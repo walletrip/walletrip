@@ -1,4 +1,5 @@
 import streamlit as st
+import urllib.parse
 from datetime import datetime
 
 # Configuration de la page Streamlit
@@ -23,8 +24,9 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Ouvrir Skyscanner pour les vols",
-        "btn_hotel": "🏨 Ouvrir Booking pour les hôtels"
+        "btn_vol": "✈️ Vols directs pour {ville}",
+        "btn_hotel": "🏨 Hôtels disponibles à {ville}",
+        "lang_booking": "fr"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -43,8 +45,9 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Open Skyscanner for flights",
-        "btn_hotel": "🏨 Open Booking for hotels"
+        "btn_vol": "✈️ Direct flights to {ville}",
+        "btn_hotel": "🏨 Available hotels in {ville}",
+        "lang_booking": "en-us"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -63,8 +66,9 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Abrir Skyscanner para vuelos",
-        "btn_hotel": "🏨 Abrir Booking para hoteles"
+        "btn_vol": "✈️ Vuelos directos a {ville}",
+        "btn_hotel": "🏨 Hoteles disponibles en {ville}",
+        "lang_booking": "es"
     }
 }
 
@@ -96,15 +100,20 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["error_date"])
     else:
-        st.success(lang["success"].format(total=total_voyageurs))
+        str_debut = date_debut.strftime("%Y-%m-%d")
+        str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Base de données fixe et propre
+        # Base de données fixe et sécurisée avec les identifiants uniques de recherche
         destinations_data = {
-            "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"}
+            "Cracovie": {"query_booking": "Krakow", "query_vols": "KRK", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"query_booking": "Budapest", "query_vols": "BUD", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"query_booking": "Porto", "query_vols": "OPO", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"query_booking": "Marrakech", "query_vols": "RAK", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"query_booking": "Sofia", "query_vols": "SOF", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
+        st.success(lang["success"].format(total=total_voyageurs))
+            
         for ville, infos in destinations_data.items():
             cout_vol = infos["vol"] * total_voyageurs
             cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
@@ -124,16 +133,19 @@ if submit_button:
                     st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
+                
+                # ENCODAGE PROPRE POUR CHAQUE LIEN
+                city_booking = urllib.parse.quote(infos["query_booking"])
+                city_vols = urllib.parse.quote(infos["query_vols"])
+                
+                # FABRICATION DES LIENS INDIVIDUELS LIÉS À CHAQUE VILLE ET TRACKÉS EN DUR
+                link_vol_strict = f"https://skyscanner.fr{city_vols}/"
+                link_hotel_strict = f"https://booking.com{city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                
+                # Affichage des deux boutons bleus dédiés spécifiquement sous la ville concernée
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol_strict)
+                with col_b2:
+                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
                 st.markdown("---")
-        
-        # BOUTONS ASSURÉS DE FONCTIONNER EN DUR SANS S'EMMÊLER LES PINCEAUX
-        st.subheader("🔗 Liens de réservation rapides")
-        
-        link_vol_fixe = "https://skyscanner.fr"
-        link_hotel_fixe = "https://booking.com"
-        
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            st.link_button(lang["btn_vol"], link_vol_fixe)
-        with col_b2:
-            st.link_button(lang["btn_hotel"], link_hotel_fixe)

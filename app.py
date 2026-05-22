@@ -1,8 +1,10 @@
 import streamlit as st
 import urllib.parse
 from datetime import datetime, timedelta
+
 # Configuration de la page Streamlit
 st.set_page_config(page_title="Pouch", page_icon="✈️", layout="centered")
+
 # Dictionnaire de traduction automatique pour l'interface de Pouch
 translations = {
     "Français": {
@@ -86,9 +88,11 @@ translations = {
         "lang_booking": "es"
     }
 }
+
 # Sélecteur de langue global
 langue = st.selectbox("🌐 Choose Language / Choisir la Langue / Elegir Idioma", ["Français", "English", "Español"])
 lang = translations[langue]
+
 st.title(lang["title"])
 st.subheader(lang["subtitle"])
 # Formulaire utilisateur propre avec le retour des deux calendriers de dates
@@ -106,27 +110,27 @@ with st.form("budget_form"):
     destination_saisie = st.text_input(lang["destination"], "")
     submit_button = st.form_submit_button(label=lang["button"])
 
-# Base de données complète et classée par continent
+# Base de données complète et classée par continent avec les codes aéroports IATA pour Skyscanner
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
-        "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
-        "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
-        "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"}
+        "Cracovie": {"query": "Krakow", "code_iata": "KRK", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
+        "Budapest": {"query": "Budapest", "code_iata": "BUD", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
+        "Porto": {"query": "Porto", "code_iata": "OPO", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
+        "Sofia": {"query": "Sofia", "code_iata": "SOF", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"}
     },
     "Amerique": {
-        "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
-        "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
+        "New York": {"query": "New York", "code_iata": "NYC", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
+        "Montréal": {"query": "Montreal", "code_iata": "YUL", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
     },
     "AsieAfrique": {
-        "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
-        "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant traditions et modernité"},
-        "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"}
+        "Marrakech": {"query": "Marrakech", "code_iata": "RAK", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
+        "Tokyo": {"query": "Tokyo", "code_iata": "TYO", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant traditions et modernité"},
+        "Bangkok": {"query": "Bangkok", "code_iata": "BKK", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"}
     }
 }
 
 # Fonction réutilisable pour afficher une destination
-def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang_booking):
+def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang_booking, code_iata):
     nb_nuits = nb_jours
     cout_vol = infos["vol"] * total_voyageurs
     cout_hotel = infos["hotel"] * nb_nuits * (1 if total_voyageurs <= 2 else 2)
@@ -150,8 +154,10 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_de
             st.markdown(f"*{infos['avis']}*")
         
         city_encoded = urllib.parse.quote(infos["query"])
-        link_vol_strict = "https://skyscanner.fr"
-        link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang_booking}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+        
+        # TRANSFORMATION EN LIENS REDIRECTIONS PROFONDS ET DIRECTS POUR L'AVION ET L'HÔTEL
+        link_vol_strict = f"https://tp.st{code_iata}"
+        link_hotel_strict = f"https://tp.st{city_encoded}%26checkin%3D{str_debut}%26checkout%3D{str_fin}%26group_adults%3D{adultes}%26group_children%3D{enfants}"
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
@@ -176,22 +182,25 @@ if submit_button:
         
         if dest_test:
             cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
+            code_custom = "LON"
             if any(k in dest_test for k in ["paris", "london", "madrid", "barcelona", "rome", "lisbon", "porto", "krakow", "budapest", "sofia", "europe", "pologne", "espagne"]):
                 cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
+                code_custom = "KRK" if "kra" in dest_test else "OPO"
             if any(k in dest_test for k in ["marrakech", "maroc", "thailande", "bangkok", "bali", "vietnam"]):
                 cout_vol_unitaire = 120 if "mar" in dest_test else 600
                 cout_hotel_nuit, cout_vie_jour = 30, 15
+                code_custom = "RAK" if "mar" in dest_test else "BKK"
                 
             infos_custom = {"query": destination_saisie.strip(), "pays": {"Français": "", "English": "", "Español": ""}, "vol": cout_vol_unitaire, "hotel": cout_hotel_nuit, "vie": cout_vie_jour, "meteo": lang["meteo_txt"], "avis": ""}
-            afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+            afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"], code_custom)
         else:
             tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
             with tab1:
                 for v, i in destinations_globales["Europe"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"], i["code_iata"])
             with tab2:
                 for v, i in destinations_globales["Amerique"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"], i["code_iata"])
             with tab3:
                 for v, i in destinations_globales["AsieAfrique"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"], i["code_iata"])

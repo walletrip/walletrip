@@ -24,8 +24,8 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Ouvrir Skyscanner pour {ville}",
-        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
+        "btn_vol": "✈️ Vols directs pour {ville}",
+        "btn_hotel": "🏨 Hôtels disponibles à {ville}",
         "lang_booking": "fr"
     },
     "English": {
@@ -45,7 +45,7 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Open Skyscanner for {ville}",
+        "btn_vol": "✈️ Direct flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
         "lang_booking": "en-us"
     },
@@ -66,7 +66,7 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Buscar vuelos a {ville}",
+        "btn_vol": "✈️ Vuelos directos a {ville}",
         "btn_hotel": "🏨 Reservar hotel en {ville}",
         "lang_booking": "es"
     }
@@ -103,13 +103,13 @@ if submit_button:
         str_debut = date_debut.strftime("%Y-%m-%d")
         str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Base de données fixe et sécurisée
+        # Base de données fixe et sécurisée avec codes IATA pour Skyscanner
         destinations_data = {
-            "Cracovie": {"search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
-            "Marrakech": {"search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
-            "Sofia": {"search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
+            "Cracovie": {"code_iata": "KRK", "search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"code_iata": "BUD", "search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"code_iata": "OPO", "search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"code_iata": "RAK", "search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"code_iata": "SOF", "search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
         st.success(lang["success"].format(total=total_voyageurs))
@@ -134,12 +134,12 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE DE SÉCURITÉ DES TEXTES DE RECHERCHE
-                city_encoded = urllib.parse.quote(infos["search_booking"])
+                # ENCODAGE DE SÉCURITÉ POUR LES BOUTONS
+                city_booking = urllib.parse.quote(infos["search_booking"])
                 
-                # LIENS CORRIGÉS AVEC SÉPARATEURS PARFAITS POUR SKYSCANNER ET BOOKING
-                link_vol_strict = f"https://skyscanner.fr"
-                link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                # STRUCTURE DE LIENS OFFICIELS TRAVELPAYOUTS ET INCASSABLES (AVEC LA BARRE / ET LE ?)
+                link_vol_strict = f"https://tp.st{infos['code_iata']}"
+                link_hotel_strict = f"https://booking.com{city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:

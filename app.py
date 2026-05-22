@@ -134,12 +134,12 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE DE SÉCURITÉ
+                # ENCODAGE DE SÉCURITÉ POUR LES STRINGS DE RECHERCHE
                 city_encoded = urllib.parse.quote(infos["search_booking"])
                 depart_encoded = urllib.parse.quote(depart.strip())
                 
-                # UTILISATION DE LIENS 100% REDIRECTION VIA TRAVELPAYOUTS (PAS DE MOT SKYSCANNER ÉCRIT)
-                link_vol_strict = f"https://tp.st{city_encoded}"
+                # RECONSTRUCTION DES LIENS EN DUR AVEC LE TRACEUR D'AFFILIATION 531779
+                link_vol_strict = f"https://aviasales.fr{depart_encoded}&destination={city_encoded}"
                 link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)

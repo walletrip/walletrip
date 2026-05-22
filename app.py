@@ -36,7 +36,7 @@ if submit_button:
         if nb_jours <= 0:
             st.error("La date de retour doit être après la date de départ.")
         else:
-            # Construction du prompt épuré : on ne demande plus à l'IA de faire les liens
+            # Construction du prompt épuré
             prompt = f"""
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
@@ -69,17 +69,17 @@ if submit_button:
                         for block in blocks[1:]:
                             if block.strip():
                                 lines = block.split("\n")
-                                title = lines[0].split(",")[0].strip().replace("[","").replace("]","")
+                                title = block.split(",")[0].strip().replace("[","").replace("]","")
                                 
                                 # Affichage du texte de l'IA
                                 st.markdown("### 📍 " + block)
                                 
-                                # Création automatique de liens d'affiliation 100% sans erreur par Python
+                                # Correction ici : Ajout du "/" indispensable après tp.st
                                 city_clean = urllib.parse.quote(title)
-                                link_vol = f"https://tp.st{tp_id}&origin={depart}&destination={city_clean}"
-                                link_hotel = f"https://tp.st{tp_id}&query={city_clean}"
+                                link_vol = f"https://aviasales.tp.st/{tp_id}?origin={depart}&destination={city_clean}"
+                                link_hotel = f"https://booking.tp.st/{tp_id}?query={city_clean}"
                                 
-                                # Affichage de deux vrais boutons bleus cliquables sous chaque destination !
+                                # Affichage de deux vrais boutons bleus cliquables sous chaque destination
                                 col_b1, col_b2 = st.columns(2)
                                 with col_b1:
                                     st.link_button(f"✈️ Réserver le vol pour {title}", link_vol)

@@ -24,9 +24,9 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Vols directs pour {ville}",
-        "btn_hotel": "🏨 Hôtels disponibles à {ville}",
-        "domain_booking": "fr.html",
+        "btn_vol": "✈️ Rechercher le vol pour {ville}",
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
+        "lang_booking": "fr",
         "domain_sky": "fr"
     },
     "English": {
@@ -46,10 +46,10 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Direct flights to {ville}",
-        "btn_hotel": "🏨 Available hotels in {ville}",
-        "domain_booking": "en.html",
-        "domain_sky": "net"
+        "btn_vol": "✈️ Search flights to {ville}",
+        "btn_hotel": "🏨 Book hotel in {ville}",
+        "lang_booking": "en-us",
+        "domain_sky": "com"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -68,9 +68,9 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Vuelos directos a {ville}",
-        "btn_hotel": "🏨 Hoteles disponibles en {ville}",
-        "domain_booking": "es.html",
+        "btn_vol": "✈️ Buscar vuelos a {ville}",
+        "btn_hotel": "🏨 Reservar hotel en {ville}",
+        "lang_booking": "es",
         "domain_sky": "es"
     }
 }
@@ -107,24 +107,18 @@ if submit_button:
         str_debut = date_debut.strftime("%Y-%m-%d")
         str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Base de données fixe et ultra-sécurisée avec les codes de destinations Skyscanner (ex: krk pour cracovie)
+        # Base de données fixe et sécurisée
         destinations_data = {
-            "Cracovie": {"code_sky": "krk", "search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"code_sky": "bud", "search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"code_sky": "opo", "search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
-            "Marrakech": {"code_sky": "rak", "search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
-            "Sofia": {"code_sky": "sof", "search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
+            "Cracovie": {"search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
         st.success(lang["success"].format(total=total_voyageurs))
-        
-        # Nettoyage de la ville de départ saisie par l'utilisateur pour le lien Skyscanner
-        depart_clean = depart.strip().lower().replace(" ", "")
-        if not depart_clean:
-            depart_clean = "paris"
             
         for ville, infos in destinations_data.items():
-            # Calculs du coût du groupe
             cout_vol = infos["vol"] * total_voyageurs
             cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
             cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
@@ -144,16 +138,16 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # FABRICATION DES LIENS ULTRA-PRÉCIS PAR DESTINATION ET PARTICIPANTS
-                city_encoded_booking = urllib.parse.quote(infos["search_booking"])
+                # ENCODAGE DE SÉCURITÉ POUR CHAQUE VILLE ET PARTICIPANT
+                city_encoded = urllib.parse.quote(infos["search_booking"])
+                depart_encoded = urllib.parse.quote(depart)
                 
-                # Lien direct Skyscanner configuré avec la ville de départ, d'arrivée et les dates exactes
-                link_vol_strict = f"https://www.skyscanner.{lang['domain_sky']}/transport/vols/{depart_clean}/{infos['code_sky']}/{str_debut[:2]}{str_debut[5:7]}{str_debut[8:10]}/{str_fin[:2]}{str_fin[5:7]}{str_fin[8:10]}/"
+                # 1. LIEN SKYSCANNER CORRIGÉ : Redirection vers le moteur de recherche universel
+                link_vol_strict = f"https://www.skyscanner.{lang['domain_sky']}/g/referrals/v1/flights/home?aid={tp_id}&origin={depart_encoded}&destination={city_encoded}"
                 
-                # Lien direct Booking configuré avec la ville d'arrivée exacte, les dates et le nombre de participants
-                link_hotel_strict = f"https://booking.com.{lang['domain_booking']}?aid={tp_id}&ss={city_encoded_booking}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                # 2. LIEN BOOKING CORRIGÉ : Redirection propre vers la ville, les dates et la composition de groupe
+                link_hotel_strict = f"https://booking.com{tp_id}&ss={city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
-                # Boutons bleus exclusifs positionnés sous CHAQUE ville proposée
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:
                     st.link_button(lang["btn_vol"].format(ville=ville), link_vol_strict)

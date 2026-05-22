@@ -103,7 +103,7 @@ if submit_button:
         str_debut = date_debut.strftime("%Y-%m-%d")
         str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Base de données fixe et sécurisée avec codes IATA pour Skyscanner
+        # Base de données fixe et sécurisée
         destinations_data = {
             "Cracovie": {"code_iata": "KRK", "search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
             "Budapest": {"code_iata": "BUD", "search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
@@ -134,11 +134,12 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE DE SÉCURITÉ POUR LES BOUTONS
+                # ENCODAGE ET NETTOYAGE DES SAISIES
                 city_booking = urllib.parse.quote(infos["search_booking"])
+                depart_encoded = urllib.parse.quote(depart.strip().upper())
                 
-                # STRUCTURE DE LIENS OFFICIELS TRAVELPAYOUTS ET INCASSABLES (AVEC LA BARRE / ET LE ?)
-                link_vol_strict = f"https://tp.st{infos['code_iata']}"
+                # STRUCTURE DE LIENS UNIVERSELLES EN DUR (AVEC SÉPARATEURS PARFAITS)
+                link_vol_strict = f"https://aviasales.fr{depart_encoded}&destination={infos['code_iata']}"
                 link_hotel_strict = f"https://booking.com{city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)

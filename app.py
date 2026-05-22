@@ -39,7 +39,7 @@ if submit_button:
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
             
-            Trouve à l'aide de tes connaissances et de tes capacités d'estimation en temps réel, 2 ou 3 destinations réelles valides.
+            Trouve à l'aide de tes connaissances et de tes capacités d'estimation en temps réel pour l'année 2026, 2 ou 3 destinations réelles valides.
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
@@ -61,28 +61,25 @@ if submit_button:
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     
-                    # Découpage et nettoyage de sécurité robuste par Python
+                    # Découpage et nettoyage par Python
                     blocks = response.text.split("### 📍")
                     if len(blocks) > 1:
                         for block in blocks[1:]:
                             if block.strip():
-                                # Extraction propre de la première ligne (Le titre de la ville)
                                 lines = [l for l in block.split("\n") if l.strip()]
                                 first_line = lines[0] if lines else ""
                                 
-                                # On isole le nom avant la virgule et on nettoie les symboles parasites
                                 city_raw = first_line.split(",")[0]
                                 city_clean = re.sub(r'[\[\]\*#📍]', '', city_raw).strip()
                                 
-                                # Affichage propre du texte généré par l'IA
                                 st.markdown("### 📍 " + block)
                                 
-                                # Création des adresses internet propres
                                 city_encoded = urllib.parse.quote(city_clean)
+                                
+                                # LIENS SÉCURISÉS ET CORRIGÉS AVEC LE SÉPARATEUR REQUIS (?)
                                 link_vol = f"https://aviasales.fr{tp_id}&origin={depart}&destination={city_encoded}"
                                 link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
                                 
-                                # Affichage des boutons bleus
                                 col_b1, col_b2 = st.columns(2)
                                 with col_b1:
                                     st.link_button(f"✈️ Vol pour {city_clean}", link_vol)

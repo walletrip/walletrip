@@ -1,10 +1,11 @@
 import streamlit as st
+import urllib.parse
 from datetime import datetime
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
 
-# Traduction automatique de l'interface
+# Dictionnaire de traduction automatique pour l'interface
 translations = {
     "Français": {
         "title": "✈️ WalletTrip",
@@ -23,8 +24,10 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Ouvrir Skyscanner pour les vols",
-        "btn_hotel": "🏨 Ouvrir Booking pour les hôtels"
+        "btn_vol": "✈️ Vols directs pour {ville}",
+        "btn_hotel": "🏨 Hôtels disponibles à {ville}",
+        "domain_booking": "fr.html",
+        "domain_sky": "fr"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -43,8 +46,10 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Open Skyscanner for flights",
-        "btn_hotel": "🏨 Open Booking for hotels"
+        "btn_vol": "✈️ Direct flights to {ville}",
+        "btn_hotel": "🏨 Available hotels in {ville}",
+        "domain_booking": "en.html",
+        "domain_sky": "net"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -63,8 +68,10 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Abrir Skyscanner para vuelos",
-        "btn_hotel": "🏨 Abrir Booking para hoteles"
+        "btn_vol": "✈️ Vuelos directos a {ville}",
+        "btn_hotel": "🏨 Hoteles disponibles en {ville}",
+        "domain_booking": "es.html",
+        "domain_sky": "es"
     }
 }
 
@@ -97,15 +104,27 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["error_date"])
     else:
-        st.success(lang["success"].format(total=total_voyageurs))
+        str_debut = date_debut.strftime("%Y-%m-%d")
+        str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Liste fixe et propre pour bloquer toute erreur de texte
+        # Base de données fixe et ultra-sécurisée avec les codes de destinations Skyscanner (ex: krk pour cracovie)
         destinations_data = {
-            "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"}
+            "Cracovie": {"code_sky": "krk", "search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"code_sky": "bud", "search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"code_sky": "opo", "search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"code_sky": "rak", "search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"code_sky": "sof", "search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
+        st.success(lang["success"].format(total=total_voyageurs))
+        
+        # Nettoyage de la ville de départ saisie par l'utilisateur pour le lien Skyscanner
+        depart_clean = depart.strip().lower().replace(" ", "")
+        if not depart_clean:
+            depart_clean = "paris"
+            
         for ville, infos in destinations_data.items():
+            # Calculs du coût du groupe
             cout_vol = infos["vol"] * total_voyageurs
             cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
             cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
@@ -124,16 +143,20 @@ if submit_button:
                     st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
+                
+                # FABRICATION DES LIENS ULTRA-PRÉCIS PAR DESTINATION ET PARTICIPANTS
+                city_encoded_booking = urllib.parse.quote(infos["search_booking"])
+                
+                # Lien direct Skyscanner configuré avec la ville de départ, d'arrivée et les dates exactes
+                link_vol_strict = f"https://www.skyscanner.{lang['domain_sky']}/transport/vols/{depart_clean}/{infos['code_sky']}/{str_debut[:2]}{str_debut[5:7]}{str_debut[8:10]}/{str_fin[:2]}{str_fin[5:7]}{str_fin[8:10]}/"
+                
+                # Lien direct Booking configuré avec la ville d'arrivée exacte, les dates et le nombre de participants
+                link_hotel_strict = f"https://booking.com.{lang['domain_booking']}?aid={tp_id}&ss={city_encoded_booking}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                
+                # Boutons bleus exclusifs positionnés sous CHAQUE ville proposée
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol_strict)
+                with col_b2:
+                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
                 st.markdown("---")
-        
-        # LIENS ASSURÉS SANS VARIABLES (ZÉRO ERREUR TECHNIQUE POSSIBLE)
-        st.subheader("🔗 Liens de réservation rapides")
-        
-        link_vol_fixe = "https://skyscanner.fr"
-        link_hotel_fixe = f"https://booking.com{tp_id}"
-        
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            st.link_button(lang["btn_vol"], link_vol_fixe)
-        with col_b2:
-            st.link_button(lang["btn_hotel"], link_hotel_fixe)

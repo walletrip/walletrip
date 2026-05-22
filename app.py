@@ -24,8 +24,8 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Vols directs pour {ville}",
-        "btn_hotel": "🏨 Hôtels disponibles à {ville}",
+        "btn_vol": "✈️ Rechercher le vol pour {ville}",
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
         "lang_booking": "fr"
     },
     "English": {
@@ -45,7 +45,7 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Direct flights to {ville}",
+        "btn_vol": "✈️ Search flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
         "lang_booking": "en-us"
     },
@@ -66,7 +66,7 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Vuelos directos a {ville}",
+        "btn_vol": "✈️ Buscar vuelos a {ville}",
         "btn_hotel": "🏨 Reservar hotel en {ville}",
         "lang_booking": "es"
     }
@@ -105,11 +105,11 @@ if submit_button:
         
         # Base de données fixe et sécurisée
         destinations_data = {
-            "Cracovie": {"code_iata": "KRK", "search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"code_iata": "BUD", "search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"code_iata": "OPO", "search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
-            "Marrakech": {"code_iata": "RAK", "search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
-            "Sofia": {"code_iata": "SOF", "search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
+            "Cracovie": {"search_booking": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"search_booking": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"search_booking": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"search_booking": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"search_booking": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
         st.success(lang["success"].format(total=total_voyageurs))
@@ -134,13 +134,13 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE ET NETTOYAGE DES SAISIES
-                city_booking = urllib.parse.quote(infos["search_booking"])
-                depart_encoded = urllib.parse.quote(depart.strip().upper())
+                # NETTOYAGE STRICT ET ENCODAGE DES TEXTES DE RECHERCHE
+                city_encoded = urllib.parse.quote(infos["search_booking"])
+                depart_encoded = urllib.parse.quote(depart.strip())
                 
-                # STRUCTURE DE LIENS UNIVERSELLES EN DUR (AVEC SÉPARATEURS PARFAITS)
-                link_vol_strict = f"https://aviasales.fr{depart_encoded}&destination={infos['code_iata']}"
-                link_hotel_strict = f"https://booking.com{city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                # LIENS AVEC CARACTÈRES DE SÉPARATION PARFAITS EN DUR
+                link_vol_strict = f"https://aviasales.fr{depart_encoded}&destination={city_encoded}"
+                link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:

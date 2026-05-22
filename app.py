@@ -38,7 +38,7 @@ if submit_button:
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
             
-            Trouve à l'aide de tes connaissances et de tes capacités d'estimation en temps réel pour l'année 2026, 2 ou 3 destinations réelles valides.
+            Trouve à l'aide de tes connaissances et de tes capacités d'estimation en temps réel, 2 ou 3 destinations réelles valides.
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
@@ -60,17 +60,14 @@ if submit_button:
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     
-                    # On affiche le texte de l'IA proprement sans découpage complexe
+                    # On affiche le texte de l'IA proprement
                     st.markdown(response.text)
                     
-                    # BLOC DE LIENS FIXES : Construits sans risque d'erreur directement depuis les saisies
+                    # LIENS FIXES SÉCURISÉS : Pas de découpage de texte, aucun risque de plantage !
                     st.write("---")
                     st.subheader("🔗 Liens de réservation rapides")
-                    st.write("Utilisez ces boutons officiels basés sur vos critères pour réserver vos billets :")
                     
-                    # Encodage propre des variables du formulaire
                     dep_enc = urllib.parse.quote(depart)
-                    
                     link_vol_global = f"https://skyscanner.fr{dep_enc}/"
                     link_hotel_global = f"https://booking.com{tp_id}&ss=Europe"
                     

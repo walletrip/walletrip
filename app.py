@@ -26,8 +26,7 @@ translations = {
         "reste": "VOTRE RESTE-À-VIVRE",
         "btn_vol": "✈️ Rechercher le vol pour {ville}",
         "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
-        "lang_booking": "fr",
-        "domain_sky": "fr"
+        "lang_booking": "fr"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -48,8 +47,7 @@ translations = {
         "reste": "YOUR POCKET MONEY",
         "btn_vol": "✈️ Search flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
-        "lang_booking": "en-us",
-        "domain_sky": "com"
+        "lang_booking": "en-us"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -70,8 +68,7 @@ translations = {
         "reste": "TU DINERO DE BOLSILLO",
         "btn_vol": "✈️ Buscar vuelos a {ville}",
         "btn_hotel": "🏨 Reservar hotel en {ville}",
-        "lang_booking": "es",
-        "domain_sky": "es"
+        "lang_booking": "es"
     }
 }
 
@@ -97,7 +94,6 @@ with st.form("budget_form"):
     submit_button = st.form_submit_button(label=lang["button"])
 
 if submit_button:
-    tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
     total_voyageurs = adultes + enfants
     nb_jours = (date_fin - date_debut).days
     
@@ -138,15 +134,13 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE DE SÉCURITÉ POUR CHAQUE VILLE ET PARTICIPANT
+                # ENCODAGE DES TEXTES DE RECHERCHE
                 city_encoded = urllib.parse.quote(infos["search_booking"])
                 depart_encoded = urllib.parse.quote(depart)
                 
-                # 1. LIEN SKYSCANNER CORRIGÉ : Redirection vers le moteur de recherche universel
-                link_vol_strict = f"https://www.skyscanner.{lang['domain_sky']}/g/referrals/v1/flights/home?aid={tp_id}&origin={depart_encoded}&destination={city_encoded}"
-                
-                # 2. LIEN BOOKING CORRIGÉ : Redirection propre vers la ville, les dates et la composition de groupe
-                link_hotel_strict = f"https://booking.com{tp_id}&ss={city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                # LIENS AVEC IDENTIFIANT EN DUR (ZÉRO RISQUE D'ERREUR DNS)
+                link_vol_strict = f"https://tp.st{city_encoded}"
+                link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:

@@ -56,6 +56,7 @@ if submit_button:
             with st.spinner("L'IA calcule le coût de la vie pour vos destinations..."):
                 try:
                     model = genai.GenerativeModel('gemini-2.5-flash')
+
                     response = model.generate_content(prompt)
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")

@@ -134,13 +134,13 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # ENCODAGE DE SÉCURITÉ DES TEXTES DE RECHERCHE
-                city_encoded = urllib.parse.quote(infos["search_booking"])
-                depart_encoded = urllib.parse.quote(depart)
+                # NETTOYAGE STRICT DES ESPACES PAR PYTHON POUR SÉCURISER L'ADRESSE INTERNET
+                city_clean = infos["search_booking"].strip().lower()
+                depart_clean = depart.strip().lower()
                 
-                # RECONSTRUCTION DES LIENS EN DUR AVEC LES SÉPARATEURS PARFAITS (/, ?)
-                link_vol_strict = f"https://skyscanner.fr{depart_encoded}/vers/{city_encoded}/"
-                link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                # LIENS AVEC SÉPARATEURS OBLIGATOIRES (?) ET NETTOYÉS
+                link_vol_strict = f"https://skyscanner.fr{depart_clean}/vers/{city_clean}/"
+                link_hotel_strict = f"https://booking.com{city_clean}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:

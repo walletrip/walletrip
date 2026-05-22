@@ -3,9 +3,9 @@ import google.generativeai as genai
 from datetime import datetime
 
 # Configuration de la page Streamlit
-st.set_page_config(page_title="TrueBudget Travel", page_icon="✈️", layout="centered")
+st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
 
-st.title("✈️ TrueBudget Travel")
+st.title("✈️ WalletTrip")
 st.subheader("L'IA qui trouve des voyages selon votre budget réel, pas seulement le prix du vol.")
 
 # Formulaire utilisateur
@@ -22,18 +22,20 @@ with st.form("budget_form"):
 
 # Traitement de la demande
 if submit_button:
-    # Récupération sécurisée de la clé API Google stockée dans l'interface Streamlit
     if "GEMINI_API_KEY" not in st.secrets:
         st.error("Veuillez configurer votre clé API Gemini (GEMINI_API_KEY) dans les paramètres.")
     else:
         genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+        
+        # Récupération de votre ID Travelpayouts configuré dans les secrets
+        tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
         
         # Calcul du nombre de jours
         nb_jours = (date_fin - date_debut).days
         if nb_jours <= 0:
             st.error("La date de retour doit être après la date de départ.")
         else:
-            # Construction du prompt pour l'IA
+            # Construction du prompt pour l'IA avec consignes strictes d'affiliation
             prompt = f"""
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
@@ -42,23 +44,27 @@ if submit_button:
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
+            Génère STRICTEMENT des liens d'affiliation au format exact suivant pour aider l'utilisateur à réserver (remplace [NOM_VILLE_ANGLAIS] par la ville trouvée sans espace) :
+            - Lien vol : https://tp.st{tp_id}&subid=wallettrip&origin={depart}&destination=[NOM_VILLE_ANGLAIS]
+            - Lien hôtel : https://tp.st{tp_id}&subid=wallettrip&query=[NOM_VILLE_ANGLAIS]
+            
             Affiche le résultat au format Markdown suivant :
             ### 📍 [Ville, Pays]
             - **✈️ Vol aller-retour estimé** : [Prix]€
             - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
             - **🍔 Vie sur place ({nb_jours + 1} jours)** : [Prix total]€
             - **💰 BUDGET TOTAL ESTIMÉ** : [Somme]€
-            - **🔥 VOTRE RESTE-À-VIVRE** : [Budget initial - Somme]€ d'argent de poche
+            - **🔥 VOTRE RESTE-À-VIVRE** : [Calcul du budget initial - Somme]€ d'argent de poche
+            - [👉 Réserver les vols moins chers pour cette destination]([METS_LE_LIEN_VOL_GENERE_ICI])
+            - [👉 Trouver un hébergement dans le budget]([METS_LE_LIEN_HOTEL_GENERE_ICI])
             - *L'avis de l'IA* : [Explication courte et pertinente du choix]
             """
             
-            with st.spinner("L'IA calcule le coût de la vie et cherche vos destinations..."):
+            with st.spinner("L'IA calcule le coût de la vie et prépare vos liens de réservation d'affilié..."):
                 try:
-                    # Appel au modèle de Google
                     model = genai.GenerativeModel('gemini-2.5-flash')
                     response = model.generate_content(prompt)
                     
-                    # Affichage du résultat
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     st.markdown(response.text)
                 except Exception as e:

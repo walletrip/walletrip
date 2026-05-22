@@ -7,20 +7,99 @@ import json
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
 
-st.title("✈️ WalletTrip")
-st.subheader("L'IA qui trouve des voyages selon votre budget réel, pas seulement le prix du vol.")
+# Dictionnaire de traduction pour l'interface de l'application
+translations = {
+    "Français": {
+        "title": "✈️ WalletTrip",
+        "subtitle": "L'IA qui trouve des voyages selon votre budget réel, pas seulement le prix du vol.",
+        "depart": "🛫 Ville de départ",
+        "budget": "💰 Budget TOTAL maximum (€)",
+        "date_dep": "🗓️ Date de départ",
+        "date_ret": "🗓️ Date de retour",
+        "adults": "👨‍💼 Nombre d'adultes",
+        "children": "👶 Nombre d'enfants",
+        "button": "Trouver mes destinations réelles",
+        "error_date": "La date de retour doit être après la date de départ.",
+        "loading": "L'IA calcule le budget de groupe et analyse la météo locale...",
+        "success": "Voici les destinations valides pour {total} personnes :",
+        "vols": "Vols",
+        "logement": "Logement",
+        "vie": "Vie sur place",
+        "meteo": "Météo prévue",
+        "reste": "VOTRE RESTE-À-VIVRE",
+        "btn_vol": "✈️ Voir les vols pour {ville}",
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
+        "domain_booking": "fr.html?aid=",
+        "domain_sky": "fr"
+    },
+    "English": {
+        "title": "✈️ WalletTrip",
+        "subtitle": "The AI that finds trips based on your real budget, not just the flight price.",
+        "depart": "🛫 Departure City",
+        "budget": "💰 Maximum TOTAL Budget (€)",
+        "date_dep": "🗓️ Departure Date",
+        "date_ret": "🗓️ Return Date",
+        "adults": "👨‍💼 Number of Adults",
+        "children": "👶 Number of Children",
+        "button": "Find my real destinations",
+        "error_date": "Return date must be after departure date.",
+        "loading": "AI is calculating group budget and analyzing local weather...",
+        "success": "Here are the valid destinations for {total} people:",
+        "vols": "Flights",
+        "logement": "Accommodation",
+        "vie": "Cost of living",
+        "meteo": "Expected Weather",
+        "reste": "YOUR POCKET MONEY",
+        "btn_vol": "✈️ See flights to {ville}",
+        "btn_hotel": "🏨 Book hotel in {ville}",
+        "domain_booking": "en.html?aid=",
+        "domain_sky": "net"
+    },
+    "Español": {
+        "title": "✈️ WalletTrip",
+        "subtitle": "La IA que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
+        "depart": "🛫 Ciudad de salida",
+        "budget": "💰 Presupuesto TOTAL máximo (€)",
+        "date_dep": "🗓️ Fecha de salida",
+        "date_ret": "🗓️ Fecha de regreso",
+        "adults": "👨‍💼 Número de adultos",
+        "children": "👶 Número de niños",
+        "button": "Buscar mis destinos reales",
+        "error_date": "La fecha de regreso debe ser posterior a la fecha de salida.",
+        "loading": "La IA está calculando el presupuesto grupal y analizando el clima...",
+        "success": "Aquí están los destinos válidos para {total} personas:",
+        "vols": "Vuelos",
+        "logement": "Alojamiento",
+        "vie": "Coste de vida",
+        "meteo": "Clima previsto",
+        "reste": "TU DINERO DE BOLSILLO",
+        "btn_vol": "✈️ Ver vuelos a {ville}",
+        "btn_hotel": "🏨 Reservar hotel en {ville}",
+        "domain_booking": "es.html?aid=",
+        "domain_sky": "es"
+    }
+}
 
-# Formulaire utilisateur
+# Sélecteur de langue tout en haut de la page
+langue = st.selectbox("🌐 Choose Language / Choisir la Langue / Elegir Idioma", ["Français", "English", "Español"])
+lang = translations[langue]
+
+st.title(lang["title"])
+st.subheader(lang["subtitle"])
+
+# Formulaire dynamique traduit automatiquement
 with st.form("budget_form"):
     col1, col2 = st.columns(2)
     with col1:
-        depart = st.text_input("🛫 Ville de départ", "Paris")
-        date_debut = st.date_input("🗓️ Date de départ", datetime.today())
+        depart = st.text_input(lang["depart"], "Paris")
+        date_debut = st.date_input(lang["date_dep"], datetime.today())
+        adultes = st.number_input(lang["adults"], min_value=1, value=1, step=1)
     with col2:
-        budget = st.number_input("💰 Budget TOTAL maximum (€)", min_value=50, value=500, step=50)
-        date_fin = st.date_input("🗓️ Date de retour", datetime.today())
+        budget = st.number_input(lang["budget"], min_value=50, value=500, step=50)
+        date_fin = st.date_input(lang["date_ret"], datetime.today())
+        enfants = st.number_input(lang["children"], min_value=0, value=0, step=1)
         
-    submit_button = st.form_submit_button(label="Trouver mes destinations réelles")
+    submit_button = st.form_submit_button(label=lang["button"])
 
 # Traitement de la demande
 if submit_button:
@@ -30,58 +109,77 @@ if submit_button:
         genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
         tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
         
-        # Calcul du nombre de jours
+        total_voyageurs = adultes + enfants
         nb_jours = (date_fin - date_debut).days
+        
         if nb_jours <= 0:
-            st.error("La date de retour doit être après la date de départ.")
+            st.error(lang["error_date"])
         else:
-            # On demande à l'IA de répondre sous un format strict de liste JSON que Python sait lire
-            prompt = f"""
-            Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
-            Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
+            str_debut = date_debut.strftime("%Y-%m-%d")
+            str_fin = date_fin.strftime("%Y-%m-%d")
             
-            Trouve 2 ou 3 destinations réelles valides. Le total (Vol + Hôtel + Vie) doit être inférieur à {budget}€.
-             Donne ta réponse UNIQUEMENT sous la forme d'un tableau JSON au format suivant, sans autre texte avant ou après :
+            # Consigne stricte à l'IA de répondre dans la langue choisie
+            prompt = f"""
+            You are a world travel agent assistant. Write your response ONLY in {langue}.
+            A user wants to travel from {depart} from {str_debut} to {str_fin} ({nb_jours} nights).
+            There are {adultes} adult(s) and {enfants} child(ren) ({total_voyageurs} people total).
+            The maximum total budget for EVERYTHING (flights + hotels + meals for everyone) is {budget}€.
+            
+            Find 2 or 3 real destinations in Europe where the total price fits inside the budget.
+            Estimate typical weather conditions for that city during this period.
+            
+            Provide your response ONLY as a strict JSON array, with no other text before or after:
             [
-              {{"ville": "Nom de la ville en anglais", "pays": "Nom du pays", "vol": 70, "hotel": 120, "vie": 90, "reste": 120, "avis": "Explication courte"}}
+              {{
+                "ville": "Name of the city in English",
+                "pays": "Name of the country translated in {langue}",
+                "vol_total": 140,
+                "hotel_total": 240,
+                "vie_totale": 180,
+                "reste_argent_poche": 40,
+                "meteo": "Weather description in {langue}",
+                "avis": "Short justification in {langue}"
+              }}
             ]
             """
             
-            with st.spinner("L'IA calcule le coût de la vie et prépare vos liens personnalisés..."):
+            with st.spinner(lang["loading"]):
                 try:
                     model = genai.GenerativeModel('gemini-2.5-flash')
                     response = model.generate_content(prompt)
                     
-                    # Nettoyage du texte JSON reçu de l'IA
                     json_text = response.text.strip().replace("```json", "").replace("```", "")
                     destinations = json.loads(json_text)
                     
-                    st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
+                    st.success(lang["success"].format(total=total_voyageurs))
                     
-                    # Pour chaque ville trouvée par l'IA, Python génère les explications et les boutons précis !
                     for dest in destinations:
                         st.markdown(f"### 📍 {dest['ville']}, {dest['pays']}")
-                        st.markdown(f"- **✈️ Vol aller-retour estimé** : {dest['vol']}€")
-                        st.markdown(f"- **🏨 Hébergement ({nb_jours} nuits)** : {dest['hotel']}€")
-                        st.markdown(f"- **🍔 Vie sur place ({nb_jours + 1} jours)** : {dest['vie']}€")
-                        st.markdown(f"- **🔥 VOTRE RESTE-À-VIVRE** :  {dest['reste']}€ d'argent de poche")
-                        st.markdown(f"*L'avis de l'IA* : {dest['avis']}")
                         
-                        # Fabrication des liens ultra-précis vers la destination exacte
-                        city_encoded = urllib.parse.quote(dest['ville'])
-                        dep_encoded = urllib.parse.quote(depart)
+                        col_c1, col_c2 = st.columns(2)
+                        with col_c1:
+                            st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {dest['vol_total']}€")
+                            st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {dest['hotel_total']}€")
+                            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {dest['vie_totale']}€")
+                        with col_c2:
+                            st.info(f"🌤️ **{lang['meteo']}** : {dest['meteo']}")
+                            st.metric(label=f"🔥 {lang['reste']}", value=f"{dest['reste_argent_poche']}€")
                         
-                        link_vol = f"https://skyscanner.fr{dep_encoded}/{city_encoded}/"
-                        link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
+                        st.markdown(f"*{dest['avis']}*")
                         
-                        # Affichage des boutons bleus juste en dessous de la ville concernée
+                        # Liens internationaux dynamiques adaptés à la langue sélectionnée
+                        city_enc = urllib.parse.quote(dest['ville'])
+                        dep_enc = urllib.parse.quote(depart)
+                        
+                        link_vol = f"https://www.skyscanner.{lang['domain_sky']}/transport/vols/{dep_enc}/{city_enc}/"
+                        link_hotel = f"https://booking.com.{lang['domain_booking']}{tp_id}&ss={city_enc}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                        
                         col_b1, col_b2 = st.columns(2)
                         with col_b1:
-                            st.link_button(f"✈️ Réserver le vol pour {dest['ville']}", link_vol)
+                            st.link_button(lang["btn_vol"].format(ville=dest['ville']), link_vol)
                         with col_b2:
-                            st.link_button(f"🏨 Trouver un hôtel à {dest['ville']}", link_hotel)
+                            st.link_button(lang["btn_hotel"].format(ville=dest['ville']), link_hotel)
                         st.markdown("---")
                         
                 except Exception as e:
-                    # En cas de problème de format de l'IA, on affiche quand même son texte brut
                     st.markdown(response.text)

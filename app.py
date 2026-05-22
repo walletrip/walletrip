@@ -1,5 +1,8 @@
 import streamlit as st
+import google.generativeai as genai
 from datetime import datetime
+import urllib.parse
+import json
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -8,63 +11,69 @@ st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered
 translations = {
     "Français": {
         "title": "✈️ WalletTrip",
-        "subtitle": "L'IA qui trouve des voyages selon votre budget réel, pas seulement le prix du vol.",
+        "subtitle": "L'IA mondiale qui trouve des voyages selon votre budget réel, pas seulement le prix du vol.",
         "depart": "🛫 Ville de départ",
         "budget": "💰 Budget TOTAL maximum (€)",
         "date_dep": "🗓️ Date de départ",
         "date_ret": "🗓️ Date de retour",
         "adults": "👨‍💼 Nombre d'adultes",
         "children": "👶 Nombre d'enfants",
-        "button": "Trouver mes destinations réelles",
+        "button": "Voyager dans le monde entier",
         "error_date": "La date de retour doit être après la date de départ.",
-        "success": "Voici les destinations valides pour {total} personnes :",
+        "loading": "L'IA analyse le coût de la vie mondial et prépare vos liens...",
+        "success": "Voici les destinations mondiales valides pour {total} personnes :",
         "vols": "Vols",
         "logement": "Logement",
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Ouvrir Skyscanner pour les vols",
-        "btn_hotel": "🏨 Ouvrir Booking pour les hôtels"
+        "btn_vol": "✈️ Rechercher le vol pour {ville}",
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
+        "lang_booking": "fr"
     },
     "English": {
         "title": "✈️ WalletTrip",
-        "subtitle": "The AI that finds trips based on your real budget, not just the flight price.",
+        "subtitle": "The global AI that finds trips based on your real budget, not just the flight price.",
         "depart": "🛫 Departure City",
         "budget": "💰 Maximum TOTAL Budget (€)",
         "date_dep": "🗓️ Departure Date",
         "date_ret": "🗓️ Return Date",
         "adults": "👨‍💼 Number of Adults",
         "children": "👶 Number of Children",
-        "button": "Find my real destinations",
+        "button": "Travel worldwide",
         "error_date": "Return date must be after departure date.",
-        "success": "Here are the valid destinations for {total} people:",
+        "loading": "AI is calculating worldwide cost of living and preparing your links...",
+        "success": "Here are the valid worldwide destinations for {total} people:",
         "vols": "Flights",
         "logement": "Accommodation",
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Open Skyscanner for flights",
-        "btn_hotel": "🏨 Open Booking for hotels"
+        "btn_vol": "✈️ Search flights to {ville}",
+        "btn_hotel": "🏨 Book hotel in {ville}",
+        "lang_booking": "en-us"
     },
     "Español": {
         "title": "✈️ WalletTrip",
-        "subtitle": "La IA que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
+        "subtitle": "La IA mundial que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
         "depart": "🛫 Ciudad de salida",
         "budget": "💰 Presupuesto TOTAL máximo (€)",
         "date_dep": "Fecha de salida",
         "date_ret": "Fecha de regreso",
         "adults": "👨‍💼 Número de adultos",
         "children": "👶 Número de niños",
-        "button": "Buscar mis destinos reales",
+        "button": "Viajar por todo el mundo",
         "error_date": "La fecha de regreso debe ser posterior a la fecha de salida.",
-        "success": "Aquí están los destinos válidos para {total} personas:",
+        "loading": "La IA está calculando el costo de vida mundial y preparando los enlaces...",
+        "success": "Aquí están los destinos mundiales válidos para {total} personas:",
         "vols": "Vuelos",
         "logement": "Alojamiento",
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Abrir Skyscanner para vuelos",
-        "btn_hotel": "🏨 Abrir Booking para hoteles"
+        "btn_vol": "✈️ Buscar vuelos a {ville}",
+        "btn_hotel": "🏨 Reservar hotel en {ville}",
+        "lang_booking": "es"
     }
 }
 
@@ -90,50 +99,86 @@ with st.form("budget_form"):
     submit_button = st.form_submit_button(label=lang["button"])
 
 if submit_button:
-    total_voyageurs = adultes + enfants
-    nb_jours = (date_fin - date_debut).days
-    
-    if nb_jours <= 0:
-        st.error(lang["error_date"])
+    if "GEMINI_API_KEY" not in st.secrets:
+        st.error("Veuillez configurer votre clé API Gemini (GEMINI_API_KEY) dans les paramètres.")
     else:
-        st.success(lang["success"].format(total=total_voyageurs))
+        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
+        tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
         
-        # Base de données fixe et propre
-        destinations_data = {
-            "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"}
-        }
+        total_voyageurs = adultes + enfants
+        nb_jours = (date_fin - date_debut).days
         
-        for ville, infos in destinations_data.items():
-            cout_vol = infos["vol"] * total_voyageurs
-            cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
-            cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
-            total_estime = cout_vol + cout_hotel + cout_vie
+        if nb_jours <= 0:
+            st.error(lang["error_date"])
+        else:
+            str_debut = date_debut.strftime("%Y-%m-%d")
+            str_fin = date_fin.strftime("%Y-%m-%d")
             
-            if total_estime <= budget:
-                reste_a_vivre = budget - total_estime
-                st.markdown(f"### 📍 {ville}, {infos['pays'][langue]}")
-                
-                col_c1, col_c2 = st.columns(2)
-                with col_c1:
-                    st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {cout_vol}€")
-                    st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {cout_hotel}€")
-                    st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {cout_vie}€")
-                with col_c2:
-                    st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
-                    st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
-                st.markdown(f"*{infos['avis']}*")
-                st.markdown("---")
-        
-        # LIENS SÉCURISÉS EN CLAIR (ÉCRITS LETTRE PAR LETTRE)
-        st.subheader("🔗 Liens de réservation rapides")
-        
-        link_vol_fixe = "https://skyscanner.fr"
-        link_hotel_fixe = "https://booking.com"
-        
-        col_b1, col_b2 = st.columns(2)
-        with col_b1:
-            st.link_button(lang["btn_vol"], link_vol_fixe)
-        with col_b2:
-            st.link_button(lang["btn_hotel"], link_hotel_fixe)
+            # PROMPT AVEC LE FILTRE MONDIAL ET LE STRUCTURAGE DES NOMS EN ANGLAIS POUR BOOKING
+            prompt = f"""
+            You are a global travel expert. Write your response ONLY in {langue}.
+            Analyse ALL COUNTRIES IN THE WORLD to find 2 or 3 amazing destinations.
+            Departure city: {depart}. From {str_debut} to {str_fin} ({nb_jours} nights).
+            Total group size: {adultes} adult(s) and {enfants} child(ren) ({total_voyageurs} people total).
+            The MAXIMUM TOTAL BUDGET for EVERYTHING (flights + hotel + local life for ALL people) is {budget}€.
+            
+            Calculate precisely: Flight cost + Hotel cost + (Cost of living per day * {nb_jours+1} * {total_voyageurs}).
+            Only output destinations where the sum is LESS than {budget}€.
+            
+            Provide your response ONLY as a strict JSON array, with no other text before or after:
+            [
+              {{
+                "ville_anglais": "Name of the city in English (Ex: New York, Tokyo, Krakow)",
+                "ville_traduit": "Name of the city translated in {langue}",
+                "pays": "Name of the country in {langue}",
+                "vol_total": 150,
+                "hotel_total": 200,
+                "vie_totale": 100,
+                "reste_argent_poche": 50,
+                "meteo": "Weather description in {langue}",
+                "avis": "Short justification in {langue}"
+              }}
+            ]
+            """
+            
+            with st.spinner(lang["loading"]):
+                try:
+                    model = genai.GenerativeModel('gemini-2.5-flash')
+                    response = model.generate_content(prompt)
+                    
+                    # Nettoyage et lecture sécurisée du JSON de l'IA
+                    json_text = response.text.strip().replace("```json", "").replace("```", "")
+                    destinations = json.loads(json_text)
+                    
+                    st.success(lang["success"].format(total=total_voyageurs))
+                    
+                    for dest in destinations:
+                        st.markdown(f"### 📍 {dest['ville_traduit']}, {dest['pays']}")
+                        
+                        col_c1, col_c2 = st.columns(2)
+                        with col_c1:
+                            st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {dest['vol_total']}€")
+                            st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {dest['hotel_total']}€")
+                            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {dest['vie_totale']}€")
+                        with col_c2:
+                            st.info(f"🌤️ **{lang['meteo']}** : {dest['meteo']}")
+                            st.metric(label=f"🔥 {lang['reste']}", value=f"{dest['reste_argent_poche']}€")
+                        
+                        st.markdown(f"*{dest['avis']}*")
+                        
+                        # PYTHON SÉCURISE LES LIENS SANS AUCUN RISQUE DE COLLAGE TEXTE
+                        city_booking = urllib.parse.quote(dest["ville_anglais"])
+                        
+                        link_vol = f"https://skyscanner.fr"
+                        link_hotel = f"https://booking.com{tp_id}&ss={city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                        
+                        # Un bloc de boutons dédié spécifiquement sous chaque option
+                        col_b1, col_b2 = st.columns(2)
+                        with col_b1:
+                            st.link_button(lang["btn_vol"].format(ville=dest['ville_traduit']), link_vol)
+                        with col_b2:
+                            st.link_button(lang["btn_hotel"].format(ville=dest['ville_traduit']), link_hotel)
+                        st.markdown("---")
+                        
+                except Exception as e:
+                    st.error("Désolé, une erreur est survenue lors de l'analyse. Veuillez relancer la recherche.")

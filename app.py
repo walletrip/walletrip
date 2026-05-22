@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime
+import urllib.parse
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -23,8 +24,8 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Ouvrir Skyscanner ({ville})",
-        "btn_hotel": "🏨 Hôtels disponibles à {ville}"
+        "btn_vol": "✈️ Comparer les vols pour {ville}",
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -43,8 +44,8 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Open Skyscanner ({ville})",
-        "btn_hotel": "🏨 Available hotels in {ville}"
+        "btn_vol": "✈️ Compare flights to {ville}",
+        "btn_hotel": "🏨 Book hotel in {ville}"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -63,8 +64,8 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Abrir Skyscanner ({ville})",
-        "btn_hotel": "🏨 Hoteles disponibles en {ville}"
+        "btn_vol": "✈️ Buscar vuelos a {ville}",
+        "btn_hotel": "🏨 Reservar hotel en {ville}"
     }
 }
 
@@ -100,11 +101,11 @@ if submit_button:
         
         # Base de données fixe et sécurisée
         destinations_data = {
-            "Cracovie": {"query_hotel": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"query_hotel": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"query_hotel": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
-            "Marrakech": {"query_hotel": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
-            "Sofia": {"query_hotel": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
+            "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
+            "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"},
+            "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 30, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix / Total change of scenery / Desconexión total"},
+            "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 22, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères / One of the cheapest capitals / Una de las capitales más baratas"}
         }
         
         for ville, infos in destinations_data.items():
@@ -127,13 +128,17 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # LIENS AVEC CODES D'AFFILIATION INTÉGRÉS DIRECTEMENT SANS RISQUE D'ERREUR
-                link_vol_fixe = f"https://skyscanner.fr"
-                link_hotel_fixe = f"https://booking.com{infos['query_hotel']}"
+                # ENCODAGE PROPRE DE LA VILLE POUR LES LIENS
+                ville_encodee = urllib.parse.quote(infos["query"])
+                depart_encode = urllib.parse.quote(depart)
+                
+                # LIENS AVEC CARACTÈRES DE SÉPARATION PARFAITS (?, /, &) ÉCRITS DE MANIÈRE FIXE
+                link_vol = f"https://skyscanner.fr{depart_encode}/{ville_encodee}/"
+                link_hotel = f"https://booking.com{ville_encodee}"
                 
                 col_b1, col_b2 = st.columns(2)
                 with col_b1:
-                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol_fixe)
+                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol)
                 with col_b2:
-                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_fixe)
+                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel)
                 st.markdown("---")

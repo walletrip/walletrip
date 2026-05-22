@@ -50,7 +50,7 @@ translations = {
         "btn_vol": "✈️ Search flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
         "warning_no_dest": "No worldwide destinations match this budget for this duration.",
-        "tab_eu": "🇪🇺 Europe",
+        "tab_eu": "🌍 Europe",
         "tab_am": "🌎 America",
         "tab_as": "🌏 Asia & Africa"
     },
@@ -58,7 +58,6 @@ translations = {
         "title": "✈️ Pouch",
         "subtitle": "El comparador que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
         "depart": "🛫 Ciudad de salida",
-        "destination": "📍 Destino específico (Opcional - Dejar en blanco para sugerencias)",
         "budget": "💰 Presupuesto TOTAL máximo (€)",
         "duration": "🗓️ Duración del viaje (en días)",
         "adults": "👨‍💼 Número de adultos",
@@ -101,6 +100,25 @@ with st.form("budget_form"):
     destination_saisie = st.text_input(lang["destination"], "")
     submit_button = st.form_submit_button(label=lang["button"])
 
+# Base de données complète et classée par continent
+destinations_globales = {
+    "Europe": {
+        "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
+        "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
+        "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
+        "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"}
+    },
+    "Amerique": {
+        "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
+        "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
+    },
+    "AsieAfrique": {
+        "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
+        "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant traditions et modernité"},
+        "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"}
+    }
+}
+
 # Fonction réutilisable pour afficher une carte de destination
 def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
     nb_nuits = nb_jours - 1 if nb_jours > 1 else 1
@@ -135,31 +153,9 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
         with col_b2:
             st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
         st.markdown("---")
-        return True
-    return False
 
 if submit_button:
     total_voyageurs = adultes + enfants
-    
-    # Base de données complète et classée par continent
-    destinations_globales = {
-        "Europe": {
-            "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
-            "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
-            "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
-            "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"}
-        },
-        "Amerique": {
-            "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
-            "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
-        },
-        "AsieAfrique": {
-            "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
-            "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant traditions et modernité"},
-            "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"}
-        }
-    }
-    
     dest_test = destination_saisie.strip().lower()
     st.success(lang["success"].format(total=total_voyageurs))
     
@@ -174,3 +170,13 @@ if submit_button:
         infos_custom = {"query": destination_saisie.strip(), "pays": {"Français": "", "English": "", "Español": ""}, "vol": cout_vol_unitaire, "hotel": cout_hotel_nuit, "vie": cout_vie_jour, "meteo": lang["meteo_txt"], "avis": ""}
         afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours)
     else:
+        tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
+        with tab1:
+            for v, i in destinations_globales["Europe"].items():
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours)
+        with tab2:
+            for v, i in destinations_globales["Amerique"].items():
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours)
+        with tab3:
+            for v, i in destinations_globales["AsieAfrique"].items():
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours)

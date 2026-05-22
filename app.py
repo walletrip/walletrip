@@ -122,8 +122,8 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_de
         # ASSEMBLAGE INVISIBLE DES PARAMÈTRES POUR S'ALIGNER ET LIER LES VILLES EN DIRECT
         c_enc = urllib.parse.quote(infos["query"])
         
-        link_vol = f"https://skyscanner.fr{infos['code'].lower()}/"
-        link_hotel = f"https://booking.com{c_enc}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+        link_vol = f"https://skyscanner.fr//infos['code'].lower()}/"
+        link_hotel = f"https://booking.com//{c_enc}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
 
         
         col_b1, col_b2 = st.columns(2)

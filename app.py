@@ -43,7 +43,7 @@ if submit_button:
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
-            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville (très important, respecte la ligne ### 📍 Ville, Pays) :
+            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville :
             ### 📍 [Nom de la Ville], [Nom du Pays]
             - **✈️ Vol aller-retour estimé** : [Prix]€
             - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
@@ -61,20 +61,23 @@ if submit_button:
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     
-                    # Découpage et nettoyage de sécurité par Python
+                    # Découpage et nettoyage de sécurité robuste par Python
                     blocks = response.text.split("### 📍")
                     if len(blocks) > 1:
                         for block in blocks[1:]:
                             if block.strip():
-                                # Extraction et nettoyage strict du nom de la ville
-                                first_line = block.split("\n")
-                                city_raw = first_line.split(",")
+                                # Extraction propre de la première ligne (Le titre de la ville)
+                                lines = [l for l in block.split("\n") if l.strip()]
+                                first_line = lines[0] if lines else ""
+                                
+                                # On isole le nom avant la virgule et on nettoie les symboles parasites
+                                city_raw = first_line.split(",")[0]
                                 city_clean = re.sub(r'[\[\]\*#📍]', '', city_raw).strip()
                                 
-                                # Affichage propre du texte généré
+                                # Affichage propre du texte généré par l'IA
                                 st.markdown("### 📍 " + block)
                                 
-                                # Correction des adresses internet (ajout du "?" et de la structure d'affiliation correcte)
+                                # Création des adresses internet propres
                                 city_encoded = urllib.parse.quote(city_clean)
                                 link_vol = f"https://aviasales.fr{tp_id}&origin={depart}&destination={city_encoded}"
                                 link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"

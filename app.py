@@ -2,6 +2,7 @@ import streamlit as st
 import google.generativeai as genai
 from datetime import datetime
 import urllib.parse
+import re
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -27,8 +28,6 @@ if submit_button:
         st.error("Veuillez configurer votre clé API Gemini (GEMINI_API_KEY) dans les paramètres.")
     else:
         genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-        
-        # Récupération de votre ID Travelpayouts configuré dans les secrets
         tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
         
         # Calcul du nombre de jours
@@ -36,7 +35,6 @@ if submit_button:
         if nb_jours <= 0:
             st.error("La date de retour doit être après la date de départ.")
         else:
-            # Construction du prompt épuré
             prompt = f"""
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
@@ -45,14 +43,14 @@ if submit_button:
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
-            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville :
-            ### 📍 [Mets le Nom de la Ville ici], [Pays]
+            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville (très important, respecte la ligne ### 📍 Ville, Pays) :
+            ### 📍 [Nom de la Ville], [Nom du Pays]
             - **✈️ Vol aller-retour estimé** : [Prix]€
             - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
             - **🍔 Vie sur place ({nb_jours + 1} jours)** : [Prix total]€
             - **💰 BUDGET TOTAL ESTIMÉ** : [Somme]€
             - **🔥 VOTRE RESTE-À-VIVRE** : [Calcul du reste]€ d'argent de poche
-            - *L'avis de l'IA* : [Explication courte et pertinente du choix]
+            - *L'avis de l'IA* : [Explication courte]
             ---
             """
             
@@ -63,28 +61,30 @@ if submit_button:
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     
-                    # Découpage magique par Python pour fabriquer des boutons de réservation parfaits !
+                    # Découpage et nettoyage de sécurité par Python
                     blocks = response.text.split("### 📍")
                     if len(blocks) > 1:
                         for block in blocks[1:]:
                             if block.strip():
-                                lines = block.split("\n")
-                                title = block.split(",")[0].strip().replace("[","").replace("]","")
+                                # Extraction et nettoyage strict du nom de la ville
+                                first_line = block.split("\n")[0]
+                                city_raw = first_line.split(",")[0]
+                                city_clean = re.sub(r'[\[\]\*#📍]', '', city_raw).strip()
                                 
-                                # Affichage du texte de l'IA
+                                # Affichage propre du texte généré
                                 st.markdown("### 📍 " + block)
                                 
-                                # Correction ici : Ajout du "/" indispensable après tp.st
-                                city_clean = urllib.parse.quote(title)
-                                link_vol = f"https://aviasales.tp.st/{tp_id}?origin={depart}&destination={city_clean}"
-                                link_hotel = f"https://booking.tp.st/{tp_id}?query={city_clean}"
+                                # Création de liens officiels et fiables encodés proprement
+                                city_encoded = urllib.parse.quote(city_clean)
+                                link_vol = f"https://aviasales.fr{tp_id}&origin={depart}&destination={city_encoded}"
+                                link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
                                 
-                                # Affichage de deux vrais boutons bleus cliquables sous chaque destination
+                                # Affichage des boutons bleus
                                 col_b1, col_b2 = st.columns(2)
                                 with col_b1:
-                                    st.link_button(f"✈️ Réserver le vol pour {title}", link_vol)
+                                    st.link_button(f"✈️ Vol pour {city_clean}", link_vol)
                                 with col_b2:
-                                    st.link_button(f"🏨 Trouver un hôtel à {title}", link_hotel)
+                                    st.link_button(f"🏨 Hôtel à {city_clean}", link_hotel)
                     else:
                         st.markdown(response.text)
                         

@@ -2,7 +2,6 @@ import streamlit as st
 import google.generativeai as genai
 from datetime import datetime
 import urllib.parse
-import re
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -43,7 +42,7 @@ if submit_button:
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
-            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville :
+            Affiche le résultat au format Markdown suivant pour chaque ville :
             ### 📍 [Nom de la Ville], [Nom du Pays]
             - **✈️ Vol aller-retour estimé** : [Prix]€
             - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
@@ -61,33 +60,25 @@ if submit_button:
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
                     
-                    # Découpage et nettoyage par Python
-                    blocks = response.text.split("### 📍")
-                    if len(blocks) > 1:
-                        for block in blocks[1:]:
-                            if block.strip():
-                                lines = [l for l in block.split("\n") if l.strip()]
-                                first_line = lines[0] if lines else ""
-                                
-                                city_raw = first_line.split(",")[0]
-                                city_clean = re.sub(r'[\[\]\*#📍]', '', city_raw).strip()
-                                
-                                # Affichage propre du texte de l'IA
-                                st.markdown("### 📍 " + block)
-                                
-                                city_encoded = urllib.parse.quote(city_clean)
-                                
-                                # LIENS STANDARD DIRECTS ET INDESTRUCTIBLES
-                                link_vol = f"https://skyscanner.fr{depart}/{city_encoded}/"
-                                link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
-                                
-                                col_b1, col_b2 = st.columns(2)
-                                with col_b1:
-                                    st.link_button(f"✈️ Vol pour {city_clean}", link_vol)
-                                with col_b2:
-                                    st.link_button(f"🏨 Hôtel à {city_clean}", link_hotel)
-                    else:
-                        st.markdown(response.text)
+                    # On affiche le texte de l'IA proprement sans découpage complexe
+                    st.markdown(response.text)
+                    
+                    # BLOC DE LIENS FIXES : Construits sans risque d'erreur directement depuis les saisies
+                    st.write("---")
+                    st.subheader("🔗 Liens de réservation rapides")
+                    st.write("Utilisez ces boutons officiels basés sur vos critères pour réserver vos billets :")
+                    
+                    # Encodage propre des variables du formulaire
+                    dep_enc = urllib.parse.quote(depart)
+                    
+                    link_vol_global = f"https://skyscanner.fr{dep_enc}/"
+                    link_hotel_global = f"https://booking.com{tp_id}&ss=Europe"
+                    
+                    col_b1, col_b2 = st.columns(2)
+                    with col_b1:
+                        st.link_button(f"✈️ Comparer les vols au départ de {depart}", link_vol_global)
+                    with col_b2:
+                        st.link_button("🏨 Trouver un hôtel sur Booking", link_hotel_global)
                         
                 except Exception as e:
                     st.error(f"Une erreur est survenue lors de l'appel à l'IA : {e}")

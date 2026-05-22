@@ -1,13 +1,11 @@
 import streamlit as st
-import google.generativeai as genai
-from datetime import datetime
 import urllib.parse
-import json
+from datetime import datetime
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
 
-# Dictionnaire de traduction automatique pour l'interface
+# Dictionnaire de traduction automatique pour l'interface mondiale
 translations = {
     "Français": {
         "title": "✈️ WalletTrip",
@@ -20,7 +18,6 @@ translations = {
         "children": "👶 Nombre d'enfants",
         "button": "Voyager dans le monde entier",
         "error_date": "La date de retour doit être après la date de départ.",
-        "loading": "L'IA analyse le coût de la vie mondial et prépare vos liens...",
         "success": "Voici les destinations mondiales valides pour {total} personnes :",
         "vols": "Vols",
         "logement": "Logement",
@@ -28,8 +25,7 @@ translations = {
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
         "btn_vol": "✈️ Rechercher le vol pour {ville}",
-        "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
-        "lang_booking": "fr"
+        "btn_hotel": "🏨 Réserver l'hôtel à {ville}"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -42,7 +38,6 @@ translations = {
         "children": "👶 Number of Children",
         "button": "Travel worldwide",
         "error_date": "Return date must be after departure date.",
-        "loading": "AI is calculating worldwide cost of living and preparing your links...",
         "success": "Here are the valid worldwide destinations for {total} people:",
         "vols": "Flights",
         "logement": "Accommodation",
@@ -50,30 +45,27 @@ translations = {
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
         "btn_vol": "✈️ Search flights to {ville}",
-        "btn_hotel": "🏨 Book hotel in {ville}",
-        "lang_booking": "en-us"
+        "btn_hotel": "🏨 Book hotel in {ville}"
     },
     "Español": {
         "title": "✈️ WalletTrip",
-        "subtitle": "La IA mundial que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
+        "subtitle": "La IA que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
         "depart": "🛫 Ciudad de salida",
         "budget": "💰 Presupuesto TOTAL máximo (€)",
         "date_dep": "Fecha de salida",
         "date_ret": "Fecha de regreso",
         "adults": "👨‍💼 Número de adultos",
         "children": "👶 Número de niños",
-        "button": "Viajar por todo el mundo",
+        "button": "Buscar mis destinos reales",
         "error_date": "La fecha de regreso debe ser posterior a la fecha de salida.",
-        "loading": "La IA está calculando el costo de vida mundial y preparando los enlaces...",
-        "success": "Aquí están los destinos mundiales válidos para {total} personas:",
+        "success": "Aquí están los destinos válidos para {total} personas:",
         "vols": "Vuelos",
         "logement": "Alojamiento",
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
         "btn_vol": "✈️ Buscar vuelos a {ville}",
-        "btn_hotel": "🏨 Reservar hotel en {ville}",
-        "lang_booking": "es"
+        "btn_hotel": "🏨 Reservar hotel en {ville}"
     }
 }
 
@@ -99,86 +91,64 @@ with st.form("budget_form"):
     submit_button = st.form_submit_button(label=lang["button"])
 
 if submit_button:
-    if "GEMINI_API_KEY" not in st.secrets:
-        st.error("Veuillez configurer votre clé API Gemini (GEMINI_API_KEY) dans les paramètres.")
+    tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
+    total_voyageurs = adultes + enfants
+    nb_jours = (date_fin - date_debut).days
+    
+    if nb_jours <= 0:
+        st.error(lang["error_date"])
     else:
-        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-        tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
+        str_debut = date_debut.strftime("%Y-%m-%d")
+        str_fin = date_fin.strftime("%Y-%m-%d")
         
-        total_voyageurs = adultes + enfants
-        nb_jours = (date_fin - date_debut).days
+        # Base de données fixe et sécurisée mondiale
+        destinations_data = {
+            "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
+            "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
+            "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
+            "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
+            "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"},
+            "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La ville qui ne dort jamais nécessite un gros budget"},
+            "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Le logement et la vie sur place restent raisonnables"},
+            "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Parfait pour les séjours exotiques économiques"},
+            "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
+        }
         
-        if nb_jours <= 0:
-            st.error(lang["error_date"])
-        else:
-            str_debut = date_debut.strftime("%Y-%m-%d")
-            str_fin = date_fin.strftime("%Y-%m-%d")
+        st.success(lang["success"].format(total=total_voyageurs))
+        valid_destinations = 0
             
-            # PROMPT AVEC LE FILTRE MONDIAL ET LE STRUCTURAGE DES NOMS EN ANGLAIS POUR BOOKING
-            prompt = f"""
-            You are a global travel expert. Write your response ONLY in {langue}.
-            Analyse ALL COUNTRIES IN THE WORLD to find 2 or 3 amazing destinations.
-            Departure city: {depart}. From {str_debut} to {str_fin} ({nb_jours} nights).
-            Total group size: {adultes} adult(s) and {enfants} child(ren) ({total_voyageurs} people total).
-            The MAXIMUM TOTAL BUDGET for EVERYTHING (flights + hotel + local life for ALL people) is {budget}€.
+        for ville, infos in destinations_data.items():
+            cout_vol = infos["vol"] * total_voyageurs
+            cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
+            cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
+            total_estime = cout_vol + cout_hotel + cout_vie
             
-            Calculate precisely: Flight cost + Hotel cost + (Cost of living per day * {nb_jours+1} * {total_voyageurs}).
-            Only output destinations where the sum is LESS than {budget}€.
-            
-            Provide your response ONLY as a strict JSON array, with no other text before or after:
-            [
-              {{
-                "ville_anglais": "Name of the city in English (Ex: New York, Tokyo, Krakow)",
-                "ville_traduit": "Name of the city translated in {langue}",
-                "pays": "Name of the country in {langue}",
-                "vol_total": 150,
-                "hotel_total": 200,
-                "vie_totale": 100,
-                "reste_argent_poche": 50,
-                "meteo": "Weather description in {langue}",
-                "avis": "Short justification in {langue}"
-              }}
-            ]
-            """
-            
-            with st.spinner(lang["loading"]):
-                try:
-                    model = genai.GenerativeModel('gemini-2.5-flash')
-                    response = model.generate_content(prompt)
-                    
-                    # Nettoyage et lecture sécurisée du JSON de l'IA
-                    json_text = response.text.strip().replace("```json", "").replace("```", "")
-                    destinations = json.loads(json_text)
-                    
-                    st.success(lang["success"].format(total=total_voyageurs))
-                    
-                    for dest in destinations:
-                        st.markdown(f"### 📍 {dest['ville_traduit']}, {dest['pays']}")
-                        
-                        col_c1, col_c2 = st.columns(2)
-                        with col_c1:
-                            st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {dest['vol_total']}€")
-                            st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {dest['hotel_total']}€")
-                            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {dest['vie_totale']}€")
-                        with col_c2:
-                            st.info(f"🌤️ **{lang['meteo']}** : {dest['meteo']}")
-                            st.metric(label=f"🔥 {lang['reste']}", value=f"{dest['reste_argent_poche']}€")
-                        
-                        st.markdown(f"*{dest['avis']}*")
-                        
-                        # PYTHON SÉCURISE LES LIENS SANS AUCUN RISQUE DE COLLAGE TEXTE
-                        city_booking = urllib.parse.quote(dest["ville_anglais"])
-                        
-                        link_vol = f"https://skyscanner.fr"
-                        link_hotel = f"https://booking.com{tp_id}&ss={city_booking}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
-                        
-                        # Un bloc de boutons dédié spécifiquement sous chaque option
-                        col_b1, col_b2 = st.columns(2)
-                        with col_b1:
-                            st.link_button(lang["btn_vol"].format(ville=dest['ville_traduit']), link_vol)
-                        with col_b2:
-                            st.link_button(lang["btn_hotel"].format(ville=dest['ville_traduit']), link_hotel)
-                        st.markdown("---")
-                        
-                except Exception as e:
-                    st.error("Désolé, une erreur est survenue lors de l'analyse. Veuillez relancer la recherche.")
+            if total_estime <= budget:
+                valid_destinations += 1
+                reste_a_vivre = budget - total_estime
+                st.markdown(f"### 📍 {ville}, {infos['pays'][langue]}")
+                
+                col_c1, col_c2 = st.columns(2)
+                with col_c1:
+                    st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {cout_vol}€")
+                    st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {cout_hotel}€")
+                    st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {cout_vie}€")
+                with col_c2:
+                    st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
+                    st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
+                st.markdown(f"*{infos['avis']}*")
+                
+                city_encoded = urllib.parse.quote(infos["query"])
+                
+                link_vol_strict = f"https://skyscanner.fr"
+                link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+                
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol_strict)
+                with col_b2:
+                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
+                st.markdown("---")
+                
+        if valid_destinations == 0:
+            st.warning("Aucune destination mondiale ne correspond à ce budget.")

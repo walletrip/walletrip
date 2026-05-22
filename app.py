@@ -1,6 +1,7 @@
 import streamlit as st
 import google.generativeai as genai
 from datetime import datetime
+import urllib.parse
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -35,7 +36,7 @@ if submit_button:
         if nb_jours <= 0:
             st.error("La date de retour doit être après la date de départ.")
         else:
-            # Construction du prompt pour l'IA avec consignes strictes d'affiliation
+            # Construction du prompt épuré : on ne demande plus à l'IA de faire les liens
             prompt = f"""
             Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
             Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
@@ -44,28 +45,48 @@ if submit_button:
             Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
             Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
             
-            Génère STRICTEMENT des liens d'affiliation au format exact suivant pour aider l'utilisateur à réserver (remplace [NOM_VILLE_ANGLAIS] par la ville trouvée sans espace) :
-            - Lien vol : https://tp.st{tp_id}&subid=wallettrip&origin={depart}&destination=[NOM_VILLE_ANGLAIS]
-            - Lien hôtel : https://tp.st{tp_id}&subid=wallettrip&query=[NOM_VILLE_ANGLAIS]
-            
-            Affiche le résultat au format Markdown suivant :
-            ### 📍 [Ville, Pays]
+            Affiche le résultat au format Markdown suivant EXACTEMENT pour chaque ville :
+            ### 📍 [Mets le Nom de la Ville ici], [Pays]
             - **✈️ Vol aller-retour estimé** : [Prix]€
             - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
             - **🍔 Vie sur place ({nb_jours + 1} jours)** : [Prix total]€
             - **💰 BUDGET TOTAL ESTIMÉ** : [Somme]€
-            - **🔥 VOTRE RESTE-À-VIVRE** : [Calcul du budget initial - Somme]€ d'argent de poche
-            - [👉 Réserver les vols moins chers pour cette destination]([METS_LE_LIEN_VOL_GENERE_ICI])
-            - [👉 Trouver un hébergement dans le budget]([METS_LE_LIEN_HOTEL_GENERE_ICI])
+            - **🔥 VOTRE RESTE-À-VIVRE** : [Calcul du reste]€ d'argent de poche
             - *L'avis de l'IA* : [Explication courte et pertinente du choix]
+            ---
             """
             
-            with st.spinner("L'IA calcule le coût de la vie et prépare vos liens de réservation d'affilié..."):
+            with st.spinner("L'IA calcule le coût de la vie pour vos destinations..."):
                 try:
                     model = genai.GenerativeModel('gemini-2.5-flash')
                     response = model.generate_content(prompt)
                     
                     st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
-                    st.markdown(response.text)
+                    
+                    # Découpage magique par Python pour fabriquer des boutons de réservation parfaits !
+                    blocks = response.text.split("### 📍")
+                    if len(blocks) > 1:
+                        for block in blocks[1:]:
+                            if block.strip():
+                                lines = block.split("\n")
+                                title = lines[0].split(",")[0].strip().replace("[","").replace("]","")
+                                
+                                # Affichage du texte de l'IA
+                                st.markdown("### 📍 " + block)
+                                
+                                # Création automatique de liens d'affiliation 100% sans erreur par Python
+                                city_clean = urllib.parse.quote(title)
+                                link_vol = f"https://tp.st{tp_id}&origin={depart}&destination={city_clean}"
+                                link_hotel = f"https://tp.st{tp_id}&query={city_clean}"
+                                
+                                # Affichage de deux vrais boutons bleus cliquables sous chaque destination !
+                                col_b1, col_b2 = st.columns(2)
+                                with col_b1:
+                                    st.link_button(f"✈️ Réserver le vol pour {title}", link_vol)
+                                with col_b2:
+                                    st.link_button(f"🏨 Trouver un hôtel à {title}", link_hotel)
+                    else:
+                        st.markdown(response.text)
+                        
                 except Exception as e:
                     st.error(f"Une erreur est survenue lors de l'appel à l'IA : {e}")

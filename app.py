@@ -72,12 +72,13 @@ if submit_button:
                                 city_raw = first_line.split(",")[0]
                                 city_clean = re.sub(r'[\[\]\*#📍]', '', city_raw).strip()
                                 
+                                # Affichage propre du texte de l'IA
                                 st.markdown("### 📍 " + block)
                                 
                                 city_encoded = urllib.parse.quote(city_clean)
                                 
-                                # LIENS SÉCURISÉS ET CORRIGÉS AVEC LE SÉPARATEUR REQUIS (?)
-                                link_vol = f"https://aviasales.fr{tp_id}&origin={depart}&destination={city_encoded}"
+                                # LIENS STANDARD DIRECTS ET INDESTRUCTIBLES
+                                link_vol = f"https://skyscanner.fr{depart}/{city_encoded}/"
                                 link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
                                 
                                 col_b1, col_b2 = st.columns(2)

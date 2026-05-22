@@ -178,12 +178,26 @@ if submit_button:
         str_fin = date_fin.strftime("%Y-%m-%d")
         dest_test = destination_saisie.strip().lower()
         st.success(lang["success"].format(total=total_voyageurs))
-        
-        if dest_test:
+                if dest_test:
             cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
+            if any(k in dest_test for k in ["paris", "london", "madrid", "barcelona", "rome", "lisbon", "porto", "krakow", "budapest", "sofia", "europe", "pologne", "espagne"]):
+                cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
+            if any(k in dest_test for k in ["marrakech", "maroc", "thailande", "bangkok", "bali", "vietnam"]):
+                cout_vol_unitaire = 120 if "mar" in dest_test else 600
+                cout_hotel_nuit, cout_vie_jour = 30, 15
+                
+            infos_custom = {"query": destination_saisie.strip(), "pays": {"Français": "", "English": "", "Español": ""}, "vol": cout_vol_unitaire, "hotel": cout_hotel_nuit, "vie": cout_vie_jour, "meteo": lang["meteo_txt"], "avis": ""}
+            afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+        else:
+            tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
+            with tab1:
+                for v, i in destinations_globales["Europe"].items():
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
             with tab2:
                 for v, i in destinations_globales["Amerique"].items():
                     afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
             with tab3:
                 for v, i in destinations_globales["AsieAfrique"].items():
                     afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+
+        

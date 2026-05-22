@@ -1,5 +1,6 @@
 import streamlit as st
 import urllib.parse
+from datetime import datetime, timedelta
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="Pouch", page_icon="✈️", layout="centered")
@@ -12,10 +13,12 @@ translations = {
         "depart": "🛫 Ville de départ",
         "destination": "📍 Destination précise (Optionnel - Laissez vide pour avoir des suggestions)",
         "budget": "💰 Budget TOTAL maximum (€)",
-        "duration": "🗓️ Durée du voyage (en jours)",
+        "date_dep": "🗓️ Date de départ",
+        "date_ret": "🗓️ Date de retour",
         "adults": "👨‍💼 Nombre d'adultes",
         "children": "👶 Nombre d'enfants",
         "button": "Trouver mes destinations mondiales",
+        "error_date": "La date de retour doit être après la date de départ.",
         "success": "Voici les destinations mondiales valides pour {total} personnes :",
         "vols": "Vols",
         "logement": "Logement",
@@ -25,10 +28,11 @@ translations = {
         "reste": "VOTRE RESTE-À-VIVRE",
         "btn_vol": "✈️ Rechercher le vol pour {ville}",
         "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
-        "warning_no_dest": "Aucune destination mondiale ne correspond à ce budget pour cette durée. Essayez d'augmenter votre budget.",
+        "warning_no_dest": "Aucune destination mondiale ne correspond à ce budget pour ces dates. Essayez d'augmenter votre budget.",
         "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 Amérique",
-        "tab_as": "🌏 Asie & Afrique"
+        "tab_as": "🌏 Asie & Afrique",
+        "lang_booking": "fr"
     },
     "English": {
         "title": "✈️ Pouch",
@@ -36,10 +40,12 @@ translations = {
         "depart": "🛫 Departure City",
         "destination": "📍 Specific Destination (Optional - Leave blank for suggestions)",
         "budget": "💰 Maximum TOTAL Budget (€)",
-        "duration": "🗓️ Trip duration (in days)",
+        "date_dep": "🗓️ Departure Date",
+        "date_ret": "🗓️ Return Date",
         "adults": "👨‍💼 Number of Adults",
         "children": "👶 Number of Children",
         "button": "Find my worldwide destinations",
+        "error_date": "Return date must be after departure date.",
         "success": "Here are the valid worldwide destinations for {total} people:",
         "vols": "Flights",
         "logement": "Accommodation",
@@ -49,17 +55,20 @@ translations = {
         "reste": "YOUR POCKET MONEY",
         "btn_vol": "✈️ Search flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
-        "warning_no_dest": "No worldwide destinations match this budget for this duration.",
-        "tab_eu": "🌍 Europe",
+        "warning_no_dest": "No worldwide destinations match this budget for these dates.",
+        "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 America",
-        "tab_as": "🌏 Asia & Africa"
+        "tab_as": "🌏 Asia & Africa",
+        "lang_booking": "en-us"
     },
     "Español": {
         "title": "✈️ Pouch",
         "subtitle": "El comparador que encuentra viajes basados en tu presupuesto real, no solo en el precio del vuelo.",
         "depart": "🛫 Ciudad de salida",
+        "destination": "📍 Destino específico (Opcional - Dejar en blanco para sugerencias)",
         "budget": "💰 Presupuesto TOTAL máximo (€)",
-        "duration": "🗓️ Duración del viaje (en días)",
+        "date_dep": "Fecha de salida",
+        "date_ret": "Fecha de regreso",
         "adults": "👨‍💼 Número de adultos",
         "children": "👶 Número de niños",
         "button": "Buscar mis destinos mundiales",
@@ -72,10 +81,11 @@ translations = {
         "reste": "TU DINERO DE BOLSILLO",
         "btn_vol": "✈️ Buscar vuelos a {ville}",
         "btn_hotel": "🏨 Reservar hotel en {ville}",
-        "warning_no_dest": "Ningún destino mundial coincide con este presupuesto para esta duración.",
+        "warning_no_dest": "Ningún destino mundial coincide con este presupuesto para estas fechas.",
         "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 América",
-        "tab_as": "🌏 Asia & África"
+        "tab_as": "🌏 Asia & África",
+        "lang_booking": "es"
     }
 }
 
@@ -86,15 +96,16 @@ lang = translations[langue]
 st.title(lang["title"])
 st.subheader(lang["subtitle"])
 
-# Formulaire utilisateur propre
+# Formulaire utilisateur propre avec le retour des deux calendriers de dates
 with st.form("budget_form"):
     col1, col2 = st.columns(2)
     with col1:
         depart = st.text_input(lang["depart"], "Paris")
-        nb_jours = st.number_input(lang["duration"], min_value=1, value=4, step=1)
+        date_debut = st.date_input(lang["date_dep"], datetime.today())
         adultes = st.number_input(lang["adults"], min_value=1, value=1, step=1)
     with col2:
         budget = st.number_input(lang["budget"], min_value=50, value=1500, step=50)
+        date_fin = st.date_input(lang["date_ret"], datetime.today() + timedelta(days=4))
         enfants = st.number_input(lang["children"], min_value=0, value=0, step=1)
         
     destination_saisie = st.text_input(lang["destination"], "")
@@ -119,12 +130,12 @@ destinations_globales = {
     }
 }
 
-# Fonction réutilisable pour afficher une carte de destination
-def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
-    nb_nuits = nb_jours - 1 if nb_jours > 1 else 1
+# Fonction réutilisable sécurisée pour afficher une carte de destination
+def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang_booking):
+    nb_nuits = nb_jours
     cout_vol = infos["vol"] * total_voyageurs
     cout_hotel = infos["hotel"] * nb_nuits * (1 if total_voyageurs <= 2 else 2)
-    cout_vie = infos["vie"] * nb_jours * total_voyageurs
+    cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
     total_estime = cout_vol + cout_hotel + cout_vie
     
     if total_estime <= budget:
@@ -136,7 +147,7 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
         with col_c1:
             st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {cout_vol}€")
             st.markdown(f"- **🏨 {lang['logement']} ({nb_nuits} nuits)** : {cout_hotel}€")
-            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours} j.)** : {cout_vie}€")
+            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {cout_vie}€")
         with col_c2:
             st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
@@ -145,7 +156,7 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
         
         city_encoded = urllib.parse.quote(infos["query"])
         link_vol_strict = "https://skyscanner.fr"
-        link_hotel_strict = f"https://booking.com{city_encoded}"
+        link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang_booking}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
@@ -153,30 +164,26 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours):
         with col_b2:
             st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
         st.markdown("---")
+        return True
+    return False
 
 if submit_button:
     total_voyageurs = adultes + enfants
-    dest_test = destination_saisie.strip().lower()
-    st.success(lang["success"].format(total=total_voyageurs))
+    nb_jours = (date_fin - date_debut).days
     
-    if dest_test:
-        cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
-        if any(k in dest_test for k in ["paris", "london", "madrid", "barcelona", "rome", "lisbon", "porto", "krakow", "budapest", "sofia", "europe", "pologne", "espagne"]):
-            cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
-        if any(k in dest_test for k in ["marrakech", "maroc", "thailande", "bangkok", "bali", "vietnam"]):
-            cout_vol_unitaire = 120 if "mar" in dest_test else 600
-            cout_hotel_nuit, cout_vie_jour = 30, 15
-            
-        infos_custom = {"query": destination_saisie.strip(), "pays": {"Français": "", "English": "", "Español": ""}, "vol": cout_vol_unitaire, "hotel": cout_hotel_nuit, "vie": cout_vie_jour, "meteo": lang["meteo_txt"], "avis": ""}
-        afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours)
+    if nb_jours <= 0:
+        st.error(lang["error_date"])
     else:
-        tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
-        with tab1:
-            for v, i in destinations_globales["Europe"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours)
-        with tab2:
-            for v, i in destinations_globales["Amerique"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours)
-        with tab3:
-            for v, i in destinations_globales["AsieAfrique"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours)
+        str_debut = date_debut.strftime("%Y-%m-%d")
+        str_fin = date_fin.strftime("%Y-%m-%d")
+        dest_test = destination_saisie.strip().lower()
+        st.success(lang["success"].format(total=total_voyageurs))
+        
+        if dest_test:
+            cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
+            with tab2:
+                for v, i in destinations_globales["Amerique"].items():
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
+            with tab3:
+                for v, i in destinations_globales["AsieAfrique"].items():
+                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])

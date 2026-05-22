@@ -28,7 +28,11 @@ translations = {
         "reste": "VOTRE RESTE-À-VIVRE",
         "btn_vol": "✈️ Rechercher le vol pour {ville}",
         "btn_hotel": "🏨 Réserver l'hôtel à {ville}",
-        "warning_no_dest": "Aucune destination mondiale ne correspond à ce budget pour ces dates. Essayez d'augmenter votre budget."
+        "warning_no_dest": "Aucune destination mondiale ne correspond à ce budget pour ces dates.",
+        "tab_all": "🌍 Toutes",
+        "tab_eu": "🇪🇺 Europe",
+        "tab_am": "🌎 Amérique",
+        "tab_as": "🌏 Asie & Afrique"
     },
     "English": {
         "title": "✈️ Pouch",
@@ -51,7 +55,11 @@ translations = {
         "reste": "YOUR POCKET MONEY",
         "btn_vol": "✈️ Search flights to {ville}",
         "btn_hotel": "🏨 Book hotel in {ville}",
-        "warning_no_dest": "No worldwide destinations match this budget for these dates. Try increasing your budget."
+        "warning_no_dest": "No worldwide destinations match this budget for these dates.",
+        "tab_all": "🌍 All",
+        "tab_eu": "🇪🇺 Europe",
+        "tab_am": "🌎 America",
+        "tab_as": "🌏 Asia & Africa"
     },
     "Español": {
         "title": "✈️ Pouch",
@@ -74,7 +82,11 @@ translations = {
         "reste": "TU DINERO DE BOLSILLO",
         "btn_vol": "✈️ Buscar vuelos a {ville}",
         "btn_hotel": "🏨 Reservar hotel en {ville}",
-        "warning_no_dest": "Ningún destino mundial coincide con este presupuesto para estas fechas. Intente aumentar su presupuesto."
+        "warning_no_dest": "Ningún destino mundial coincide con este presupuesto para estas fechas.",
+        "tab_all": "🌍 Todas",
+        "tab_eu": "🇪🇺 Europe",
+        "tab_am": "🌎 América",
+        "tab_as": "🌏 Asia & África"
     }
 }
 
@@ -85,7 +97,7 @@ lang = translations[langue]
 st.title(lang["title"])
 st.subheader(lang["subtitle"])
 
-# Formulaire utilisateur propre avec la case optionnelle intégrée
+# Formulaire utilisateur propre
 with st.form("budget_form"):
     col1, col2 = st.columns(2)
     with col1:
@@ -100,8 +112,43 @@ with st.form("budget_form"):
     destination_saisie = st.text_input(lang["destination"], "")
     submit_button = st.form_submit_button(label=lang["button"])
 
+# Fonction réutilisable pour afficher une carte de destination avec ses boutons propres
+def afficher_destination(ville, infos):
+    cout_vol = infos["vol"] * total_voyageurs
+    cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
+    cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
+    total_estime = cout_vol + cout_hotel + cout_vie
+    
+    if total_estime <= budget:
+        reste_a_vivre = budget - total_estime
+        nom_pays = f", {infos['pays'][langue]}" if infos['pays'][langue] else ""
+        
+        st.markdown(f"### 📍 {ville}{nom_pays}")
+        col_c1, col_c2 = st.columns(2)
+        with col_c1:
+            st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {cout_vol}€")
+            st.markdown(f"- **🏨 {lang['logement']} ({nb_jours} nuits)** : {cout_hotel}€")
+            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {cout_vie}€")
+        with col_c2:
+            st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
+            st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
+        if infos['avis']:
+            st.markdown(f"*{infos['avis']}*")
+        
+        city_encoded = urllib.parse.quote(infos["query"])
+        link_vol_strict = "https://skyscanner.fr"
+        link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+        
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.link_button(lang["btn_vol"].format(ville=ville), link_vol_strict)
+        with col_b2:
+            st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel_strict)
+        st.markdown("---")
+        return True
+    return False
+
 if submit_button:
-    tp_id = "531779"
     total_voyageurs = adultes + enfants
     nb_jours = (date_fin - date_debut).days
     
@@ -111,62 +158,28 @@ if submit_button:
         str_debut = date_debut.strftime("%Y-%m-%d")
         str_fin = date_fin.strftime("%Y-%m-%d")
         
-        # Catalogue de destinations par défaut du catalogue mondial automatique
-        destinations_data = {
-            "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
-            "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
-            "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
-            "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
-            "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"},
-            "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
-            "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant modernité et traditions"},
-            "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"},
-            "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
+        # Base de données complète et classée par continent
+        destinations_globales = {
+            "Europe": {
+                "Cracovie": {"query": "Krakow", "pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable"},
+                "Budapest": {"query": "Budapest", "pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap"},
+                "Porto": {"query": "Porto", "pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun"},
+                "Sofia": {"query": "Sofia", "pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ Climat agréable - 21°C", "avis": "Une des capitales les moins chères"}
+            },
+            "Amerique": {
+                "New York": {"query": "New York", "pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 Ensoleillé - 23°C", "avis": "La métropole mythique américaine"},
+                "Montréal": {"query": "Montreal", "pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 Beau temps - 21°C", "avis": "Une superbe métropole francophone en Amérique"}
+            },
+            "AsieAfrique": {
+                "Marrakech": {"query": "Marrakech", "pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 Chaud et ensoleillé - 31°C", "avis": "Dépaysement total à petit prix"},
+                "Tokyo": {"query": "Tokyo", "pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 Climat idéal - 19°C", "avis": "Un voyage inoubliable mêlant traditions et modernité"},
+                "Bangkok": {"query": "Bangkok", "pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 Chaud et tropical - 33°C", "avis": "Une expérience exotique incroyable"}
+            }
         }
         
-        # Logique intelligente : Filtrer selon la saisie de l'utilisateur si elle existe
         dest_test = destination_saisie.strip().lower()
+        st.success(lang["success"].format(total=total_voyageurs))
         
         if dest_test:
-            # Si l'utilisateur a écrit une destination mondiale, on calcule une option sur-mesure
-            cout_vol_unitaire = 550
-            cout_hotel_nuit = 85
-            cout_vie_jour = 45
-            
-            europe_list = ["paris", "london", "londres", "madrid", "barcelona", "barcelone", "rome", "roma", "lisbon", "lisbonne", "porto", "cracovie", "krakow", "budapest", "sofia", "prague", "berlin", "amsterdam", "pologne", "portugal", "espagne", "italie", "hongrie", "bulgarie", "europe"]
-            if any(k in dest_test for k in europe_list):
-                cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
-                
-            low_cost_countries = ["marrakech", "maroc", "morocco", "thailande", "thailand", "bangkok", "bali", "vietnam", "tunisie", "egypte"]
-            if any(k in dest_test for k in low_cost_countries):
-                cout_vol_unitaire = 120 if "mar" in dest_test else 600
-                cout_hotel_nuit, cout_vie_jour = 30, 15
-                
-            destinations_data = {
-                destination_saisie.strip().capitalize(): {
-                    "query": destination_saisie.strip(),
-                    "pays": {"Français": "", "English": "", "Español": ""},
-                    "vol": cout_vol_unitaire,
-                    "hotel": cout_hotel_nuit,
-                    "vie": cout_vie_jour,
-                    "meteo": lang["meteo_txt"],
-                    "avis": ""
-                }
-            }
-
-        st.success(lang["success"].format(total=total_voyageurs))
-        valid_destinations = 0
-            
-        for ville, infos in destinations_data.items():
-            cout_vol = infos["vol"] * total_voyageurs
-            cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
-            cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
-            total_estime = cout_vol + cout_hotel + cout_vie
-            
-            if total_estime <= budget:
-                valid_destinations += 1
-                reste_a_vivre = budget - total_estime
-                
-                nom_pays = f", {infos['pays'][langue]}" if infos['pays'][langue] else ""
-                st.markdown(f"### 📍 {ville}{nom_pays}")
-                
+            # Recherche précise de l'utilisateur
+            cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45

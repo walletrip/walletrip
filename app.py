@@ -48,6 +48,7 @@ if submit_button:
         
         link_vol = "https://skyscanner.fr"
         link_hotel = f"https://booking.com{tp_id}"
+
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:

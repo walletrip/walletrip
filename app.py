@@ -134,11 +134,11 @@ if submit_button:
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
                 st.markdown(f"*{infos['avis']}*")
                 
-                # NETTOYAGE STRICT ET ENCODAGE DES TEXTES DE RECHERCHE
+                # ENCODAGE ET NETTOYAGE STRICT
                 city_encoded = urllib.parse.quote(infos["search_booking"])
                 depart_encoded = urllib.parse.quote(depart.strip())
                 
-                # LIENS AVEC CARACTÈRES DE SÉPARATION PARFAITS EN DUR
+                # RECONSTRUCTION SÉCURISÉE DES LIENS AVEC CARACTÈRES DE SÉPARATION EN DUR (/search?)
                 link_vol_strict = f"https://aviasales.fr{depart_encoded}&destination={city_encoded}"
                 link_hotel_strict = f"https://booking.com{city_encoded}&lang={lang['lang_booking']}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
                 

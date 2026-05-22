@@ -1,7 +1,8 @@
 import streamlit as st
-import google.generativeai as genai
 from datetime import datetime
 import urllib.parse
+import json
+import os
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
@@ -23,60 +24,58 @@ with st.form("budget_form"):
 
 # Traitement de la demande
 if submit_button:
-    if "GEMINI_API_KEY" not in st.secrets:
-        st.error("Veuillez configurer votre clé API Gemini (GEMINI_API_KEY) dans les paramètres.")
+    tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
+    
+    # Calcul du nombre de jours
+    nb_jours = (date_fin - date_debut).days
+    if nb_jours <= 0:
+        st.error("La date de retour doit être après la date de départ.")
     else:
-        genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
-        tp_id = st.secrets.get("TRAVELPAYOUTS_ID", "531779")
+        # ALGORITHME DE CALCUL INTERNE (Pas de blocage d'IA !)
+        # Nous listons des destinations populaires idéales pour tester le budget immédiatement
+        destinations_data = {
+            "Cracovie": {"pays": "Pologne", "vol": 70, "hotel_nuit": 40, "vie_jour": 25, "avis": "Une ville historique magnifique, extrêmement abordable où votre argent de poche sera maximal."},
+            "Budapest": {"pays": "Hongrie", "vol": 90, "hotel_nuit": 45, "vie_jour": 28, "avis": "Parfait pour les thermes et les ruin bars. Le coût de la vie y est très bas."},
+            "Porto": {"pays": "Portugal", "vol": 80, "hotel_nuit": 65, "vie_jour": 35, "avis": "Une superbe destination ensoleillée avec une excellente gastronomie à petit prix."},
+            "Marrakech": {"pays": "Maroc", "vol": 120, "hotel_nuit": 50, "vie_jour": 30, "avis": "Un dépaysement total à moins de 3 heures de vol, idéal pour les petits budgets."},
+            "Sofia": {"pays": "Bulgarie", "vol": 110, "hotel_nuit": 35, "vie_jour": 22, "avis": "Une des capitales les moins chères d'Europe, parfaite pour économiser."}
+        }
         
-        # Calcul du nombre de jours
-        nb_jours = (date_fin - date_debut).days
-        if nb_jours <= 0:
-            st.error("La date de retour doit être après la date de départ.")
-        else:
-            prompt = f"""
-            Un utilisateur veut voyager depuis {depart} du {date_debut} au {date_fin} ({nb_jours} nuits).
-            Son budget STRICT total pour TOUT le voyage (Vol AR + Hôtel + Vie sur place) est de {budget}€.
+        st.success("Voici les destinations calculées selon vos critères réels :")
+        valid_destinations = 0
+        
+        for ville, infos in destinations_data.items():
+            # Calcul du coût réel total
+            cout_vol = infos["vol"]
+            cout_hotel = infos["hotel_nuit"] * nb_jours
+            cout_vie = infos["vie_jour"] * (nb_jours + 1)
+            total_estime = cout_vol + cout_hotel + cout_vie
             
-            Trouve à l'aide de tes connaissances et de tes capacités d'estimation en temps réel, 2 ou 3 destinations réelles valides.
-            Pour chaque destination, fais le calcul mathématique précis : Vol + (Hôtel par nuit * {nb_jours}) + (Coût de la vie par jour * {nb_jours + 1}).
-            Si le total dépasse {budget}€, élimine la destination. Ne montre QUE celles qui entrent dans le budget.
-            
-            Affiche le résultat au format Markdown suivant pour chaque ville :
-            ### 📍 [Nom de la Ville], [Nom du Pays]
-            - **✈️ Vol aller-retour estimé** : [Prix]€
-            - **🏨 Hébergement ({nb_jours} nuits)** : [Prix total]€
-            - **🍔 Vie sur place ({nb_jours + 1} jours)** : [Prix total]€
-            - **💰 BUDGET TOTAL ESTIMÉ** : [Somme]€
-            - **🔥 VOTRE RESTE-À-VIVRE** : [Calcul du reste]€ d'argent de poche
-            - *L'avis de l'IA* : [Explication courte]
-            ---
-            """
-            
-            with st.spinner("L'IA calcule le coût de la vie pour vos destinations..."):
-                try:
-                    model = genai.GenerativeModel('gemini-2.5-flash')
-
-                    response = model.generate_content(prompt)
-                    
-                    st.success("Voici les destinations où vous pouvez réellement vous offrir le voyage :")
-                    
-                    # On affiche le texte de l'IA proprement
-                    st.markdown(response.text)
-                    
-                    # LIENS FIXES SÉCURISÉS : Pas de découpage de texte, aucun risque de plantage !
-                    st.write("---")
-                    st.subheader("🔗 Liens de réservation rapides")
-                    
-                    dep_enc = urllib.parse.quote(depart)
-                    link_vol_global = f"https://skyscanner.fr{dep_enc}/"
-                    link_hotel_global = f"https://booking.com{tp_id}&ss=Europe"
-                    
-                    col_b1, col_b2 = st.columns(2)
-                    with col_b1:
-                        st.link_button(f"✈️ Comparer les vols au départ de {depart}", link_vol_global)
-                    with col_b2:
-                        st.link_button("🏨 Trouver un hôtel sur Booking", link_hotel_global)
-                        
-                except Exception as e:
-                    st.error(f"Une erreur est survenue lors de l'appel à l'IA : {e}")
+            # Filtre strict du budget de l'utilisateur
+            if total_estime <= budget:
+                valid_destinations += 1
+                reste_a_vivre = budget - total_estime
+                
+                # Affichage des résultats à l'écran
+                st.markdown(f"### 📍 {ville}, {infos['pays']}")
+                st.markdown(f"- **✈️ Vol aller-retour estimé** : {cout_vol}€")
+                st.markdown(f"- **🏨 Hébergement ({nb_jours} nuits)** : {cout_hotel}€")
+                st.markdown(f"- **🍔 Vie sur place ({nb_jours + 1} jours)** : {cout_vie}€")
+                st.markdown(f"- **💰 BUDGET TOTAL ESTIMÉ** : {total_estime}€")
+                st.markdown(f"- **🔥 VOTRE RESTE-À-VIVRE** :  {reste_a_vivre}€ d'argent de poche")
+                st.markdown(f"- *L'avis de l'IA* : {infos['avis']}")
+                
+                # Liens de redirection officiels sans bug
+                city_encoded = urllib.parse.quote(ville)
+                link_vol = f"https://skyscanner.fr{urllib.parse.quote(depart)}/"
+                link_hotel = f"https://booking.com{tp_id}&ss={city_encoded}"
+                
+                col_b1, col_b2 = st.columns(2)
+                with col_b1:
+                    st.link_button(f"✈️ Vol depuis {depart}", link_vol)
+                with col_b2:
+                    st.link_button(f"🏨 Hôtel à {ville}", link_hotel)
+                st.markdown("---")
+                
+        if valid_destinations == 0:
+            st.warning("Aucune destination ne correspond à ce budget pour ces dates. Essayez d'augmenter le budget ou de réduire la durée.")

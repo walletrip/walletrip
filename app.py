@@ -130,7 +130,7 @@ destinations_globales = {
     }
 }
 
-# Fonction réutilisable sécurisée pour afficher une carte de destination
+# Fonction réutilisable pour afficher une destination
 def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang_booking):
     nb_nuits = nb_jours
     cout_vol = infos["vol"] * total_voyageurs

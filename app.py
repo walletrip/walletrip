@@ -122,8 +122,8 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_de
         # ASSEMBLAGE INVISIBLE DES PARAMÈTRES POUR S'ALIGNER ET LIER LES VILLES EN DIRECT
         c_enc = urllib.parse.quote(infos["query"])
         
-        link_vol = f"https://tp.st{infos['code']}"
-        link_hotel = f"https://tp.st{c_enc}%26checkin%3D{str_debut}%26checkout%3D{str_fin}%26group_adults%3D{adultes}%26group_children%3D{enfants}"
+        link_vol = f"https://tp.st/{infos['code']}"
+        link_hotel = f"https://tp.st/{c_enc}%26checkin%3D{str_debut}%26checkout%3D{str_fin}%26group_adults%3D{adultes}%26group_children%3D{enfants}"
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:

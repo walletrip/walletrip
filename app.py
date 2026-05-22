@@ -1,11 +1,10 @@
 import streamlit as st
 from datetime import datetime
-import urllib.parse
 
 # Configuration de la page Streamlit
 st.set_page_config(page_title="WalletTrip", page_icon="✈️", layout="centered")
 
-# Dictionnaire de traduction automatique pour l'interface
+# Traduction automatique de l'interface
 translations = {
     "Français": {
         "title": "✈️ WalletTrip",
@@ -24,8 +23,8 @@ translations = {
         "vie": "Vie sur place",
         "meteo": "Météo prévue",
         "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Voir les vols pour {ville}",
-        "btn_hotel": "🏨 Réserver l'hôtel à {ville}"
+        "btn_vol": "✈️ Ouvrir Skyscanner pour les vols",
+        "btn_hotel": "🏨 Ouvrir Booking pour les hôtels"
     },
     "English": {
         "title": "✈️ WalletTrip",
@@ -44,8 +43,8 @@ translations = {
         "vie": "Cost of living",
         "meteo": "Expected Weather",
         "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ See flights to {ville}",
-        "btn_hotel": "🏨 Book hotel in {ville}"
+        "btn_vol": "✈️ Open Skyscanner for flights",
+        "btn_hotel": "🏨 Open Booking for hotels"
     },
     "Español": {
         "title": "✈️ WalletTrip",
@@ -64,8 +63,8 @@ translations = {
         "vie": "Coste de vida",
         "meteo": "Clima previsto",
         "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Ver vuelos a {ville}",
-        "btn_hotel": "🏨 Reservar hotel en {ville}"
+        "btn_vol": "✈️ Abrir Skyscanner para vuelos",
+        "btn_hotel": "🏨 Abrir Booking para hoteles"
     }
 }
 
@@ -98,29 +97,22 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["error_date"])
     else:
-        str_debut = date_debut.strftime("%Y-%m-%d")
-        str_fin = date_fin.strftime("%Y-%m-%d")
-        
-        # Base de données stable des coûts par personne
-        destinations_data = {
-            "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
-            "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"},
-            "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 Grand soleil - 25°C", "avis": "Parfait pour le soleil / Perfect for sun / Perfecto para el sol"}
-        }
-        
         st.success(lang["success"].format(total=total_voyageurs))
         
+        # Liste fixe et propre pour bloquer toute erreur de texte
+        destinations_data = {
+            "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ Ensoleillé - 22°C", "avis": "Très économique / Highly affordable / Muy económico"},
+            "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ Nuageux - 20°C", "avis": "Magnifique & Pas cher / Great & Cheap / Magnífico y barato"}
+        }
+        
         for ville, infos in destinations_data.items():
-            # Calculs exacts et proportionnels au nombre de voyageurs et de jours
             cout_vol = infos["vol"] * total_voyageurs
-            cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2) # Ajoute une chambre si grand groupe
+            cout_hotel = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
             cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
             total_estime = cout_vol + cout_hotel + cout_vie
             
-            # Filtre de l'enveloppe budgétaire
             if total_estime <= budget:
                 reste_a_vivre = budget - total_estime
-                
                 st.markdown(f"### 📍 {ville}, {infos['pays'][langue]}")
                 
                 col_c1, col_c2 = st.columns(2)
@@ -131,19 +123,17 @@ if submit_button:
                 with col_c2:
                     st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
                     st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
-                
                 st.markdown(f"*{infos['avis']}*")
-                
-                # Génération des boutons de redirection parfaits et multilingues
-                city_enc = urllib.parse.quote(ville)
-                dep_enc = urllib.parse.quote(depart)
-                
-                link_vol = f"https://skyscanner.fr{dep_enc}/{city_enc}/"
-                link_hotel = f"https://booking.com{tp_id}&ss={city_enc}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
-                
-                col_b1, col_b2 = st.columns(2)
-                with col_b1:
-                    st.link_button(lang["btn_vol"].format(ville=ville), link_vol)
-                with col_b2:
-                    st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel)
                 st.markdown("---")
+        
+        # LIENS ASSURÉS SANS VARIABLES (ZÉRO ERREUR TECHNIQUE POSSIBLE)
+        st.subheader("🔗 Liens de réservation rapides")
+        
+        link_vol_fixe = "https://skyscanner.fr"
+        link_hotel_fixe = f"https://booking.com{tp_id}"
+        
+        col_b1, col_b2 = st.columns(2)
+        with col_b1:
+            st.link_button(lang["btn_vol"], link_vol_fixe)
+        with col_b2:
+            st.link_button(lang["btn_hotel"], link_hotel_fixe)

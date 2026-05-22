@@ -1,4 +1,5 @@
 import streamlit as st
+import urllib.parse
 from datetime import datetime, timedelta
 
 # Configuration de la page Pouch
@@ -26,7 +27,8 @@ translations = {
         "btn_hotel": "🏨 Hôtel à {ville}",
         "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 Amérique",
-        "tab_as": "🌏 Asie & Afrique"
+        "tab_as": "🌏 Asie & Afrique",
+        "l_b": "fr"
     },
     "English": {
         "title": "✈️ Pouch",
@@ -49,7 +51,8 @@ translations = {
         "btn_hotel": "🏨 Hotel in {ville}",
         "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 America",
-        "tab_as": "🌏 Asia & Africa"
+        "tab_as": "🌏 Asia & Africa",
+        "l_b": "en-us"
     },
     "Español": {
         "title": "✈️ Pouch",
@@ -71,7 +74,8 @@ translations = {
         "btn_hotel": "🏨 Hotel en {ville}",
         "tab_eu": "🇪🇺 Europe",
         "tab_am": "🌎 América",
-        "tab_as": "🌏 Asia & África"
+        "tab_as": "🌏 Asia & África",
+        "l_b": "es"
     }
 }
 
@@ -94,7 +98,7 @@ with st.form("budget_form"):
         
     submit_button = st.form_submit_button(label=lang["button"])
 
-def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, link_vol, link_hotel):
+def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants):
     nb_nuits = nb_jours
     cout_vol = infos["vol"] * total_voyageurs
     cout_hotel = infos["hotel"] * nb_nuits * (1 if total_voyageurs <= 2 else 2)
@@ -115,6 +119,12 @@ def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, link_v
             st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
         
+        # ASSEMBLAGE INVISIBLE DES PARAMÈTRES POUR S'ALIGNER ET LIER LES VILLES EN DIRECT
+        c_enc = urllib.parse.quote(infos["query"])
+        
+        link_vol = f"https://tp.st{infos['code']}"
+        link_hotel = f"https://tp.st{c_enc}%26checkin%3D{str_debut}%26checkout%3D{str_fin}%26group_adults%3D{adultes}%26group_children%3D{enfants}"
+        
         col_b1, col_b2 = st.columns(2)
         with col_b1:
             st.link_button(lang["btn_vol"].format(ville=ville), link_vol)
@@ -130,32 +140,34 @@ if submit_button:
         st.error(lang["error_date"])
     else:
         st.success(lang["success"].format(total=total_voyageurs))
+        str_debut = date_debut.strftime("%Y-%m-%d")
+        str_fin = date_fin.strftime("%Y-%m-%d")
         
         destinations_globales = {
             "Europe": {
-                "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Sofia": {"pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ 21°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"}
+                "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "query": "Krakow", "code": "KRK"},
+                "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "query": "Budapest", "code": "BUD"},
+                "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "query": "Porto", "code": "OPO"},
+                "Sofia": {"pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ 21°C", "query": "Sofia", "code": "SOF"}
             },
             "Amerique": {
-                "New York": {"pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Montréal": {"pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"}
+                "New York": {"pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "query": "New York", "code": "NYC"},
+                "Montréal": {"pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "query": "Montreal", "code": "YUL"}
             },
             "AsieAfrique": {
-                "Marrakech": {"pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Tokyo": {"pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"},
-                "Bangkok": {"pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 33°C", "link_vol": "https://skyscanner.fr", "link_hotel": "https://booking.com"}
+                "Marrakech": {"pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "query": "Marrakech", "code": "RAK"},
+                "Tokyo": {"pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "query": "Tokyo", "code": "TYO"},
+                "Bangkok": {"pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 33°C", "query": "Bangkok", "code": "BKK"}
             }
         }
         
         tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
         with tab1:
             for v, i in destinations_globales["Europe"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours, i["link_vol"], i["link_hotel"])
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
         with tab2:
             for v, i in destinations_globales["Amerique"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours, i["link_vol"], i["link_hotel"])
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
         with tab3:
             for v, i in destinations_globales["AsieAfrique"].items():
-                afficher_destination(v, i, budget, total_voyageurs, nb_jours, i["link_vol"], i["link_hotel"])
+                afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)

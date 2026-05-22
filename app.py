@@ -1,10 +1,8 @@
 import streamlit as st
 import urllib.parse
 from datetime import datetime, timedelta
-
 # Configuration de la page Streamlit
 st.set_page_config(page_title="Pouch", page_icon="✈️", layout="centered")
-
 # Dictionnaire de traduction automatique pour l'interface de Pouch
 translations = {
     "Français": {
@@ -88,14 +86,11 @@ translations = {
         "lang_booking": "es"
     }
 }
-
 # Sélecteur de langue global
 langue = st.selectbox("🌐 Choose Language / Choisir la Langue / Elegir Idioma", ["Français", "English", "Español"])
 lang = translations[langue]
-
 st.title(lang["title"])
 st.subheader(lang["subtitle"])
-
 # Formulaire utilisateur propre avec le retour des deux calendriers de dates
 with st.form("budget_form"):
     col1, col2 = st.columns(2)
@@ -178,7 +173,8 @@ if submit_button:
         str_fin = date_fin.strftime("%Y-%m-%d")
         dest_test = destination_saisie.strip().lower()
         st.success(lang["success"].format(total=total_voyageurs))
-                if dest_test:
+        
+        if dest_test:
             cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
             if any(k in dest_test for k in ["paris", "london", "madrid", "barcelona", "rome", "lisbon", "porto", "krakow", "budapest", "sofia", "europe", "pologne", "espagne"]):
                 cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
@@ -199,5 +195,3 @@ if submit_button:
             with tab3:
                 for v, i in destinations_globales["AsieAfrique"].items():
                     afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants, lang["lang_booking"])
-
-        

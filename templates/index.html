@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Voyages du Monde</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;500;600&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --sky: #0770e3;
+  --book: #003580;
+  --accent: #e8581c;
+  --bg: #f7f4ef;
+  --surface: #ffffff;
+  --border: rgba(0,0,0,0.09);
+  --text: #1a1814;
+  --muted: #7a7570;
+  --success: #1a7a4a;
+  --success-bg: #eaf6f0;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+header {
+  background: var(--text);
+  color: #fff;
+  padding: 2rem 2rem 1.5rem;
+  text-align: center;
+}
+header h1 {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(28px, 5vw, 42px);
+  font-weight: 500;
+  letter-spacing: -1px;
+  margin-bottom: 6px;
+}
+header p {
+  font-size: 15px;
+  opacity: 0.65;
+}
+
+/* ── LAYOUT ── */
+main {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+}
+
+/* ── SEARCH CARD ── */
+.search-card {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 1.75rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.field { display: flex; flex-direction: column; gap: 7px; }
+.field.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+input, select {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  padding: 11px 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.15s;
+}
+input:focus, select:focus { border-color: var(--accent); }
+
+/* Budget slider */
+.budget-wrap { display: flex; flex-direction: column; gap: 8px; }
+.budget-row { display: flex; align-items: center; gap: 10px; }
+.budget-row span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+input[type=range] {
+  -webkit-appearance: none;
+  flex: 1; height: 4px;
+  background: linear-gradient(to right, var(--accent) 0%, var(--accent) 30%, #d5d0c8 30%);
+  border-radius: 4px; border: none; padding: 0; cursor: pointer;
+}
+input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  background: var(--accent);
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+.budget-display {
+  display: flex; align-items: baseline; gap: 8px;
+}
+#budget-val {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 500; color: var(--text);
+}
+#budget-per-person { font-size: 13px; color: var(--muted); }
+
+/* Voyageurs */
+.travelers-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.traveler-box {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 12px;
+  display: flex; flex-direction: column; gap: 8px;
+}
+.trav-label { font-size: 12px; color: var(--muted); }
+.counter { display: flex; align-items: center; gap: 10px; }
+.counter-btn {
+  width: 30px; height: 30px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  font-size: 18px; line-height: 1;
+  cursor: pointer; color: var(--text);
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.12s, border-color 0.12s;
+}
+.counter-btn:hover { background: var(--bg); border-color: var(--accent); }
+.counter-val { font-size: 16px; font-weight: 500; min-width: 20px; text-align: center; }
+
+/* Search button */
+.search-btn {
+  width: 100%;
+  padding: 14px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 500;
+  border: none; border-radius: var(--radius-sm);
+  background: var(--text);
+  color: #fff;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.search-btn:hover { opacity: 0.88; }
+.search-btn:active { transform: scale(0.99); }
+.search-btn svg { width: 18px; height: 18px; }
+
+/* ── RESULTS ── */
+.results-meta {
+  font-size: 14px; color: var(--muted);
+  margin-bottom: 1.25rem;
+}
+.results-meta strong { color: var(--text); }
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+/* Card */
+.dest-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: box-shadow 0.2s, transform 0.2s;
+  animation: fadeUp 0.3s ease both;
+}
+.dest-card:hover {
+  box-shadow: 0 6px 24px rgba(0,0,0,0.09);
+  transform: translateY(-2px);
+}
+.dest-card.featured {
+  border: 2px solid var(--accent);
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.card-flag { font-size: 30px; line-height: 1; }
+.fav-badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 11px; font-weight: 500;
+  padding: 3px 10px; border-radius: 99px;
+  background: #fff3ee; color: var(--accent);
+  border: 1px solid rgba(232,88,28,0.2);
+}
+.card-name {
+  font-family: 'Fraunces', serif;
+  font-size: 18px; font-weight: 500; color: var(--text);
+}
+.card-country { font-size: 13px; color: var(--muted); }
+
+.tags { display: flex; flex-wrap: wrap; gap: 5px; }
+.tag {
+  font-size: 11px; padding: 3px 9px;
+  border-radius: 99px;
+  border: 1px solid var(--border);
+  color: var(--muted);
+}
+
+.price-row {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  border-top: 1px solid var(--border); padding-top: 10px;
+}
+.price-left { display: flex; flex-direction: column; gap: 2px; }
+.price-total {
+  font-family: 'Fraunces', serif;
+  font-size: 22px; font-weight: 500; color: var(--text);
+}
+.price-note { font-size: 11px; color: var(--muted); }
+.price-right { text-align: right; }
+.nights-label { font-size: 13px; color: var(--muted); }
+.reste-label { font-size: 12px; color: var(--success); font-weight: 500; }
+
+/* Live price badge */
+.live-price {
+  font-size: 11px; color: var(--success);
+  background: var(--success-bg);
+  border-radius: 99px; padding: 2px 8px;
+  display: none;
+}
+.live-price.visible { display: inline-block; }
+
+/* Affiliate buttons */
+.affil-row { display: flex; gap: 8px; }
+.affil-btn {
+  flex: 1;
+  padding: 9px 8px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 500;
+  border-radius: var(--radius-sm);
+  border: none; cursor: pointer;
+  text-decoration: none;
+  display: flex; align-items: center; justify-content: center; gap: 5px;
+  transition: opacity 0.15s;
+}
+.affil-btn:hover { opacity: 0.86; }
+.btn-sky  { background: var(--sky);  color: #fff; }
+.btn-book { background: var(--book); color: #fff; }
+.affil-btn svg { width: 14px; height: 14px; flex-shrink: 0; }
+
+/* Empty / loading */
+.state-box {
+  text-align: center; padding: 3rem;
+  color: var(--muted); font-size: 14px;
+}
+.spinner {
+  display: inline-block;
+  width: 22px; height: 22px;
+  border: 2px solid var(--border);
+  border-top-color: var(--text);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  margin-bottom: 12px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Affil note */
+.aff-note {
+  text-align: center;
+  font-size: 11px; color: var(--muted);
+  margin-top: 1.5rem;
+}
+
+@media (max-width: 600px) {
+  .fields { grid-template-columns: 1fr; }
+  .travelers-grid { grid-template-columns: 1fr 1fr; }
+  .travelers-grid .traveler-box:last-child { grid-column: 1 / -1; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>✈ Voyages du Monde</h1>
+  <p>Trouvez votre prochaine aventure selon votre budget et vos dates</p>
+</header>
+
+<main>
+  <!-- ── FORMULAIRE ── -->
+  <div class="search-card">
+    <div class="fields">
+
+      <!-- Départ -->
+      <div class="field">
+        <label>Lieu de départ</label>
+        <select id="depart">
+          <option value="">Sélectionnez une ville</option>
+          {% for v in villes %}
+          <option value="{{ v.iata }}">{{ v.flag }} {{ v.nom }}, {{ v.pays }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Budget -->
+      <div class="field">
+        <label>Budget total</label>
+        <div class="budget-wrap">
+          <div class="budget-row">
+            <span>500€</span>
+            <input type="range" id="budget" min="500" max="10000" step="100" value="3000">
+            <span>10 000€</span>
+          </div>
+          <div class="budget-display">
+            <span id="budget-val">3 000 €</span>
+            <span id="budget-per-person"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dates -->
+      <div class="field">
+        <label>Date de départ</label>
+        <input type="date" id="date-depart">
+      </div>
+      <div class="field">
+        <label>Date de retour</label>
+        <input type="date" id="date-retour">
+      </div>
+
+      <!-- Voyageurs -->
+      <div class="field full">
+        <label>Voyageurs</label>
+        <div class="travelers-grid">
+          <div class="traveler-box">
+            <span class="trav-label">👤 Adultes</span>
+            <div class="counter">
+              <button class="counter-btn" onclick="changer('adultes',-1)">−</button>
+              <span class="counter-val" id="val-adultes">2</span>
+              <button class="counter-btn" onclick="changer('adultes',1)">+</button>
+            </div>
+          </div>
+          <div class="traveler-box">
+            <span class="trav-label">🧒 Enfants <small>(2–11 ans)</small></span>
+            <div class="counter">
+              <button class="counter-btn" onclick="changer('enfants',-1)">−</button>
+              <span class="counter-val" id="val-enfants">0</span>
+              <button class="counter-btn" onclick="changer('enfants',1)">+</button>
+            </div>
+          </div>
+          <div class="traveler-box">
+            <span class="trav-label">👶 Bébés <small>(&lt;2 ans)</small></span>
+            <div class="counter">
+              <button class="counter-btn" onclick="changer('bebes',-1)">−</button>
+              <span class="counter-val" id="val-bebes">0</span>
+              <button class="counter-btn" onclick="changer('bebes',1)">+</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Destination favorite -->
+      <div class="field full">
+        <label>Destination favorite <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optionnel)</span></label>
+        <input type="text" id="dest-fav" placeholder="Ex : Japon, Maldives, New York…">
+      </div>
+
+    </div><!-- /fields -->
+
+    <button class="search-btn" onclick="lancerRecherche()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      Rechercher des voyages
+    </button>
+  </div><!-- /search-card -->
+
+  <!-- ── RÉSULTATS ── -->
+  <div id="results-zone"></div>
+</main>
+
+<script>
+const voyageurs = { adultes: 2, enfants: 0, bebes: 0 };
+const TRAVELPAYOUT_ID = "{{ travelpayout_id }}";
+
+
+// Init dates
+const today = new Date();
+const pad = n => String(n).padStart(2,'0');
+const fmt = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+document.getElementById('date-depart').value = fmt(today);
+const ret = new Date(today); ret.setDate(ret.getDate() + 10);
+document.getElementById('date-retour').value = fmt(ret);
+
+// Budget slider
+const budgetSlider = document.getElementById('budget');
+budgetSlider.addEventListener('input', () => {
+  majBudget();
+  majBudgetPP();
+  majSliderFill();
+});
+
+function majBudget() {
+  const v = parseInt(budgetSlider.value);
+  document.getElementById('budget-val').textContent = v.toLocaleString('fr-FR') + ' €';
+}
+function majSliderFill() {
+  const pct = ((budgetSlider.value - budgetSlider.min) / (budgetSlider.max - budgetSlider.min)) * 100;
+  budgetSlider.style.background = `linear-gradient(to right, #e8581c 0%, #e8581c ${pct}%, #d5d0c8 ${pct}%)`;
+}
+function majBudgetPP() {
+  const total = totalVoyageurs();
+  const budget = parseInt(budgetSlider.value);
+  const pp = document.getElementById('budget-per-person');
+  pp.textContent = total > 1 ? `(${Math.round(budget / total).toLocaleString('fr-FR')} €/pers.)` : '';
+}
+majSliderFill();
+
+// Voyageurs
+function totalVoyageurs() { return voyageurs.adultes + voyageurs.enfants + voyageurs.bebes; }
+function changer(type, delta) {
+  if (type === 'adultes') voyageurs.adultes = Math.max(1, voyageurs.adultes + delta);
+  else if (type === 'enfants') voyageurs.enfants = Math.max(0, voyageurs.enfants + delta);
+  else voyageurs.bebes = Math.max(0, voyageurs.bebes + delta);
+  document.getElementById('val-' + type).textContent = voyageurs[type];
+  majBudgetPP();
+}
+
+// ── RECHERCHE ──
+async function lancerRecherche() {
+  const depart = document.getElementById('depart').value;
+  const d1 = document.getElementById('date-depart').value;
+  const d2 = document.getElementById('date-retour').value;
+  const budget = parseInt(budgetSlider.value);
+  const fav = document.getElementById('dest-fav').value.trim();
+
+  if (!depart) { alert('Veuillez sélectionner un lieu de départ.'); return; }
+  if (!d1 || !d2 || d2 <= d1) { alert('Dates invalides. Vérifiez vos dates de voyage.'); return; }
+
+  const zone = document.getElementById('results-zone');
+  zone.innerHTML = `<div class="state-box"><div class="spinner"></div><br>Recherche des meilleures destinations…</div>`;
+
+  try {
+    const resp = await fetch('/search', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        budget, depart, date_depart: d1, date_retour: d2,
+        adultes: voyageurs.adultes, enfants: voyageurs.enfants, bebes: voyageurs.bebes,
+        destination_favorite: fav
+      })
+    });
+    const data = await resp.json();
+
+    if (data.error) { zone.innerHTML = `<div class="state-box">${data.error}</div>`; return; }
+    if (!data.resultats.length) {
+      zone.innerHTML = `<div class="state-box">😕 Aucun voyage trouvé pour ce budget.<br>Essayez d'augmenter votre budget ou de modifier les dates.</div>`;
+      return;
+    }
+
+    afficherResultats(data, depart, d1, d2);
+  } catch(e) {
+    zone.innerHTML = `<div class="state-box">Erreur de connexion. Vérifiez que le serveur est lancé.</div>`;
+    console.error(e);
+  }
+}
+
+function afficherResultats(data, origIata, d1, d2) {
+  const { resultats, nuits, adultes, enfants, bebes, total } = data;
+  const pax = adultes + enfants + bebes;
+  const favs = resultats.filter(r => r.is_favorite);
+
+  const meta = favs.length
+    ? `<strong>${total} voyages</strong> pour <strong>${pax} voyageur${pax>1?'s':''}</strong> — ${favs.length} correspondent à votre préférence`
+    : `<strong>${total} voyages</strong> pour <strong>${pax} voyageur${pax>1?'s':''}</strong> · ${nuits} nuits`;
+
+  const zone = document.getElementById('results-zone');
+  zone.innerHTML = `<p class="results-meta">${meta}</p><div class="results-grid" id="cards"></div><p class="aff-note">🔗 Les liens s'ouvrent avec votre code affilié · Prix estimatifs — confirmez sur les plateformes</p>`;
+
+  const grid = document.getElementById('cards');
+  resultats.forEach((r, i) => {
+    const card = document.createElement('div');
+    card.className = 'dest-card' + (r.is_favorite ? ' featured' : '');
+    card.style.animationDelay = (i * 60) + 'ms';
+    card.dataset.iata    = r.iata || '';
+    card.dataset.booking = r.booking_id || '';
+    card.dataset.d1      = d1;
+    card.dataset.d2      = d2;
+    card.dataset.orig    = origIata;
+    card.dataset.nuits   = r.nuits;
+
+    card.innerHTML = `
+      <div class="card-flag">${r.flag}</div>
+      ${r.is_favorite ? '<span class="fav-badge">♥ Correspond à votre choix</span>' : ''}
+      <div>
+        <div class="card-name">${r.nom}</div>
+        <div class="card-country">${r.pays}</div>
+      </div>
+      <div class="tags">${r.tags.map(t => `<span class="tag">${t}</span>`).join('')}</div>
+      <div class="price-row">
+        <div class="price-left">
+          <div class="price-total">${r.prix_estime.toLocaleString('fr-FR')} €</div>
+          <div class="price-note">pour ${pax} voyageur${pax>1?'s':''} · estimatif</div>
+          <span class="live-price" id="live-${i}"></span>
+        </div>
+        <div class="price-right">
+          <div class="nights-label">${r.nuits} nuits</div>
+          <div class="reste-label">+${r.reste.toLocaleString('fr-FR')} € restant</div>
+        </div>
+      </div>
+      <div class="affil-row">
+        <a class="affil-btn btn-sky" href="${r.url_skyscanner}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z"/></svg>
+          Skyscanner
+        </a>
+        <a class="affil-btn btn-book" href="${r.url_booking}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 13c1.66 0 3-1.34 3-3S8.66 7 7 7s-3 1.34-3 3 1.34 3 3 3zm12-6h-8v7H3V5H1v15h2v-3h18v3h2v-9c0-2.21-1.79-4-4-4z"/></svg>
+          Booking
+        </a>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+</script>
+</body>
+</html>

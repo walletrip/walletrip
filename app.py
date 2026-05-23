@@ -87,8 +87,9 @@ def afficher_destination(ville, infos):
         # SÉCURISATION ET ENCODAGE PROPRE DES LIENS DE DIRECTION
         nom_ville_web = urllib.parse.quote(infos["q"])
         
-        url_skyscanner = f"https://skyscanner.fr//{nom_ville_web}/"
-        url_booking = f"https://booking.com//{nom_ville_web}//&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
+                url_skyscanner = f"https://skyscanner.fr{nom_ville_web}/"
+        url_booking = f"https://booking.com{nom_ville_web}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
+
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:

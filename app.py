@@ -2,152 +2,127 @@ import streamlit as st
 import urllib.parse
 from datetime import datetime, timedelta
 
-# Configuration de la page Pouch
-st.set_page_config(page_title="Pouch", page_icon="✈️", layout="centered")
+# Configuration de la page
+st.set_page_config(page_title="Pouch", layout="centered")
 
 translations = {
     "Français": {
         "title": "✈️ Pouch",
-        "subtitle": "Trouvez des voyages selon votre budget réel, pas seulement le vol.",
-        "depart": "🛫 Ville de départ",
-        "budget": "💰 Budget TOTAL maximum (€)",
-        "date_dep": "🗓️ Date de départ",
-        "date_ret": "🗓️ Date de retour",
-        "adults": "👨‍💼 Nombre d'adultes",
-        "children": "👶 Nombre d'enfants",
-        "button": "Trouver mes destinations mondiales",
-        "error_date": "La date de retour doit être après la date de départ.",
-        "success": "Voici les destinations mondiales valides pour {total} personnes :",
-        "vols": "Vols",
-        "logement": "Logement",
-        "vie": "Vie sur place",
-        "meteo": "Météo prévue",
-        "reste": "VOTRE RESTE-À-VIVRE",
-        "btn_vol": "✈️ Vol pour {ville}",
-        "btn_hotel": "🏨 Hôtel à {ville}",
-        "tab_eu": "🇪🇺 Europe",
-        "tab_am": "🌎 Amérique",
-        "tab_as": "🌏 Asie & Afrique",
-        "lang_booking": "fr"
+        "sub": "Trouvez des voyages selon votre budget.",
+        "dep": "🛫 Départ",
+        "dest": "📍 Ville ou Pays précis (Optionnel)",
+        "bud": "💰 Budget MAX (€)",
+        "d_dep": "🗓️ Date aller",
+        "d_ret": "🗓️ Date retour",
+        "ad": "👨‍💼 Adultes",
+        "ch": "👶 Enfants",
+        "btn": "Trouver mon voyage",
+        "err": "La date retour doit être après l'aller.",
+        "ok": "Options valides pour {total} pers :",
+        "v": "Vols",
+        "l": "Hôtel",
+        "px": "Vie",
+        "m": "Météo",
+        "r": "RESTE",
+        "b_v": "✈️ Vols",
+        "b_h": "🏨 Hôtels",
+        "t_eu": "🇪🇺 Europe",
+        "t_am": "🌎 Amérique",
+        "t_as": "🌏 Asie & Afrique",
+        "b_l": "fr"
     },
     "English": {
         "title": "✈️ Pouch",
-        "subtitle": "Find trips based on your real budget, not just the flight price.",
-        "depart": "🛫 Departure City",
-        "budget": "💰 Maximum TOTAL Budget (€)",
-        "date_dep": "🗓️ Departure Date",
-        "date_ret": "🗓️ Return Date",
-        "adults": "👨‍💼 Number of Adults",
-        "children": "👶 Number of Children",
-        "button": "Find my worldwide destinations",
-        "error_date": "Return date must be after departure date.",
-        "success": "Here are the valid worldwide destinations for {total} people:",
-        "vols": "Flights",
-        "logement": "Accommodation",
-        "vie": "Cost of living",
-        "meteo": "Expected Weather",
-        "reste": "YOUR POCKET MONEY",
-        "btn_vol": "✈️ Flight to {ville}",
-        "btn_hotel": "🏨 Hotel in {ville}",
-        "tab_eu": "🇪🇺 Europe",
-        "tab_am": "🌎 America",
-        "tab_as": "🌏 Asia & Africa",
-        "lang_booking": "en-us"
-    },
-    "Español": {
-        "title": "✈️ Pouch",
-        "subtitle": "Encuentra viajes basados en tu presupuesto real, no solo en el vuelo.",
-        "depart": "🛫 Ciudad de salida",
-        "budget": "💰 Presupuesto TOTAL máximo (€)",
-        "date_dep": "Fecha de salida",
-        "date_ret": "Fecha de regreso",
-        "adults": "👨‍💼 Número de adultos",
-        "children": "👶 Número de niños",
-        "button": "Buscar mis destinos mundiales",
-        "success": "Aquí están los destinos mundiales válidos para {total} personas:",
-        "vols": "Vuelos",
-        "logement": "Alojamiento",
-        "vie": "Coste de vida",
-        "meteo": "Clima previsto",
-        "reste": "TU DINERO DE BOLSILLO",
-        "btn_vol": "✈️ Vuelo a {ville}",
-        "btn_hotel": "🏨 Hotel en {ville}",
-        "tab_eu": "🇪🇺 Europe",
-        "tab_am": "🌎 América",
-        "tab_as": "🌏 Asia & África",
-        "lang_booking": "es"
+        "sub": "Find trips based on your real budget.",
+        "dep": "🛫 Departure",
+        "dest": "📍 Specific Destination (Optional)",
+        "bud": "💰 Max Budget (€)",
+        "d_dep": "🗓️ Departure Date",
+        "d_ret": "🗓️ Return Date",
+        "ad": "👨‍💼 Adults",
+        "ch": "👶 Children",
+        "btn": "Find my trip",
+        "err": "Return date must be after departure.",
+        "ok": "Valid options for {total} people:",
+        "v": "Flights",
+        "l": "Hotel",
+        "px": "Life",
+        "m": "Weather",
+        "r": "POCKET MONEY",
+        "b_v": "✈️ Flights",
+        "b_h": "🏨 Hotels",
+        "t_eu": "🇪🇺 Europe",
+        "t_am": "🌎 America",
+        "t_as": "🌏 Asia & Africa",
+        "b_l": "en-us"
     }
 }
 
-langue = st.selectbox("🌐 Langue / Language / Idioma", ["Français", "English", "Español"])
+langue = st.selectbox("🌐 Langue", ["Français", "English"])
 lang = translations[langue]
 
 st.title(lang["title"])
-st.subheader(lang["subtitle"])
+st.subheader(lang["sub"])
+
 with st.form("budget_form"):
     col1, col2 = st.columns(2)
     with col1:
-        depart = st.text_input(lang["depart"], "Paris")
-        date_debut = st.date_input(lang["date_dep"], datetime.today())
-        adultes = st.number_input(lang["adults"], min_value=1, value=1, step=1)
+        depart = st.text_input(lang["dep"], "Paris")
+        date_debut = st.date_input(lang["d_dep"], datetime.today())
+        adultes = st.number_input(lang["ad"], min_value=1, value=1)
     with col2:
-        budget = st.number_input(lang["budget"], min_value=50, value=1500, step=50)
-        date_fin = st.date_input(lang["date_ret"], datetime.today() + timedelta(days=4))
-        enfants = st.number_input(lang["children"], min_value=0, value=0, step=1)
+        budget = st.number_input(lang["bud"], min_value=50, value=1500)
+        date_fin = st.date_input(lang["d_ret"], datetime.today() + timedelta(days=4))
+        enfants = st.number_input(lang["ch"], min_value=0, value=0)
         
-    destination_saisie = st.text_input(lang["destination"], "")
-    submit_button = st.form_submit_button(label=lang["button"])
+    destination_saisie = st.text_input(lang["dest"], "")
+    submit_button = st.form_submit_button(label=lang["btn"])
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"pays": {"Français": "Pologne", "English": "Poland", "Español": "Polonia"}, "vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "query": "Krakow", "code": "KRK"},
-        "Budapest": {"pays": {"Français": "Hongrie", "English": "Hungary", "Español": "Hungría"}, "vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "query": "Budapest", "code": "BUD"},
-        "Porto": {"pays": {"Français": "Portugal", "English": "Portugal", "Español": "Portugal"}, "vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "query": "Porto", "code": "OPO"},
-        "Sofia": {"pays": {"Français": "Bulgarie", "English": "Bulgaria", "Español": "Bulgaria"}, "vol": 110, "hotel": 35, "vie": 20, "meteo": "🌤️ 21°C", "query": "Sofia", "code": "SOF"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow", "c": "KRK"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest", "c": "BUD"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto", "c": "OPO"}
     },
     "Amerique": {
-        "New York": {"pays": {"Français": "États-Unis", "English": "USA", "Español": "Estados Unidos"}, "vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "query": "New York", "code": "NYC"},
-        "Montréal": {"pays": {"Français": "Canada", "English": "Canada", "Español": "Canadá"}, "vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "query": "Montreal", "code": "YUL"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York", "c": "NYC"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal", "c": "YUL"}
     },
     "AsieAfrique": {
-        "Marrakech": {"pays": {"Français": "Maroc", "English": "Morocco", "Español": "Marruecos"}, "vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "query": "Marrakech", "code": "RAK"},
-        "Tokyo": {"pays": {"Français": "Japon", "English": "Japan", "Español": "Japón"}, "vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "query": "Tokyo", "code": "TYO"},
-        "Bangkok": {"pays": {"Français": "Thaïlande", "English": "Thailand", "Español": "Tailandia"}, "vol": 600, "hotel": 30, "vie": 15, "meteo": "🌴 33°C", "query": "Bangkok", "code": "BKK"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech", "c": "RAK"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo", "c": "TYO"}
     }
 }
 
-def afficher_destination(ville, infos, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants):
-    nb_nuits = nb_jours
-    cout_vol = infos["vol"] * total_voyageurs
-    cout_hotel = infos["hotel"] * nb_nuits * (1 if total_voyageurs <= 2 else 2)
-    cout_vie = infos["vie"] * (nb_jours + 1) * total_voyageurs
-    total_estime = cout_vol + cout_hotel + cout_vie
+def afficher_destination(ville, infos):
+    cout_v = infos["vol"] * total_voyageurs
+    cout_h = infos["hotel"] * nb_jours * (1 if total_voyageurs <= 2 else 2)
+    cout_p = infos["vie"] * (nb_jours + 1) * total_voyageurs
+    total_estime = cout_v + cout_h + cout_p
     
     if total_estime <= budget:
-        reste_a_vivre = budget - total_estime
-        nom_pays = f", {infos['pays'][langue]}" if infos['pays'][langue] else ""
-        
-        st.markdown(f"### 📍 {ville}{nom_pays}")
+        reste = budget - total_estime
+        st.markdown(f"### 📍 {ville}")
         col_c1, col_c2 = st.columns(2)
         with col_c1:
-            st.markdown(f"- **✈️ {lang['vols']} ({total_voyageurs} pers.)** : {cout_vol}€")
-            st.markdown(f"- **🏨 {lang['logement']} ({nb_nuits} nuits)** : {cout_hotel}€")
-            st.markdown(f"- **🍔 {lang['vie']} ({nb_jours+1} j.)** : {cout_vie}€")
+            st.markdown(f"- **{lang['v']}** : {cout_v}€")
+            st.markdown(f"- **{lang['l']} ({nb_jours} n.)** : {cout_h}€")
+            st.markdown(f"- **{lang['px']}** : {cout_p}€")
         with col_c2:
-            st.info(f"🌤️ **{lang['meteo']}** : {infos['meteo']}")
-            st.metric(label=f"🔥 {lang['reste']}", value=f"{reste_a_vivre}€")
+            st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
+            st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        c_enc = urllib.parse.quote(infos["query"])
-        code_air = str(infos["code"]).lower()
+        c_enc = urllib.parse.quote(infos["q"])
+        code_air = str(infos["c"]).lower()
         
-        link_vol = f"https://skyscanner.fr{code_air}/"
-        link_hotel = f"https://booking.com{c_enc}&checkin={str_debut}&checkout={str_fin}&group_adults={adultes}&group_children={enfants}"
+        link_v = f"https://skyscanner.fr{code_air}/"
+        link_h = f"https://booking.com{c_enc}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
-            st.link_button(lang["btn_vol"].format(ville=ville), link_vol)
+            st.link_button(lang["b_v"], link_v)
         with col_b2:
-            st.link_button(lang["btn_hotel"].format(ville=ville), link_hotel)
+            st.link_button(lang["b_h"], link_h)
         st.markdown("---")
 
 if submit_button:
@@ -155,34 +130,24 @@ if submit_button:
     nb_jours = (date_fin - date_debut).days
     
     if nb_jours <= 0:
-        st.error(lang["error_date"])
+        st.error(lang["err"])
     else:
-        str_debut = date_debut.strftime("%Y-%m-%d")
-        str_fin = date_fin.strftime("%Y-%m-%d")
+        str_d = date_debut.strftime("%Y-%m-%d")
+        str_f = date_fin.strftime("%Y-%m-%d")
         dest_test = destination_saisie.strip().lower()
-        st.success(lang["success"].format(total=total_voyageurs))
+        st.success(lang["ok"].format(total=total_voyageurs))
         
         if dest_test:
-            cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 550, 85, 45
-            code_custom = "LON"
-            if any(k in dest_test for k in ["paris", "london", "madrid", "barcelona", "rome", "lisbon", "porto", "krakow", "budapest", "sofia", "europe", "pologne", "espagne"]):
-                cout_vol_unitaire, cout_hotel_nuit, cout_vie_jour = 80, 40, 25
-                code_custom = "KRK" if "kra" in dest_test else "OPO"
-            if any(k in dest_test for k in ["marrakech", "maroc", "thailande", "bangkok", "bali", "vietnam"]):
-                cout_vol_unitaire = 120 if "mar" in dest_test else 600
-                cout_hotel_nuit, cout_vie_jour = 30, 15
-                code_custom = "RAK" if "mar" in dest_test else "BKK"
-                
-            infos_custom = {"query": destination_saisie.strip(), "pays": {"Français": "", "English": "", "Español": ""}, "vol": cout_vol_unitaire, "hotel": cout_hotel_nuit, "vie": cout_vie_jour, "meteo": "🌤️ Cliquable", "code": code_custom}
-            afficher_destination(destination_saisie.strip().capitalize(), infos_custom, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
+            infos_c = {"vol": 500, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip(), "c": "PAR"}
+            afficher_destination(destination_saisie.strip().capitalize(), infos_c)
         else:
             tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
             with tab1:
                 for v, i in destinations_globales["Europe"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
+                    afficher_destination(v, i)
             with tab2:
                 for v, i in destinations_globales["Amerique"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
+                    afficher_destination(v, i)
             with tab3:
                 for v, i in destinations_globales["AsieAfrique"].items():
-                    afficher_destination(v, i, budget, total_voyageurs, nb_jours, str_debut, str_fin, adultes, enfants)
+                    afficher_destination(v, i)

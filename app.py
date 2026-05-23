@@ -1160,4 +1160,5 @@ with tab_weather:
     elif wx_btn:
         st.markdown(f\'<div class="msg-sage">⟶ {T["wx_err"]}</div>\', unsafe_allow_html=True)
     else:
-        st.markdown(f\'<div class="no-result">{T["wx_prompt"]}</div>\', unsafe_allow_html=True)
+        st.markdown(f'<div class="no-result">{T["wx_prompt"]}</div>', unsafe_allow_html=True)
+

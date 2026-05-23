@@ -2,13 +2,13 @@ import streamlit as st
 import urllib.parse
 from datetime import datetime, timedelta
 
-# Configuration de la page
+# Configuration de la page Pouch
 st.set_page_config(page_title="Pouch", layout="centered")
 
 translations = {
     "Français": {
         "title": "✈️ Pouch",
-        "sub": "Trouvez des voyages selon votre budget.",
+        "sub": "Trouvez des voyages selon votre budget réel.",
         "dep": "🛫 Départ",
         "dest": "📍 Ville ou Pays précis (Optionnel)",
         "bud": "💰 Budget MAX (€)",
@@ -80,17 +80,17 @@ with st.form("budget_form"):
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow", "c": "KRK"},
-        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest", "c": "BUD"},
-        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto", "c": "OPO"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow", "c": "krk"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest", "c": "bud"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto", "c": "opo"}
     },
     "Amerique": {
-        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York", "c": "NYC"},
-        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal", "c": "YUL"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York", "c": "jfk"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal", "c": "yul"}
     },
     "AsieAfrique": {
-        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech", "c": "RAK"},
-        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo", "c": "TYO"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech", "c": "rak"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo", "c": "tyo"}
     }
 }
 
@@ -115,6 +115,7 @@ def afficher_destination(ville, infos):
         c_enc = urllib.parse.quote(infos["q"])
         code_air = str(infos["c"]).lower()
         
+        # AJOUT CORRECT DE LA BARRE OBLIQUE APRES LE .FR POUR SKYSCANNER
         link_v = f"https://skyscanner.fr{code_air}/"
         link_h = f"https://booking.com{c_enc}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
         
@@ -138,7 +139,7 @@ if submit_button:
         st.success(lang["ok"].format(total=total_voyageurs))
         
         if dest_test:
-            infos_c = {"vol": 500, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip(), "c": "PAR"}
+            infos_c = {"vol": 500, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip(), "c": "par"}
             afficher_destination(destination_saisie.strip().capitalize(), infos_c)
         else:
             tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])

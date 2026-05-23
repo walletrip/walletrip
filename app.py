@@ -24,8 +24,8 @@ translations = {
         "px": "Vie",
         "m": "Météo",
         "r": "RESTE",
-        "b_v": "✈️ Réserver le Vol (Skyscanner)",
-        "b_h": "🏨 Réserver l'Hôtel (Booking)",
+        "b_v": "✈️ Rechercher le Vol",
+        "b_h": "🏨 Réserver l'Hôtel",
         "t_eu": "🇪🇺 Europe",
         "t_am": "🌎 Amérique",
         "t_as": "🌏 Asie & Afrique"
@@ -84,23 +84,18 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        # NETTOYAGE STRICT ET SÉCURISATION DES LIENS DIRECTS
+        # SÉCURISATION ET ENCODAGE PROPRE DES LIENS DE DIRECTION
         nom_ville_web = urllib.parse.quote(infos["q"])
         
         url_skyscanner = f"https://skyscanner.fr{nom_ville_web}/"
         url_booking = f"https://booking.com{nom_ville_web}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
         
-        html_v = f'<a href="{url_skyscanner}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block; margin-bottom:10px;">{lang["b_v"]}</a>'
-        html_h = f'<a href="{url_booking}" target="_blank" style="text-decoration:none; background-color:#10B981; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_h"]}</a>'
-        
         col_b1, col_b2 = st.columns(2)
         with col_b1:
-            st.markdown(html_v, unsafe_allow_html=True)
+            st.link_button(lang["b_v"].format(ville=ville), url_skyscanner)
         with col_b2:
-            st.markdown(html_h, unsafe_allow_html=True)
+            st.link_button(lang["b_h"].format(ville=ville), url_booking)
         st.markdown("---")
-
-       
 
 if submit_button:
     total_voyageurs = adultes + enfants

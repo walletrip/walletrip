@@ -140,8 +140,8 @@ if submit_button:
         if dest_test:
             infos_c = {"vol": 500, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip(), "c": "PAR"}
             afficher_destination(destination_saisie.strip().capitalize(), infos_c)
-        else:
-            tab1, tab2, tab3 = st.tabs([lang["tab_eu"], lang["tab_am"], lang["tab_as"]])
+              else:
+            tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])
             with tab1:
                 for v, i in destinations_globales["Europe"].items():
                     afficher_destination(v, i)

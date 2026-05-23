@@ -1,5 +1,4 @@
 import streamlit as st
-import urllib.parse
 from datetime import datetime, timedelta
 
 # Configuration de la page Pouch
@@ -24,43 +23,15 @@ translations = {
         "px": "Vie",
         "m": "Météo",
         "r": "RESTE",
-        "b_v": "✈️ Vols",
-        "b_h": "🏨 Hôtels",
+        "b_v": "🔗 Réserver le Vol (Skyscanner)",
+        "b_h": "🔗 Réserver l'Hôtel (Booking)",
         "t_eu": "🇪🇺 Europe",
         "t_am": "🌎 Amérique",
-        "t_as": "🌏 Asie & Afrique",
-        "b_l": "fr"
-    },
-    "English": {
-        "title": "✈️ Pouch",
-        "sub": "Find trips based on your real budget.",
-        "dep": "🛫 Departure",
-        "dest": "📍 Specific Destination (Optional)",
-        "bud": "💰 Max Budget (€)",
-        "d_dep": "🗓️ Departure Date",
-        "d_ret": "🗓️ Return Date",
-        "ad": "👨‍💼 Adults",
-        "ch": "👶 Children",
-        "btn": "Find my trip",
-        "err": "Return date must be after departure.",
-        "ok": "Valid options for {total} people:",
-        "v": "Flights",
-        "l": "Hotel",
-        "px": "Life",
-        "m": "Weather",
-        "r": "POCKET MONEY",
-        "b_v": "✈️ Flights",
-        "b_h": "🏨 Hotels",
-        "t_eu": "🇪🇺 Europe",
-        "t_am": "🌎 America",
-        "t_as": "🌏 Asia & Africa",
-        "b_l": "en-us"
+        "t_as": "🌏 Asie & Afrique"
     }
 }
 
-langue = st.selectbox("🌐 Langue", ["Français", "English"])
-lang = translations[langue]
-
+lang = translations["Français"]
 st.title(lang["title"])
 st.subheader(lang["sub"])
 
@@ -80,17 +51,17 @@ with st.form("budget_form"):
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow", "c": "krk"},
-        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest", "c": "bud"},
-        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto", "c": "opo"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
     },
     "Amerique": {
-        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York", "c": "jfk"},
-        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal", "c": "yul"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
     },
     "AsieAfrique": {
-        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech", "c": "rak"},
-        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo", "c": "tyo"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
     }
 }
 
@@ -112,18 +83,15 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        c_enc = urllib.parse.quote(infos["q"])
-        code_air = str(infos["c"]).lower()
-        
-        # AJOUT CORRECT DE LA BARRE OBLIQUE APRES LE .FR POUR SKYSCANNER
-        link_v = f"https://skyscanner.fr{code_air}/"
-        link_h = f"https://booking.com{c_enc}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
+        # LIENS HTML SÉCURISÉS : PLUS AUCUN BOUTON STREAMLIT QUI FAIT PLANTER L'ADRESSE
+        html_v = f'<a href="{infos["url_v"]}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_v"]}</a>'
+        html_h = f'<a href="{infos["url_h"]}" target="_blank" style="text-decoration:none; background-color:#10B981; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_h"]}</a>'
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
-            st.link_button(lang["b_v"], link_v)
+            st.markdown(html_v, unsafe_allow_html=True)
         with col_b2:
-            st.link_button(lang["b_h"], link_h)
+            st.markdown(html_h, unsafe_allow_html=True)
         st.markdown("---")
 
 if submit_button:
@@ -133,13 +101,11 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["err"])
     else:
-        str_d = date_debut.strftime("%Y-%m-%d")
-        str_f = date_fin.strftime("%Y-%m-%d")
         dest_test = destination_saisie.strip().lower()
         st.success(lang["ok"].format(total=total_voyageurs))
         
         if dest_test:
-            infos_c = {"vol": 500, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip(), "c": "par"}
+            infos_c = {"vol": 400, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
             afficher_destination(destination_saisie.strip().capitalize(), infos_c)
         else:
             tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])

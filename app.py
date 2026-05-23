@@ -15,8 +15,7 @@ from datetime import datetime, timedelta
 # ─────────────────────────────────────────────
 #  CONFIGURATION TRAVELPAYOUT + RAPIDAPI
 # ─────────────────────────────────────────────
-SKYSCANNER_API_KEY  = os.getenv("SKYSCANNER_API_KEY", "VOTRE_CLE_RAPIDAPI_SKYSCANNER")
-BOOKING_API_KEY     = os.getenv("BOOKING_API_KEY",    "VOTRE_CLE_RAPIDAPI_BOOKING")
+
 
 # Travelpayout — votre ID affilié unique
 TRAVELPAYOUT_ID     = "731169"

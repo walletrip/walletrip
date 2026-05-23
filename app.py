@@ -1,4 +1,5 @@
 import streamlit as st
+import urllib.parse
 from datetime import datetime, timedelta
 
 # Configuration de la page Pouch
@@ -23,8 +24,8 @@ translations = {
         "px": "Vie",
         "m": "Météo",
         "r": "RESTE",
-        "b_v": "🔗 Réserver le Vol (Skyscanner)",
-        "b_h": "🔗 Réserver l'Hôtel (Booking)",
+        "b_v": "✈️ Réserver le Vol (Skyscanner)",
+        "b_h": "🏨 Réserver l'Hôtel (Booking)",
         "t_eu": "🇪🇺 Europe",
         "t_am": "🌎 Amérique",
         "t_as": "🌏 Asie & Afrique"
@@ -51,17 +52,17 @@ with st.form("budget_form"):
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
-        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
-        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto"}
     },
     "Amerique": {
-        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
-        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal"}
     },
     "AsieAfrique": {
-        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"},
-        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo"}
     }
 }
 
@@ -83,9 +84,15 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        # LIENS HTML SÉCURISÉS : PLUS AUCUN BOUTON STREAMLIT QUI FAIT PLANTER L'ADRESSE
-        html_v = f'<a href="{infos["url_v"]}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_v"]}</a>'
-        html_h = f'<a href="{infos["url_h"]}" target="_blank" style="text-decoration:none; background-color:#10B981; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_h"]}</a>'
+        # SÉCURISATION ET ENCODAGE DE LA VILLE EN DIRECT POUR LES RECHERCHES CIBLÉES
+        nom_ville_web = urllib.parse.quote(infos["q"])
+        
+        # LIENS HTML INDESTRUCTIBLES LIÉS AUX DEUX COMPTES OFFICIELS PAR VILLE
+        url_skyscanner = f"https://skyscanner.fr{nom_ville_web}/"
+        url_booking = f"https://booking.com{nom_ville_web}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
+        
+        html_v = f'<a href="{url_skyscanner}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_v"]}</a>'
+        html_h = f'<a href="{url_booking}" target="_blank" style="text-decoration:none; background-color:#10B981; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_h"]}</a>'
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
@@ -101,11 +108,13 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["err"])
     else:
+        str_d = date_debut.strftime("%Y-%m-%d")
+        str_f = date_fin.strftime("%Y-%m-%d")
         dest_test = destination_saisie.strip().lower()
         st.success(lang["ok"].format(total=total_voyageurs))
         
         if dest_test:
-            infos_c = {"vol": 400, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "url_v": "https://skyscanner.fr", "url_h": "https://booking.com"}
+            infos_c = {"vol": 400, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip()}
             afficher_destination(destination_saisie.strip().capitalize(), infos_c)
         else:
             tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])

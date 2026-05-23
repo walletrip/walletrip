@@ -1090,7 +1090,7 @@ with tab_cost:
 #  ONGLET 3 — MÉTÉO
 # ══════════════════════════════════════════════
 with tab_weather:
-    st.markdown(f\'\'\')
+    st.markdown(f'''
 <div class="hero" style="padding:1.2rem 0 1.8rem; margin-bottom:1.5rem;">
   <div class="hero-title" style="font-size:2.2rem;">{T["wx_title"]}</div>
   <div class="hero-sub">{T["wx_sub"]}</div>

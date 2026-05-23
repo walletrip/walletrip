@@ -84,14 +84,13 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        # SÉCURISATION ET ENCODAGE DE LA VILLE EN DIRECT POUR LES RECHERCHES CIBLÉES
+        # NETTOYAGE STRICT ET SÉCURISATION DES LIENS DIRECTS
         nom_ville_web = urllib.parse.quote(infos["q"])
         
-        # LIENS HTML INDESTRUCTIBLES LIÉS AUX DEUX COMPTES OFFICIELS PAR VILLE
         url_skyscanner = f"https://skyscanner.fr{nom_ville_web}/"
         url_booking = f"https://booking.com{nom_ville_web}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
         
-        html_v = f'<a href="{url_skyscanner}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_v"]}</a>'
+        html_v = f'<a href="{url_skyscanner}" target="_blank" style="text-decoration:none; background-color:#1E3A8A; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block; margin-bottom:10px;">{lang["b_v"]}</a>'
         html_h = f'<a href="{url_booking}" target="_blank" style="text-decoration:none; background-color:#10B981; color:white; padding:10px 20px; border-radius:5px; font-weight:bold; display:inline-block;">{lang["b_h"]}</a>'
         
         col_b1, col_b2 = st.columns(2)
@@ -100,6 +99,8 @@ def afficher_destination(ville, infos):
         with col_b2:
             st.markdown(html_h, unsafe_allow_html=True)
         st.markdown("---")
+
+       
 
 if submit_button:
     total_voyageurs = adultes + enfants

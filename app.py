@@ -1090,13 +1090,12 @@ with tab_cost:
 #  ONGLET 3 — MÉTÉO
 # ══════════════════════════════════════════════
 with tab_weather:
-    st.markdown(f'''''',
+    st.markdown(f'''
 <div class="hero" style="padding:1.2rem 0 1.8rem; margin-bottom:1.5rem;">
   <div class="hero-title" style="font-size:2.2rem;">{T["wx_title"]}</div>
   <div class="hero-sub">{T["wx_sub"]}</div>
 </div>
 ''', unsafe_allow_html=True)
-
 
     col_wx, col_wxbtn = st.columns([4, 1])
     with col_wx:
@@ -1108,13 +1107,13 @@ with tab_weather:
     if wx_btn and wx_city.strip():
         wx = get_weather(wx_city.strip())
         if not wx:
-            st.markdown(f\'<div class="msg-sage">⟶ {T["wx_err"]}</div>\', unsafe_allow_html=True)
+            st.markdown(f'<div class="msg-sage">⟶ {T["wx_err"]}</div>', unsafe_allow_html=True)
         else:
             bg = "#FFF8EE" if wx["is_day"] else "#1A1A2E"
             fg = "#0D0D0D" if wx["is_day"] else "#E8E0D0"
             muted = "#6B6560" if wx["is_day"] else "#9A9080"
 
-            st.markdown(f\'\'\'
+            st.markdown(f'''
 <div class="dest-card" style="max-width:540px;margin:0 auto 2rem;background:{bg};">
   <div class="dest-body">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
@@ -1156,10 +1155,10 @@ with tab_weather:
     </div>
   </div>
 </div>
-\'\'\', unsafe_allow_html=True)
+''', unsafe_allow_html=True)
 
     elif wx_btn:
-        st.markdown(f\'<div class="msg-sage">⟶ {T["wx_err"]}</div>\', unsafe_allow_html=True)
+        st.markdown(f'<div class="msg-sage">⟶ {T["wx_err"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="no-result">{T["wx_prompt"]}</div>', unsafe_allow_html=True)
 

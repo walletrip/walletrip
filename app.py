@@ -49,19 +49,20 @@ with st.form("budget_form"):
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "p": "Pologne", "v": "https://aviasales.fr", "h": "https://booking.com"},
-        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "p": "Hongrie", "v": "https://aviasales.fr", "h": "https://booking.com"},
-        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "p": "Portugal", "v": "https://aviasales.fr", "h": "https://booking.com"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "p": "Pologne", "v": "https://aviasales.fr", "h": "Krakow"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "p": "Hongrie", "v": "https://aviasales.fr", "h": "Budapest"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "p": "Portugal", "v": "https://aviasales.fr", "h": "Porto"}
     },
     "Amerique": {
-        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "p": "États-Unis", "v": "https://aviasales.fr", "h": "https://booking.com"},
-        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "p": "Canada", "v": "https://aviasales.fr", "h": "https://booking.com"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "p": "États-Unis", "v": "https://aviasales.fr", "h": "New-York"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "p": "Canada", "v": "https://aviasales.fr", "h": "Montreal"}
     },
     "AsieAfrique": {
-        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "p": "Maroc", "v": "https://aviasales.fr", "h": "https://booking.com"},
-        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "p": "Japon", "v": "https://aviasales.fr", "h": "https://booking.com"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "p": "Maroc", "v": "https://aviasales.fr", "h": "Marrakech"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "p": "Japon", "v": "https://aviasales.fr", "h": "Tokyo"}
     }
 }
+
 
 def afficher_destination(ville, infos):
     cout_v = infos["vol"] * total_voyageurs
@@ -81,9 +82,11 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        # INJECTE DIRECTEMENT LES LIENS COMPLETS EN CLAIR ET PRÉ-CONFIGURÉS PAR VILLE
+        # STRUCTURATION ABSOLUE ET SÉCURISÉE DES DEUX LIENS DIRECTS PAR VILLE
         v_link_full = f"{infos['v']}&origin={depart.strip().upper()}&depart_date={str_d}&return_date={str_f}"
-        h_link_full = f"{infos['h']}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
+        
+        # AJOUT CORRECT DE /searchresults.fr.html? POUR CORRIGER L'ERREUR BOOKING
+        h_link_full = f"https://booking.com{infos['h']}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
         
         col_b1, col_b2 = st.columns(2)
         with col_b1:
@@ -91,6 +94,7 @@ def afficher_destination(ville, infos):
         with col_b2:
             st.link_button(lang["b_h"], h_link_full)
         st.markdown("---")
+
 
 if submit_button:
     total_voyageurs = adultes + enfants

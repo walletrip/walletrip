@@ -5,11 +5,12 @@ Réseau affilié : Travelpayout (ID 731169)
 """
 
 
-import requests
-from datetime import datetime, date
-import os
+import streamlit as st
+import urllib.parse
+from datetime import datetime, timedelta
 
-app = Flask(__name__)
+
+
 
 # ─────────────────────────────────────────────
 #  CONFIGURATION TRAVELPAYOUT + RAPIDAPI

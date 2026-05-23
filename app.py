@@ -1,5 +1,4 @@
 import streamlit as st
-import urllib.parse
 from datetime import datetime, timedelta
 
 # Configuration de la page Pouch
@@ -10,7 +9,6 @@ translations = {
         "title": "✈️ Pouch",
         "sub": "Trouvez des voyages selon votre budget réel.",
         "dep": "🛫 Départ",
-        "dest": "📍 Ville ou Pays précis (Optionnel)",
         "bud": "💰 Budget MAX (€)",
         "d_dep": "🗓️ Date aller",
         "d_ret": "🗓️ Date retour",
@@ -47,22 +45,21 @@ with st.form("budget_form"):
         date_fin = st.date_input(lang["d_ret"], datetime.today() + timedelta(days=4))
         enfants = st.number_input(lang["ch"], min_value=0, value=0)
         
-    destination_saisie = st.text_input(lang["dest"], "")
     submit_button = st.form_submit_button(label=lang["btn"])
 
 destinations_globales = {
     "Europe": {
-        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "q": "Krakow"},
-        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "q": "Budapest"},
-        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "q": "Porto"}
+        "Cracovie": {"vol": 70, "hotel": 35, "vie": 20, "meteo": "☀️ 22°C", "pays": "Pologne", "v_link": "https://tp.st", "h_link": "https://tp.st"},
+        "Budapest": {"vol": 85, "hotel": 40, "vie": 25, "meteo": "🌤️ 20°C", "pays": "Hongrie", "v_link": "https://tp.st", "h_link": "https://tp.st"},
+        "Porto": {"vol": 90, "hotel": 55, "vie": 30, "meteo": "🌊 25°C", "pays": "Portugal", "v_link": "https://tp.st", "h_link": "https://tp.st"}
     },
     "Amerique": {
-        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "q": "New York"},
-        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "q": "Montreal"}
+        "New York": {"vol": 450, "hotel": 160, "vie": 70, "meteo": "🗽 23°C", "pays": "États-Unis", "v_link": "https://tp.st", "h_link": "https://tp.st"},
+        "Montréal": {"vol": 400, "hotel": 110, "vie": 50, "meteo": "🍁 21°C", "pays": "Canada", "v_link": "https://tp.st", "h_link": "https://tp.st"}
     },
     "AsieAfrique": {
-        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "q": "Marrakech"},
-        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "q": "Tokyo"}
+        "Marrakech": {"vol": 120, "hotel": 50, "vie": 25, "meteo": "🌵 31°C", "pays": "Maroc", "v_link": "https://tp.st", "h_link": "https://tp.st"},
+        "Tokyo": {"vol": 750, "hotel": 90, "vie": 45, "meteo": "🌸 19°C", "pays": "Japon", "v_link": "https://tp.st", "h_link": "https://tp.st"}
     }
 }
 
@@ -74,7 +71,7 @@ def afficher_destination(ville, infos):
     
     if total_estime <= budget:
         reste = budget - total_estime
-        st.markdown(f"### 📍 {ville}")
+        st.markdown(f"### 📍 {ville}, {infos['pays']}")
         col_c1, col_c2 = st.columns(2)
         with col_c1:
             st.markdown(f"- **{lang['v']}** : {cout_v}€")
@@ -84,18 +81,11 @@ def afficher_destination(ville, infos):
             st.info(f"🌤️ **{lang['m']}** : {infos['meteo']}")
             st.metric(label=f"🔥 {lang['r']}", value=f"{reste}€")
         
-        # SÉCURISATION ET ENCODAGE PROPRE DES LIENS DE DIRECTION
-        nom_ville_web = urllib.parse.quote(infos["q"])
-        
-        url_skyscanner = f"https://skyscanner.fr{nom_ville_web}/"
-        url_booking = f"https://booking.com{nom_ville_web}&checkin={str_d}&checkout={str_f}&group_adults={adultes}&group_children={enfants}"
-
-        
         col_b1, col_b2 = st.columns(2)
         with col_b1:
-            st.link_button(lang["b_v"].format(ville=ville), url_skyscanner)
+            st.link_button(lang["b_v"], infos["v_link"])
         with col_b2:
-            st.link_button(lang["b_h"].format(ville=ville), url_booking)
+            st.link_button(lang["b_h"], infos["h_link"])
         st.markdown("---")
 
 if submit_button:
@@ -105,22 +95,14 @@ if submit_button:
     if nb_jours <= 0:
         st.error(lang["err"])
     else:
-        str_d = date_debut.strftime("%Y-%m-%d")
-        str_f = date_fin.strftime("%Y-%m-%d")
-        dest_test = destination_saisie.strip().lower()
         st.success(lang["ok"].format(total=total_voyageurs))
-        
-        if dest_test:
-            infos_c = {"vol": 400, "hotel": 80, "vie": 40, "meteo": "🌤️ Variable", "q": destination_saisie.strip()}
-            afficher_destination(destination_saisie.strip().capitalize(), infos_c)
-        else:
-            tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])
-            with tab1:
-                for v, i in destinations_globales["Europe"].items():
-                    afficher_destination(v, i)
-            with tab2:
-                for v, i in destinations_globales["Amerique"].items():
-                    afficher_destination(v, i)
-            with tab3:
-                for v, i in destinations_globales["AsieAfrique"].items():
-                    afficher_destination(v, i)
+        tab1, tab2, tab3 = st.tabs([lang["t_eu"], lang["t_am"], lang["t_as"]])
+        with tab1:
+            for v, i in destinations_globales["Europe"].items():
+                afficher_destination(v, i)
+        with tab2:
+            for v, i in destinations_globales["Amerique"].items():
+                afficher_destination(v, i)
+        with tab3:
+            for v, i in destinations_globales["AsieAfrique"].items():
+                afficher_destination(v, i)

@@ -294,14 +294,31 @@ st.markdown("""
   /* slider */
   div[data-testid="stSlider"] > div > div > div { background: var(--ink) !important; }
 
+  /* messages — vert sauge */
+  .msg-sage {
+    background: #EEF2EE;
+    border-left: 2px solid #7A9E7E;
+    color: #4A6E4E;
+    font-size: 0.82rem;
+    letter-spacing: 0.05em;
+    padding: 0.7rem 1rem;
+    margin: 0.5rem 0;
+    font-style: italic;
+  }
+
   /* no result */
   .no-result { text-align:center; padding:5rem 2rem; color:var(--muted); font-size:0.9rem; font-weight:300; letter-spacing:0.05em; }
 
-  /* info / error */
+  /* info / error / success — tout en vert sauge */
   div[data-testid="stAlert"] {
-    background: var(--cream2) !important; border: 1px solid var(--border) !important;
-    border-radius: 0 !important; color: var(--muted) !important; font-size: 0.82rem !important;
+    background: #EEF2EE !important;
+    border: 1px solid #7A9E7E !important;
+    border-radius: 0 !important;
+    color: #4A6E4E !important;
+    font-size: 0.82rem !important;
   }
+  div[data-testid="stAlert"] svg { color: #7A9E7E !important; fill: #7A9E7E !important; }
+  div[data-testid="stAlert"] p { color: #4A6E4E !important; }
 
   /* caption */
   .stCaption, [data-testid="stCaptionContainer"] p { color: var(--muted) !important; }
@@ -347,7 +364,7 @@ LANGS = {
         "search":     "Rechercher",
         "powered":    "Propulsé par Travelpayout",
         "tab_search":  "✈  Recherche",
-        "tab_cost":    "◻  Coût de la vie",
+        "tab_cost":    "❧  Coût de la vie",
         "cost_title":  "Coût de la vie par jour",
         "cost_sub":    "Entrez une ville pour estimer votre budget quotidien",
         "cost_input":  "Ville de destination",
@@ -373,9 +390,23 @@ LANGS = {
         "hotel_live": "Hôtel : ~{p:,} €/nuit",
         "reste":      "+{r:,} € restant · {n} nuits",
         "btn_sky":    "✈  Skyscanner",
-        "btn_book":   "◻  Booking",
+        "btn_book":   "⌂  Booking",
         "fav_label":  "Favori",
         "per_pax":    "pour {v} voyageur(s)",
+        "tab_weather":    "☁  Météo",
+        "wx_title":       "Météo par destination",
+        "wx_sub":         "Entrez une ville pour connaître la météo actuelle",
+        "wx_input":       "Ville",
+        "wx_ph":          "ex : Tokyo, Lisbonne, Dubaï…",
+        "wx_btn":         "Voir la météo",
+        "wx_feels":       "Ressenti",
+        "wx_humidity":    "Humidité",
+        "wx_wind":        "Vent",
+        "wx_sunrise":     "Lever",
+        "wx_sunset":      "Coucher",
+        "wx_err":         "Ville introuvable. Vérifiez l'orthographe.",
+        "wx_prompt":      "Tapez une ville et cliquez sur Voir la météo.",
+        "wx_src":         "Source : Open-Meteo + OpenStreetMap (données temps réel)",
     },
     "🇬🇧 English": {
         "subtitle":   "Travel within your budget",
@@ -392,7 +423,7 @@ LANGS = {
         "search":     "Search",
         "powered":    "Powered by Travelpayout",
         "tab_search":  "✈  Search",
-        "tab_cost":    "◻  Cost of living",
+        "tab_cost":    "❧  Cost of living",
         "cost_title":  "Daily cost of living",
         "cost_sub":    "Enter a city to estimate your daily budget",
         "cost_input":  "Destination city",
@@ -418,9 +449,23 @@ LANGS = {
         "hotel_live": "Hotel: ~€{p:,}/night",
         "reste":      "+€{r:,} remaining · {n} nights",
         "btn_sky":    "✈  Skyscanner",
-        "btn_book":   "◻  Booking",
+        "btn_book":   "⌂  Booking",
         "fav_label":  "Favourite",
         "per_pax":    "for {v} traveller(s)",
+        "tab_weather":    "☁  Weather",
+        "wx_title":       "Weather by destination",
+        "wx_sub":         "Enter a city to check current weather",
+        "wx_input":       "City",
+        "wx_ph":          "e.g. Tokyo, Lisbon, Dubai…",
+        "wx_btn":         "Check weather",
+        "wx_feels":       "Feels like",
+        "wx_humidity":    "Humidity",
+        "wx_wind":        "Wind",
+        "wx_sunrise":     "Sunrise",
+        "wx_sunset":      "Sunset",
+        "wx_err":         "City not found. Check spelling.",
+        "wx_prompt":      "Enter a city and click Check weather.",
+        "wx_src":         "Source: Open-Meteo + OpenStreetMap (live data)",
     },
     "🇪🇸 Español": {
         "subtitle":   "Viaja según tu presupuesto",
@@ -437,7 +482,7 @@ LANGS = {
         "search":     "Buscar",
         "powered":    "Desarrollado por Travelpayout",
         "tab_search":  "✈  Búsqueda",
-        "tab_cost":    "◻  Coste de vida",
+        "tab_cost":    "❧  Coste de vida",
         "cost_title":  "Coste de vida por día",
         "cost_sub":    "Introduce una ciudad para estimar tu presupuesto diario",
         "cost_input":  "Ciudad de destino",
@@ -463,9 +508,23 @@ LANGS = {
         "hotel_live": "Hotel: ~{p:,} €/noche",
         "reste":      "+{r:,} € restante · {n} noches",
         "btn_sky":    "✈  Skyscanner",
-        "btn_book":   "◻  Booking",
+        "btn_book":   "⌂  Booking",
         "fav_label":  "Favorito",
         "per_pax":    "para {v} viajero(s)",
+        "tab_weather":    "☁  Tiempo",
+        "wx_title":       "Tiempo por destino",
+        "wx_sub":         "Introduce una ciudad para ver el tiempo actual",
+        "wx_input":       "Ciudad",
+        "wx_ph":          "ej: Tokio, Lisboa, Dubái…",
+        "wx_btn":         "Ver el tiempo",
+        "wx_feels":       "Sensación",
+        "wx_humidity":    "Humedad",
+        "wx_wind":        "Viento",
+        "wx_sunrise":     "Amanecer",
+        "wx_sunset":      "Atardecer",
+        "wx_err":         "Ciudad no encontrada. Verifica la ortografía.",
+        "wx_prompt":      "Introduce una ciudad y haz clic en Ver el tiempo.",
+        "wx_src":         "Fuente: Open-Meteo + OpenStreetMap (datos en tiempo real)",
     },
 }
 
@@ -641,6 +700,76 @@ def render_card(r, T, depart_iata, d1_str, d2_str, adultes, nuits, total_v):
     return html
 
 # ─────────────────────────────────────────────
+#  MÉTÉO — Open-Meteo (gratuit, sans clé API)
+# ─────────────────────────────────────────────
+WX_CODES = {
+    0:  ("Ciel dégagé",       "☀️"),
+    1:  ("Principalement clair","🌤"),  2: ("Partiellement nuageux","⛅"),
+    3:  ("Couvert",            "☁️"),
+    45: ("Brouillard",         "🌫"),  48: ("Brouillard givrant",  "🌫"),
+    51: ("Bruine légère",      "🌦"),  53: ("Bruine modérée",      "🌦"),  55: ("Bruine dense","🌧"),
+    61: ("Pluie légère",       "🌧"),  63: ("Pluie modérée",       "🌧"),  65: ("Pluie forte","🌧"),
+    71: ("Neige légère",       "🌨"),  73: ("Neige modérée",       "🌨"),  75: ("Neige forte","❄️"),
+    80: ("Averses légères",    "🌦"),  81: ("Averses modérées",    "🌧"),  82: ("Averses fortes","⛈"),
+    95: ("Orage",              "⛈"),  96: ("Orage avec grêle",    "⛈"),  99: ("Orage violent","⛈"),
+}
+
+@st.cache_data(ttl=600, show_spinner=False)
+def get_weather(city: str) -> dict | None:
+    """Géocode la ville via Nominatim puis appelle Open-Meteo."""
+    try:
+        # Géocodage
+        geo = requests.get(
+            "https://nominatim.openstreetmap.org/search",
+            params={"q": city, "format": "json", "limit": 1},
+            headers={"User-Agent": "PouchVoyage/1.0"},
+            timeout=6
+        ).json()
+        if not geo:
+            return None
+        lat  = float(geo[0]["lat"])
+        lon  = float(geo[0]["lon"])
+        name = geo[0].get("display_name", city).split(",")[0]
+
+        # Météo actuelle
+        wx = requests.get(
+            "https://api.open-meteo.com/v1/forecast",
+            params={
+                "latitude": lat, "longitude": lon,
+                "current": "temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,weather_code,is_day",
+                "daily":   "sunrise,sunset,temperature_2m_max,temperature_2m_min",
+                "timezone": "auto", "forecast_days": 1,
+            },
+            timeout=6
+        ).json()
+
+        cur   = wx.get("current", {})
+        daily = wx.get("daily", {})
+        code  = cur.get("weather_code", 0)
+        desc, emoji = WX_CODES.get(code, ("—", "🌡"))
+
+        sunrise = daily.get("sunrise", [""])[0]
+        sunset  = daily.get("sunset",  [""])[0]
+        fmt_time = lambda s: s.split("T")[1][:5] if "T" in s else s
+
+        return {
+            "city":       name,
+            "temp":       round(cur.get("temperature_2m", 0)),
+            "feels":      round(cur.get("apparent_temperature", 0)),
+            "humidity":   cur.get("relative_humidity_2m", 0),
+            "wind":       round(cur.get("wind_speed_10m", 0)),
+            "desc":       desc,
+            "emoji":      emoji,
+            "is_day":     cur.get("is_day", 1),
+            "temp_max":   round(daily.get("temperature_2m_max", [0])[0]),
+            "temp_min":   round(daily.get("temperature_2m_min", [0])[0]),
+            "sunrise":    fmt_time(sunrise),
+            "sunset":     fmt_time(sunset),
+        }
+    except Exception:
+        return None
+
+# ─────────────────────────────────────────────
 #  COÛT DE LA VIE — données Numbeo via leur API publique
 # ─────────────────────────────────────────────
 # Base de données locale enrichie (€/jour/personne) pour les villes populaires
@@ -809,7 +938,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-tab_search, tab_cost = st.tabs([T["tab_search"], T["tab_cost"]])
+tab_search, tab_cost, tab_weather = st.tabs([T["tab_search"], T["tab_cost"], T["tab_weather"]])
 
 # ══════════════════════════════════════════════
 #  ONGLET 1 — RECHERCHE DE VOYAGES
@@ -817,42 +946,39 @@ tab_search, tab_cost = st.tabs([T["tab_search"], T["tab_cost"]])
 with tab_search:
     if not chercher:
         st.markdown(f'<div class="no-result">{T["fill_form"]}</div>', unsafe_allow_html=True)
-        st.stop()
+    elif (d2 - d1).days <= 0:
+        st.markdown(f'<div class="msg-sage">⟶ {T["date_err"]}</div>', unsafe_allow_html=True)
+    else:
+        nuits = (d2 - d1).days
+        d1_str    = d1.strftime("%Y-%m-%d")
+        d2_str    = d2.strftime("%Y-%m-%d")
+        fav_lower = fav.lower().strip()
+        total_v   = adultes + enfants + bebes
 
-    nuits = (d2 - d1).days
-    if nuits <= 0:
-        st.error(T["date_err"])
-        st.stop()
+        resultats = []
+        for dest in DESTINATIONS:
+            prix_est = prix_total(dest["prix_base"], adultes, enfants, bebes)
+            if prix_est > budget:
+                continue
+            score = 2 if prix_est <= budget * 0.75 else 0
+            nom_lower = dest["nom"].lower() + " " + dest["pays"].lower()
+            if fav_lower and (fav_lower in nom_lower or any(m in fav_lower for m in nom_lower.split())):
+                score += 10
+            resultats.append({
+                **dest,
+                "prix_estime": prix_est,
+                "nuits":       nuits,
+                "reste":       budget - prix_est,
+                "score":       score,
+                "is_favorite": score >= 10,
+                "url_sky":     build_skyscanner_url(depart_iata, dest["iata"], d1_str, d2_str, adultes, enfants, bebes),
+                "url_book":    build_booking_url(dest["booking_id"], d1_str, d2_str, adultes, enfants),
+            })
 
-    d1_str    = d1.strftime("%Y-%m-%d")
-    d2_str    = d2.strftime("%Y-%m-%d")
-    fav_lower = fav.lower().strip()
-    total_v   = adultes + enfants + bebes
+        resultats.sort(key=lambda x: (-x["score"], x["prix_estime"]))
+        resultats = resultats[:12]
 
-    resultats = []
-    for dest in DESTINATIONS:
-        prix_est = prix_total(dest["prix_base"], adultes, enfants, bebes)
-        if prix_est > budget:
-            continue
-        score = 2 if prix_est <= budget * 0.75 else 0
-        nom_lower = dest["nom"].lower() + " " + dest["pays"].lower()
-        if fav_lower and (fav_lower in nom_lower or any(m in fav_lower for m in nom_lower.split())):
-            score += 10
-        resultats.append({
-            **dest,
-            "prix_estime": prix_est,
-            "nuits":       nuits,
-            "reste":       budget - prix_est,
-            "score":       score,
-            "is_favorite": score >= 10,
-            "url_sky":     build_skyscanner_url(depart_iata, dest["iata"], d1_str, d2_str, adultes, enfants, bebes),
-            "url_book":    build_booking_url(dest["booking_id"], d1_str, d2_str, adultes, enfants),
-        })
-
-    resultats.sort(key=lambda x: (-x["score"], x["prix_estime"]))
-    resultats = resultats[:12]
-
-    st.markdown(f"""
+        st.markdown(f"""
 <div class="summary">
   <b>{len(resultats)}</b> destination(s)
   <span class="summary-dot">·</span>
@@ -864,20 +990,20 @@ with tab_search:
 </div>
 """, unsafe_allow_html=True)
 
-    if not resultats:
-        st.markdown(f'<div class="no-result">{T["no_result"]}</div>', unsafe_allow_html=True)
-    else:
-        cols = st.columns(3)
-        for i, r in enumerate(resultats):
-            with cols[i % 3]:
-                html = render_card(r, T, depart_iata, d1_str, d2_str, adultes, nuits, total_v)
-                st.markdown(html, unsafe_allow_html=True)
-                b1, b2 = st.columns(2)
-                with b1:
-                    st.link_button(T["btn_sky"], r["url_sky"], use_container_width=True)
-                with b2:
-                    st.link_button(T["btn_book"], r["url_book"], use_container_width=True)
-                st.markdown("<div style='margin-bottom:1.2rem'></div>", unsafe_allow_html=True)
+        if not resultats:
+            st.markdown(f'<div class="no-result">{T["no_result"]}</div>', unsafe_allow_html=True)
+        else:
+            cols = st.columns(3)
+            for i, r in enumerate(resultats):
+                with cols[i % 3]:
+                    html = render_card(r, T, depart_iata, d1_str, d2_str, adultes, nuits, total_v)
+                    st.markdown(html, unsafe_allow_html=True)
+                    b1, b2 = st.columns(2)
+                    with b1:
+                        st.link_button(T["btn_sky"], r["url_sky"], use_container_width=True)
+                    with b2:
+                        st.link_button(T["btn_book"], r["url_book"], use_container_width=True)
+                    st.markdown("<div style='margin-bottom:1.2rem'></div>", unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
 #  ONGLET 2 — COÛT DE LA VIE
@@ -903,7 +1029,7 @@ with tab_cost:
     if calc_btn and city_input.strip():
         cost = get_cost_of_living(city_input.strip())
         if not cost:
-            st.error(T["cost_err"])
+            st.markdown(f'<div class="msg-sage">⟶ {T["cost_err"]}</div>', unsafe_allow_html=True)
         else:
             cats   = T["cost_cats"]
             total  = sum(cost.values())
@@ -956,6 +1082,82 @@ with tab_cost:
 """, unsafe_allow_html=True)
 
     elif calc_btn:
-        st.warning("Entrez le nom d'une ville.")
+        st.markdown('<div class="msg-sage">⟶ Entrez le nom d\'une ville.</div>', unsafe_allow_html=True)
     else:
         st.markdown('<div class="no-result">Tapez une ville ci-dessus et cliquez sur Calculer.</div>', unsafe_allow_html=True)
+
+# ══════════════════════════════════════════════
+#  ONGLET 3 — MÉTÉO
+# ══════════════════════════════════════════════
+with tab_weather:
+    st.markdown(f\'\'\'
+<div class="hero" style="padding:1.2rem 0 1.8rem; margin-bottom:1.5rem;">
+  <div class="hero-title" style="font-size:2.2rem;">{T["wx_title"]}</div>
+  <div class="hero-sub">{T["wx_sub"]}</div>
+</div>
+\'\'\', unsafe_allow_html=True)
+
+    col_wx, col_wxbtn = st.columns([4, 1])
+    with col_wx:
+        wx_city = st.text_input(T["wx_input"], placeholder=T["wx_ph"],
+                                label_visibility="collapsed")
+    with col_wxbtn:
+        wx_btn = st.button(T["wx_btn"], use_container_width=True)
+
+    if wx_btn and wx_city.strip():
+        wx = get_weather(wx_city.strip())
+        if not wx:
+            st.markdown(f\'<div class="msg-sage">⟶ {T["wx_err"]}</div>\', unsafe_allow_html=True)
+        else:
+            bg = "#FFF8EE" if wx["is_day"] else "#1A1A2E"
+            fg = "#0D0D0D" if wx["is_day"] else "#E8E0D0"
+            muted = "#6B6560" if wx["is_day"] else "#9A9080"
+
+            st.markdown(f\'\'\'
+<div class="dest-card" style="max-width:540px;margin:0 auto 2rem;background:{bg};">
+  <div class="dest-body">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
+      <div>
+        <div class="dest-name" style="font-size:2rem;color:{fg};">{wx["city"]}</div>
+        <div class="dest-country" style="color:{muted};">{wx["desc"]}</div>
+      </div>
+      <div style="font-size:3.5rem;line-height:1;">{wx["emoji"]}</div>
+    </div>
+
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:1.2rem;">
+      <div style="font-family:\'Cormorant Garamond\',serif;font-size:4rem;font-weight:300;color:{fg};line-height:1;">{wx["temp"]}°</div>
+      <div style="color:{muted};font-size:0.75rem;letter-spacing:0.06em;">
+        ↑ {wx["temp_max"]}° &nbsp; ↓ {wx["temp_min"]}°
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem;">
+      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_feels"]}</div>
+        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["feels"]}°</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_humidity"]}</div>
+        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["humidity"]} %</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_wind"]}</div>
+        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["wind"]} km/h</div>
+      </div>
+      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
+        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_sunrise"]} · {T["wx_sunset"]}</div>
+        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.1rem;color:{fg};">{wx["sunrise"]} · {wx["sunset"]}</div>
+      </div>
+    </div>
+
+    <div style="font-size:0.65rem;letter-spacing:0.07em;color:{muted};text-align:center;border-top:1px solid var(--border);padding-top:0.8rem;">
+      {T["wx_src"]}
+    </div>
+  </div>
+</div>
+\'\'\', unsafe_allow_html=True)
+
+    elif wx_btn:
+        st.markdown(f\'<div class="msg-sage">⟶ {T["wx_err"]}</div>\', unsafe_allow_html=True)
+    else:
+        st.markdown(f\'<div class="no-result">{T["wx_prompt"]}</div>\', unsafe_allow_html=True)

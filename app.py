@@ -4,7 +4,7 @@ Backend Flask avec intégration Skyscanner RapidAPI + Booking.com
 Réseau affilié : Travelpayout (ID 731169)
 """
 
-from flask import Flask, render_template, request, jsonify
+
 import requests
 from datetime import datetime, date
 import os

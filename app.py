@@ -1,6 +1,6 @@
 """
 Application de recherche de voyages
-Backend Flask avec intégration Skyscanner RapidAPI + Booking.com
+Backend Pouch avec intégration Skyscanner RapidAPI + Booking.com
 Réseau affilié : Travelpayout (ID 731169)
 """
 

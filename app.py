@@ -13,7 +13,61 @@ st.set_page_config(
     page_title="Pouch Voyage",
     page_icon="✈️",
     layout="wide",
-    initial_sidebar_state="expanded",
+    # ─────────────────────────────────────────────
+#  HERO BANNER (Page d'accueil visuelle)
+# ─────────────────────────────────────────────
+st.markdown("""
+<div class="hero-container">
+    <div class="hero-title">Pouch Voyage</div>
+    <div class="hero-slogan">L'art de voyager selon votre budget</div>
+</div>
+""", unsafe_allow_html=True)
+
+# ─────────────────────────────────────────────
+#  BANDEAU DE RECHERCHE HORIZONTAL
+# ─────────────────────────────────────────────
+st.markdown('<div class="top-search-bar">', unsafe_allow_html=True)
+
+# On crée 4 colonnes pour étaler le formulaire horizontalement
+col_lang, col_dep, col_dates, col_budget, col_btn = st.columns([1, 1.5, 2, 1.5, 1])
+
+with col_lang:
+    lang_key = st.selectbox("Langue", list(LANGS.keys()))
+    T = LANGS[lang_key]
+
+with col_dep:
+    ville_options = [f"{v['flag']} {v['nom']} ({v['iata']})" for v in VILLES_DEPART]
+    ville_idx = st.selectbox(T["depart"], range(len(ville_options)), format_func=lambda i: ville_options[i])
+    depart_ville = VILLES_DEPART[ville_idx]
+    depart_iata = depart_ville["iata"]
+
+with col_dates:
+    st.write(f"<b>{T['dates']}</b>", unsafe_allow_html=True)
+    c_d1, c_d2 = st.columns(2)
+    with c_d1:
+        d1 = st.date_input("Aller", value=date.today() + timedelta(days=30), min_value=date.today(), label_visibility="collapsed")
+    with c_d2:
+        d2 = st.date_input("Retour", value=date.today() + timedelta(days=60), min_value=date.today(), label_visibility="collapsed")
+
+with col_budget:
+    # On affiche le budget avec un slider propre
+    budget = st.slider(T["budget"], min_value=500, max_value=15000, value=5000, step=100)
+
+with col_btn:
+    st.write("<br>", unsafe_allow_html=True) # Espacement pour aligner le bouton
+    chercher = st.button(T["search"], use_container_width=True, type="primary")
+
+st.markdown('</div>', unsafe_allow_html=True)
+
+# Options optionnelles en dessous du bandeau principal si besoin (ex: Voyageurs, Favoris)
+with st.expander("🎛️ Options avancées (Voyageurs, Destinations préférées...)"):
+    c1, c2, c3, c4 = st.columns(4)
+    with c1: adultes = st.number_input(T["adultes"], min_value=1, max_value=9, value=1)
+    with c2: enfants = st.number_input(T["enfants"], min_value=0, max_value=9, value=0)
+    with c3: bebes = st.number_input(T["bebes"], min_value=0, max_value=9, value=0)
+    with c4: fav = st.text_input(T["fav"], placeholder=T["fav_ph"])
+    
+    nb_stops = st.slider(T["nb_dest"], min_value=2, max_value=8, value=4)
 )
 
 # ─────────────────────────────────────────────

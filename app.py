@@ -17,11 +17,39 @@ st.set_page_config(
 )
 
 # ─────────────────────────────────────────────
+#  UNSPLASH PHOTOS PAR DESTINATION
+# ─────────────────────────────────────────────
+UNSPLASH_PHOTOS = {
+    "Tokyo":          "https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=600&q=80",
+    "Rio de Janeiro": "https://images.unsplash.com/photo-1483729558449-99ef09a8c325?w=600&q=80",
+    "Bangkok":        "https://images.unsplash.com/photo-1563492065599-3520f775eeed?w=600&q=80",
+    "Chiang Mai":     "https://images.unsplash.com/photo-1528360983277-13d401cdc186?w=600&q=80",
+    "Malé":           "https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&q=80",
+    "Lima":           "https://images.unsplash.com/photo-1531968455001-5c5272a41129?w=600&q=80",
+    "Reykjavik":      "https://images.unsplash.com/photo-1476610182048-b716b8518aae?w=600&q=80",
+    "Nairobi":        "https://images.unsplash.com/photo-1547471080-7cc2caa01a7e?w=600&q=80",
+    "Marrakech":      "https://images.unsplash.com/photo-1549144511-f099e773c147?w=600&q=80",
+    "New York":       "https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=600&q=80",
+    "Bali":           "https://images.unsplash.com/photo-1537996194471-e657df975ab4?w=600&q=80",
+    "Santorin":       "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=600&q=80",
+    "Hanoï":          "https://images.unsplash.com/photo-1509030450996-dd1a26dda07a?w=600&q=80",
+    "Ho Chi Minh":    "https://images.unsplash.com/photo-1583417319070-4a69db38a482?w=600&q=80",
+    "Kuala Lumpur":   "https://images.unsplash.com/photo-1596422846543-75c6fc197f07?w=600&q=80",
+    "Singapour":      "https://images.unsplash.com/photo-1525625293386-3f8f99389edd?w=600&q=80",
+    "Le Cap":         "https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=600&q=80",
+    "Buenos Aires":   "https://images.unsplash.com/photo-1589909202802-8f4aadce1849?w=600&q=80",
+    "Lisbonne":       "https://images.unsplash.com/photo-1555881400-74d7acaacd8b?w=600&q=80",
+    "Osaka":          "https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=600&q=80",
+    "Phnom Penh":     "https://images.unsplash.com/photo-1570197788417-0e82375c9371?w=600&q=80",
+    "Katmandou":      "https://images.unsplash.com/photo-1605640840605-14ac1855827b?w=600&q=80",
+}
+
+# ─────────────────────────────────────────────
 #  CSS
 # ─────────────────────────────────────────────
 st.markdown("""
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Inter:wght@300;400;500&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap');
   :root {
     --cream:#F5F0E8; --cream2:#EDE8DE; --ink:#0D0D0D;
     --muted:#6B6560; --border:#D4CFC6; --white:#FEFCF8;
@@ -36,6 +64,43 @@ st.markdown("""
   .subtitle{font-size:0.88rem;font-weight:300;color:var(--muted);margin-bottom:2rem;letter-spacing:0.03em;}
   .summary-box{background:var(--cream2);border:1px solid var(--border);border-radius:0;padding:0.8rem 1.2rem;margin-bottom:2rem;font-size:0.85rem;color:var(--muted);}
   .summary-box b{color:var(--ink);}
+
+  /* ── Grille 3 colonnes ── */
+  .dest-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:0.5rem;}
+  @media(max-width:1100px){.dest-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:700px){.dest-grid{grid-template-columns:1fr;}}
+
+  /* ── Carte destination ── */
+  .dest-card{background:var(--white);border:1px solid var(--border);overflow:hidden;transition:border-color 0.25s,box-shadow 0.25s;position:relative;}
+  .dest-card:hover{border-color:var(--ink);box-shadow:0 8px 32px rgba(13,13,13,0.10);}
+
+  /* ── Photo cover ── */
+  .dest-photo-wrap{position:relative;overflow:hidden;height:190px;}
+  .dest-photo{width:100%;height:100%;object-fit:cover;transition:transform 0.45s ease, filter 0.45s ease;filter:brightness(0.93);}
+  .dest-card:hover .dest-photo{transform:scale(1.04);filter:brightness(1.05);}
+
+  /* ── Ruban favori ── */
+  .fav-ribbon{position:absolute;top:14px;right:-30px;background:var(--ink);color:var(--cream);font-family:'Cormorant Garamond',serif;font-size:0.72rem;font-weight:400;letter-spacing:0.12em;text-transform:uppercase;padding:5px 38px 5px 14px;transform:rotate(0deg);box-shadow:0 2px 8px rgba(0,0,0,0.18);z-index:10;}
+
+  /* ── Corps de la carte ── */
+  .dest-body{padding:1rem 1.1rem 1.1rem;}
+  .dest-name{font-family:'Cormorant Garamond',serif;font-size:1.45rem;font-weight:400;color:var(--ink);line-height:1.1;letter-spacing:0.01em;}
+  .dest-pays{font-size:0.75rem;color:var(--muted);letter-spacing:0.04em;text-transform:uppercase;margin-top:1px;margin-bottom:0.6rem;}
+  .dest-tags{font-size:0.72rem;color:var(--muted);margin-bottom:0.8rem;letter-spacing:0.02em;}
+
+  /* ── Prix magazine ── */
+  .dest-price{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;color:var(--ink);line-height:1;letter-spacing:-0.01em;}
+  .dest-price-label{font-size:0.72rem;color:var(--muted);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:0.2rem;}
+  .dest-hotel{font-size:0.78rem;color:var(--muted);margin-top:0.25rem;margin-bottom:0.7rem;}
+  .dest-reste{font-size:0.78rem;color:var(--muted);background:var(--cream2);border:1px solid var(--border);padding:4px 8px;display:inline-block;margin-bottom:0.85rem;}
+
+  /* ── Boutons ── */
+  .dest-btns{display:flex;gap:8px;}
+  .btn-vol{flex:1;background:var(--ink);color:var(--cream);border:1px solid var(--ink);padding:9px 0;text-align:center;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;transition:background 0.2s,color 0.2s;}
+  .btn-vol:hover{background:var(--cream);color:var(--ink);}
+  .btn-hotel{flex:1;background:transparent;color:var(--ink);border:1px solid var(--ink);padding:9px 0;text-align:center;font-size:0.72rem;letter-spacing:0.1em;text-transform:uppercase;text-decoration:none;font-family:'Inter',sans-serif;transition:background 0.2s,color 0.2s;}
+  .btn-hotel:hover{background:var(--ink);color:var(--cream);}
+
   div[data-testid="stVerticalBlockBorderWrapper"]{border:1px solid var(--border)!important;border-radius:0!important;background:var(--white)!important;padding:0.2rem 0.6rem!important;transition:border-color 0.2s!important;}
   div[data-testid="stVerticalBlockBorderWrapper"]:hover{border-color:var(--ink)!important;}
   div[data-testid="stMetric"]{background:var(--cream2)!important;border:1px solid var(--border)!important;border-radius:0!important;padding:0.6rem 1rem!important;}
@@ -103,7 +168,7 @@ LANGS = {
         "price_live":"Vol (prix en direct)","price_est":"Prix de départ estimé",
         "price_help":"Indicatif — cliquez Skyscanner pour le prix exact.",
         "hotel_live":"Hôtel : ~{p:,} €/nuit","reste":"Budget restant : {r:,} € — {n} nuits",
-        "btn_sky":"Skyscanner","btn_book":"Booking","fav_label":"Favori",
+        "btn_sky":"✈ Vol","btn_book":"🏨 Hôtel","fav_label":"Favori",
         "back_title":"Votre circuit backpacker","back_sub":"Itinéraire optimisé · {n} étapes · {nuits} nuits au total",
         "back_depart":"Départ","back_retour":"Retour",
         "back_nuits":"{n} nuits","back_vol":"Vol estimé","back_hotel":"Hôtel ~{p} €/nuit",
@@ -139,7 +204,7 @@ LANGS = {
         "price_live":"Flight (live price)","price_est":"Estimated price",
         "price_help":"Indicative — click Skyscanner for exact price.",
         "hotel_live":"Hotel: ~€{p:,}/night","reste":"Remaining: €{r:,} — {n} nights",
-        "btn_sky":"Skyscanner","btn_book":"Booking","fav_label":"Favourite",
+        "btn_sky":"✈ Flight","btn_book":"🏨 Hotel","fav_label":"Favourite",
         "back_title":"Your backpacker route","back_sub":"Optimised itinerary · {n} stops · {nuits} nights total",
         "back_depart":"Departure","back_retour":"Return",
         "back_nuits":"{n} nights","back_vol":"Est. flight","back_hotel":"Hotel ~€{p}/night",
@@ -175,7 +240,7 @@ LANGS = {
         "price_live":"Vuelo (precio en directo)","price_est":"Precio estimado",
         "price_help":"Indicativo — haz clic en Skyscanner para el precio exacto.",
         "hotel_live":"Hotel: ~{p:,} €/noche","reste":"Restante: {r:,} € — {n} noches",
-        "btn_sky":"Skyscanner","btn_book":"Booking","fav_label":"Favorito",
+        "btn_sky":"✈ Vuelo","btn_book":"🏨 Hotel","fav_label":"Favorito",
         "back_title":"Tu ruta mochilera","back_sub":"Itinerario optimizado · {n} paradas · {nuits} noches en total",
         "back_depart":"Salida","back_retour":"Regreso",
         "back_nuits":"{n} noches","back_vol":"Vuelo estimado","back_hotel":"Hotel ~{p} €/noche",
@@ -183,6 +248,17 @@ LANGS = {
         "back_no":"No hay suficientes destinos en este presupuesto para una ruta mochilera.",
         "back_btn_sky":"Reservar este vuelo","back_btn_book":"Buscar hotel",
         "nuits_label":"noches por etapa",
+        "tab_meteo":"Meteorología","tab_cout":"Coste de la vida",
+        "city_ph":"ej: Tokio, Bangkok, Lisboa…",
+        "cout_title":"Coste de la vida en {city}","cout_sub":"Presupuesto estimado por persona y día",
+        "cout_total":"Total / día","cout_repas":"🍽 Comidas",
+        "cout_transport":"🚌 Transporte","cout_logement":"🏨 Alojamiento",
+        "cout_loisirs":"🎭 Actividades","cout_jour":"€/día",
+        "cout_notfound":"Ciudad no encontrada. Prueba otro nombre.",
+        "meteo_title":"Tiempo actual en {city}","meteo_notfound":"No se puede obtener el tiempo. Verifica el nombre.",
+        "meteo_feels":"Sensación {f}°C","meteo_hum":"Humedad {h}%",
+        "meteo_wind":"Viento {w} km/h","meteo_minmax":"Mín {mn}° / Máx {mx}°",
+        "meteo_sun":"🌅 {sr}  🌇 {ss}",
     },
 }
 
@@ -436,42 +512,28 @@ def get_cost_of_living(city: str):
     return None
 
 def build_backpacker_route(depart_ville, nb_stops, budget_total, adultes, enfants, bebes, nuits_par_etape):
-    """
-    Construit un circuit logique depuis le lieu de départ.
-    Sélectionne les destinations les plus proches géographiquement dans la même région,
-    en bouclant vers le retour.
-    """
     lat0, lng0 = depart_ville["lat"], depart_ville["lng"]
-
-    # Budget par étape (vol estimé uniquement pour filtrage)
     budget_par_etape = budget_total / (nb_stops + 1)
-
     candidats = []
     for d in DESTINATIONS:
         prix = prix_total(d["prix_base"], adultes, enfants, bebes)
         if prix <= budget_par_etape * 2.5:
             dist = haversine(lat0, lng0, d["lat"], d["lng"])
             candidats.append({**d, "prix_estime": prix, "dist_depart": dist})
-
     if len(candidats) < nb_stops:
         return []
-
-    # Algorithme du plus proche voisin depuis le départ
     route = []
     restants = candidats.copy()
     cur_lat, cur_lng = lat0, lng0
-
     for _ in range(nb_stops):
         if not restants: break
         restants.sort(key=lambda x: haversine(cur_lat, cur_lng, x["lat"], x["lng"]))
-        # On prend parmi les 3 plus proches celui avec le meilleur rapport qualité/prix
         pool = restants[:max(3, len(restants)//3)]
         pool.sort(key=lambda x: x["prix_estime"])
         choix = pool[0]
         route.append(choix)
         cur_lat, cur_lng = choix["lat"], choix["lng"]
         restants = [r for r in restants if r["nom"] != choix["nom"]]
-
     return route
 
 # ─────────────────────────────────────────────
@@ -565,7 +627,7 @@ nuits_par_etape = max(1, nuits_total // (nb_stops + 1))
 tab1, tab2, tab3, tab4 = st.tabs([T["tab_dest"], T["tab_back"], T["tab_meteo"], T["tab_cout"]])
 
 # ═══════════════════════════════════════════════
-#  ONGLET 1 — DESTINATIONS
+#  ONGLET 1 — DESTINATIONS (grille 3 col + photos Unsplash)
 # ═══════════════════════════════════════════════
 with tab1:
     resultats = []
@@ -591,26 +653,57 @@ with tab1:
     if not resultats:
         st.markdown(f'<div class="no-result">{T["no_result"]}</div>', unsafe_allow_html=True)
     else:
-        cols = st.columns(2)
-        for i, r in enumerate(resultats):
-            with cols[i % 2]:
-                with st.container(border=True):
-                    fav_txt = f" — {T['fav_label']}" if r["is_favorite"] else ""
-                    st.markdown(f"{r['flag']} **{r['nom']}**{fav_txt}")
-                    st.caption(r["pays"])
-                    live_vol   = get_skyscanner_prices(depart_iata, r["iata"], d1_str, d2_str, adultes)
-                    live_hotel = get_booking_hotel_price(r["booking_id"], d1_str, d2_str, adultes, nuits_total)
-                    if live_vol:
-                        st.metric(T["price_live"], f"{live_vol['price']:,} €")
-                    else:
-                        st.metric(T["price_est"], f"{r['prix_estime']:,} €", help=T["price_help"])
-                    if live_hotel:
-                        st.caption(T["hotel_live"].format(p=live_hotel["price_per_night"]))
-                    st.caption("  ·  ".join(r["tags"]))
-                    st.success(T["reste"].format(r=r["reste"], n=r["nuits"]))
-                    c1, c2 = st.columns(2)
-                    with c1: st.link_button(T["btn_sky"],  r["url_sky"],  use_container_width=True)
-                    with c2: st.link_button(T["btn_book"], r["url_book"], use_container_width=True)
+        # Construire la grille HTML 3 colonnes avec cartes enrichies
+        cards_html = '<div class="dest-grid">'
+        for r in resultats:
+            photo_url = UNSPLASH_PHOTOS.get(r["nom"], f"https://images.unsplash.com/photo-1488085061387-422e29b40080?w=600&q=80")
+
+            # Ruban favori
+            ribbon_html = ""
+            if r["is_favorite"]:
+                ribbon_html = f'<div class="fav-ribbon">{T["fav_label"]}</div>'
+
+            # Prix (live ou estimé)
+            live_vol   = get_skyscanner_prices(depart_iata, r["iata"], d1_str, d2_str, adultes)
+            live_hotel = get_booking_hotel_price(r["booking_id"], d1_str, d2_str, adultes, nuits_total)
+
+            if live_vol:
+                price_label = T["price_live"]
+                price_val   = f"{live_vol['price']:,} €"
+            else:
+                price_label = T["price_est"]
+                price_val   = f"{r['prix_estime']:,} €"
+
+            hotel_line = ""
+            if live_hotel:
+                hotel_line = f'<div class="dest-hotel">{T["hotel_live"].format(p=live_hotel["price_per_night"])}</div>'
+
+            tags_str = "  ·  ".join(r["tags"])
+            reste_str = T["reste"].format(r=r["reste"], n=r["nuits"])
+
+            cards_html += f"""
+<div class="dest-card">
+  <div class="dest-photo-wrap">
+    <img class="dest-photo" src="{photo_url}" alt="{r['nom']}" loading="lazy"/>
+    {ribbon_html}
+  </div>
+  <div class="dest-body">
+    <div class="dest-name">{r['flag']} {r['nom']}</div>
+    <div class="dest-pays">{r['pays']}</div>
+    <div class="dest-tags">{tags_str}</div>
+    <div class="dest-price-label">{price_label}</div>
+    <div class="dest-price">{price_val}</div>
+    {hotel_line}
+    <div class="dest-reste">{reste_str}</div>
+    <div class="dest-btns">
+      <a class="btn-vol" href="{r['url_sky']}" target="_blank" rel="noopener">{T['btn_sky']}</a>
+      <a class="btn-hotel" href="{r['url_book']}" target="_blank" rel="noopener">{T['btn_book']}</a>
+    </div>
+  </div>
+</div>"""
+
+        cards_html += '</div>'
+        st.markdown(cards_html, unsafe_allow_html=True)
 
 # ═══════════════════════════════════════════════
 #  ONGLET 2 — BACKPACKER
@@ -625,16 +718,11 @@ with tab2:
         st.markdown(f'<div class="itin-header">{T["back_title"]}</div>', unsafe_allow_html=True)
         st.markdown(f'<div class="itin-subtitle">{T["back_sub"].format(n=nb_stops, nuits=nuits_total_back)}</div>', unsafe_allow_html=True)
 
-        # ── Carte ────────────────────────────────
         map_col, itin_col = st.columns([1.2, 1])
 
         with map_col:
-            # Construire les données pour la carte avec places_search
             try:
                 import json
-                lats = [depart_ville["lat"]] + [r["lat"] for r in route] + [depart_ville["lat"]]
-                lngs = [depart_ville["lng"]] + [r["lng"] for r in route] + [depart_ville["lng"]]
-                # Carte simple HTML avec Leaflet
                 route_coords = [[depart_ville["lat"], depart_ville["lng"]]]
                 for r in route:
                     route_coords.append([r["lat"], r["lng"]])
@@ -680,15 +768,11 @@ with tab2:
             except Exception as e:
                 st.caption(f"Carte non disponible : {e}")
 
-        # ── Itinéraire ───────────────────────────
         with itin_col:
-            # Budget estimé total
             cout_vol_total = sum(r["prix_estime"] for r in route)
             cout_hotel_total = sum(r["prix_base"] * 0.05 * nuits_par_etape for r in route)
             cout_total = round(cout_vol_total * 0.4 + cout_hotel_total)
             pct = min(100, round(cout_total / budget * 100))
-
-            # Barre budget
             reste_budget = budget - cout_total
             st.markdown(f"""
 <div class="budget-bar-wrap">
@@ -701,7 +785,6 @@ with tab2:
 </div>
 """, unsafe_allow_html=True)
 
-            # Étapes
             etapes = [{"nom":depart_ville["nom"],"flag":depart_ville["flag"],"pays":depart_ville["pays"],
                        "is_home":True,"tags":[]}] + \
                      [{"nom":r["nom"],"flag":r["flag"],"pays":r["pays"],"is_home":False,
@@ -710,9 +793,7 @@ with tab2:
                      [{"nom":depart_ville["nom"],"flag":depart_ville["flag"],"pays":depart_ville["pays"],
                        "is_home":True,"tags":[]}]
 
-            # Date courante
             cur_date = d1
-
             itin_html = ""
             for idx, etape in enumerate(etapes):
                 is_last = idx == len(etapes) - 1
@@ -743,7 +824,6 @@ with tab2:
 
             st.markdown(itin_html, unsafe_allow_html=True)
 
-        # ── Boutons par étape ─────────────────────
         st.markdown("<hr>", unsafe_allow_html=True)
         st.caption("Réservez chaque étape :")
         btn_cols = st.columns(min(len(route), 4))
@@ -813,7 +893,6 @@ with tab4:
                       delta=f"{'dans' if total_sejour <= budget else 'hors'} budget ({budget:,} €)",
                       delta_color="normal" if total_sejour <= budget else "inverse")
 
-            # Barre visuelle
             pct = min(100, round(total_sejour / budget * 100))
             st.markdown(f"""
 <div style="background:var(--cream2);border:1px solid var(--border);padding:1rem 1.2rem;margin-top:0.5rem">

@@ -394,6 +394,7 @@ LANGS = {
         "fav_label":  "Favori",
         "per_pax":    "pour {v} voyageur(s)",
         "tab_weather":    "☁  Météo",
+        "tab_bpack":     "🎒  Backpacker",
         "wx_title":       "Météo par destination",
         "wx_sub":         "Entrez une ville pour connaître la météo actuelle",
         "wx_input":       "Ville",
@@ -407,6 +408,25 @@ LANGS = {
         "wx_err":         "Ville introuvable. Vérifiez l'orthographe.",
         "wx_prompt":      "Tapez une ville et cliquez sur Voir la météo.",
         "wx_src":         "Source : Open-Meteo + OpenStreetMap (données temps réel)",
+        "bp_title":      "Itinéraire Backpacker",
+        "bp_sub":        "Entrez votre budget total et vos préférences — on construit votre tour du monde",
+        "bp_budget":     "Budget total (€)",
+        "bp_days":       "Nombre de jours",
+        "bp_style":      "Style de voyage",
+        "bp_styles":     ["Économique 🌿", "Équilibré ⚖️", "Confort 🛎"],
+        "bp_region":     "Régions préférées (optionnel)",
+        "bp_regions":    ["Asie du Sud-Est", "Europe de l'Est", "Amérique Latine", "Afrique", "Océanie", "Moyen-Orient"],
+        "bp_btn":        "Générer l'itinéraire",
+        "bp_prompt":     "Remplissez les champs et générez votre itinéraire.",
+        "bp_day_label":  "Jour {d}",
+        "bp_flight":     "Vol estimé",
+        "bp_hotel":      "Hébergement/nuit",
+        "bp_life":       "Vie quotidienne",
+        "bp_total_dest": "Total destination",
+        "bp_grand":      "Total itinéraire",
+        "bp_nights":     "{n} nuits",
+        "bp_warning":    "Budget insuffisant pour un itinéraire multi-pays. Augmentez le budget ou réduisez les jours.",
+        "bp_src":        "Estimations basées sur données Numbeo & prix moyens compagnies aériennes",
     },
     "🇬🇧 English": {
         "subtitle":   "Travel within your budget",
@@ -453,6 +473,7 @@ LANGS = {
         "fav_label":  "Favourite",
         "per_pax":    "for {v} traveller(s)",
         "tab_weather":    "☁  Weather",
+        "tab_bpack":     "🎒  Backpacker",
         "wx_title":       "Weather by destination",
         "wx_sub":         "Enter a city to check current weather",
         "wx_input":       "City",
@@ -466,6 +487,25 @@ LANGS = {
         "wx_err":         "City not found. Check spelling.",
         "wx_prompt":      "Enter a city and click Check weather.",
         "wx_src":         "Source: Open-Meteo + OpenStreetMap (live data)",
+        "bp_title":      "Backpacker Itinerary",
+        "bp_sub":        "Enter your total budget and preferences — we'll build your world trip",
+        "bp_budget":     "Total budget (€)",
+        "bp_days":       "Number of days",
+        "bp_style":      "Travel style",
+        "bp_styles":     ["Budget 🌿", "Balanced ⚖️", "Comfort 🛎"],
+        "bp_regions":    ["Southeast Asia", "Eastern Europe", "Latin America", "Africa", "Oceania", "Middle East"],
+        "bp_region":     "Preferred regions (optional)",
+        "bp_btn":        "Generate itinerary",
+        "bp_prompt":     "Fill in the fields and generate your itinerary.",
+        "bp_day_label":  "Day {d}",
+        "bp_flight":     "Est. flight",
+        "bp_hotel":      "Accommodation/night",
+        "bp_life":       "Daily living",
+        "bp_total_dest": "Total per destination",
+        "bp_grand":      "Total itinerary",
+        "bp_nights":     "{n} nights",
+        "bp_warning":    "Budget too low for a multi-country itinerary. Increase budget or reduce days.",
+        "bp_src":        "Estimates based on Numbeo data & average airline prices",
     },
     "🇪🇸 Español": {
         "subtitle":   "Viaja según tu presupuesto",
@@ -512,6 +552,7 @@ LANGS = {
         "fav_label":  "Favorito",
         "per_pax":    "para {v} viajero(s)",
         "tab_weather":    "☁  Tiempo",
+        "tab_bpack":     "🎒  Backpacker",
         "wx_title":       "Tiempo por destino",
         "wx_sub":         "Introduce una ciudad para ver el tiempo actual",
         "wx_input":       "Ciudad",
@@ -525,6 +566,25 @@ LANGS = {
         "wx_err":         "Ciudad no encontrada. Verifica la ortografía.",
         "wx_prompt":      "Introduce una ciudad y haz clic en Ver el tiempo.",
         "wx_src":         "Fuente: Open-Meteo + OpenStreetMap (datos en tiempo real)",
+        "bp_title":      "Itinerario Mochilero",
+        "bp_sub":        "Introduce tu presupuesto total y preferencias — construimos tu viaje al mundo",
+        "bp_budget":     "Presupuesto total (€)",
+        "bp_days":       "Número de días",
+        "bp_style":      "Estilo de viaje",
+        "bp_styles":     ["Económico 🌿", "Equilibrado ⚖️", "Confort 🛎"],
+        "bp_regions":    ["Asia del Sudeste", "Europa del Este", "América Latina", "África", "Oceanía", "Oriente Medio"],
+        "bp_region":     "Regiones preferidas (opcional)",
+        "bp_btn":        "Generar itinerario",
+        "bp_prompt":     "Rellena los campos y genera tu itinerario.",
+        "bp_day_label":  "Día {d}",
+        "bp_flight":     "Vuelo estimado",
+        "bp_hotel":      "Alojamiento/noche",
+        "bp_life":       "Vida diaria",
+        "bp_total_dest": "Total por destino",
+        "bp_grand":      "Total itinerario",
+        "bp_nights":     "{n} noches",
+        "bp_warning":    "Presupuesto insuficiente. Aumenta el presupuesto o reduce los días.",
+        "bp_src":        "Estimaciones basadas en datos de Numbeo y precios medios de aerolíneas",
     },
 }
 
@@ -542,23 +602,165 @@ VILLES_DEPART = [
 ]
 
 DESTINATIONS = [
-    {"flag":"🇯🇵","nom":"Tokyo",          "pays":"Japon",          "iata":"TYO","booking_id":"Tokyo",         "tags":["Culture","Gastronomie","Modernité"],  "prix_base":2200},
-    {"flag":"🇧🇷","nom":"Rio de Janeiro", "pays":"Brésil",         "iata":"GIG","booking_id":"Rio de Janeiro","tags":["Plage","Fête","Nature"],              "prix_base":1800},
-    {"flag":"🇹🇭","nom":"Chiang Mai",     "pays":"Thaïlande",      "iata":"CNX","booking_id":"Chiang Mai",    "tags":["Temples","Nature","Détente"],         "prix_base":950},
-    {"flag":"🇲🇻","nom":"Malé",           "pays":"Maldives",       "iata":"MLE","booking_id":"Male",          "tags":["Luxe","Plage","Snorkeling"],          "prix_base":4500},
-    {"flag":"🇵🇪","nom":"Cusco",          "pays":"Pérou",          "iata":"LIM","booking_id":"Cusco",         "tags":["Aventure","Histoire","Randonnée"],    "prix_base":2600},
-    {"flag":"🇮🇸","nom":"Reykjavik",      "pays":"Islande",        "iata":"KEF","booking_id":"Reykjavik",     "tags":["Aurores","Nature","Volcans"],         "prix_base":2100},
-    {"flag":"🇰🇪","nom":"Nairobi",        "pays":"Kenya",          "iata":"NBO","booking_id":"Nairobi",       "tags":["Safari","Faune","Savane"],            "prix_base":3200},
-    {"flag":"🇳🇿","nom":"Queenstown",     "pays":"Nv-Zélande",     "iata":"ZQN","booking_id":"Queenstown",    "tags":["Aventure","Paysages","Sport"],        "prix_base":5200},
-    {"flag":"🇲🇦","nom":"Marrakech",      "pays":"Maroc",          "iata":"RAK","booking_id":"Marrakech",     "tags":["Souk","Culture","Désert"],            "prix_base":800},
-    {"flag":"🇺🇸","nom":"New York",       "pays":"États-Unis",     "iata":"JFK","booking_id":"New York City", "tags":["Ville","Shopping","Culture"],         "prix_base":2900},
-    {"flag":"🇮🇩","nom":"Bali",           "pays":"Indonésie",      "iata":"DPS","booking_id":"Bali",          "tags":["Spiritualité","Plage","Jungle"],      "prix_base":1400},
-    {"flag":"🇬🇷","nom":"Santorin",       "pays":"Grèce",          "iata":"JTR","booking_id":"Santorini",     "tags":["Romance","Mer","Gastronomie"],        "prix_base":1600},
-    {"flag":"🇻🇳","nom":"Hanoï",          "pays":"Vietnam",        "iata":"HAN","booking_id":"Hanoi",         "tags":["Rue","Histoire","Gastronomie"],       "prix_base":1100},
-    {"flag":"🇿🇦","nom":"Le Cap",         "pays":"Afrique du Sud", "iata":"CPT","booking_id":"Cape Town",     "tags":["Nature","Vignobles","Mer"],           "prix_base":2400},
-    {"flag":"🇦🇷","nom":"Buenos Aires",   "pays":"Argentine",      "iata":"EZE","booking_id":"Buenos Aires",  "tags":["Tango","Gastronomie","Culture"],      "prix_base":2000},
-    {"flag":"🇵🇹","nom":"Lisbonne",       "pays":"Portugal",       "iata":"LIS","booking_id":"Lisbon",        "tags":["Histoire","Fado","Gastronomie"],      "prix_base":700},
+    # ── EUROPE ──
+    {"flag":"🇵🇹","nom":"Lisbonne",       "pays":"Portugal",        "iata":"LIS","booking_id":"Lisbon",          "tags":["Histoire","Fado","Gastronomie"],      "prix_base":700},
+    {"flag":"🇪🇸","nom":"Barcelone",      "pays":"Espagne",         "iata":"BCN","booking_id":"Barcelona",       "tags":["Architecture","Plage","Vie nocturne"],"prix_base":900},
+    {"flag":"🇪🇸","nom":"Madrid",         "pays":"Espagne",         "iata":"MAD","booking_id":"Madrid",          "tags":["Musées","Gastronomie","Culture"],      "prix_base":850},
+    {"flag":"🇮🇹","nom":"Rome",           "pays":"Italie",          "iata":"FCO","booking_id":"Rome",            "tags":["Histoire","Art","Gastronomie"],        "prix_base":950},
+    {"flag":"🇮🇹","nom":"Venise",         "pays":"Italie",          "iata":"VCE","booking_id":"Venice",          "tags":["Romance","Architecture","Art"],        "prix_base":1100},
+    {"flag":"🇮🇹","nom":"Florence",       "pays":"Italie",          "iata":"FLR","booking_id":"Florence",        "tags":["Art","Renaissance","Gastronomie"],     "prix_base":900},
+    {"flag":"🇫🇷","nom":"Nice",           "pays":"France",          "iata":"NCE","booking_id":"Nice",            "tags":["Plage","Côte d'Azur","Gastronomie"],   "prix_base":1000},
+    {"flag":"🇬🇷","nom":"Santorin",       "pays":"Grèce",           "iata":"JTR","booking_id":"Santorini",       "tags":["Romance","Mer","Gastronomie"],         "prix_base":1600},
+    {"flag":"🇬🇷","nom":"Athènes",        "pays":"Grèce",           "iata":"ATH","booking_id":"Athens",          "tags":["Histoire","Mythologie","Culture"],     "prix_base":750},
+    {"flag":"🇬🇷","nom":"Crète",          "pays":"Grèce",           "iata":"HER","booking_id":"Crete",           "tags":["Plage","Histoire","Nature"],           "prix_base":800},
+    {"flag":"🇭🇷","nom":"Dubrovnik",      "pays":"Croatie",         "iata":"DBV","booking_id":"Dubrovnik",       "tags":["Mer","Histoire","Beauté"],             "prix_base":1000},
+    {"flag":"🇭🇷","nom":"Split",          "pays":"Croatie",         "iata":"SPU","booking_id":"Split",           "tags":["Mer","Histoire","Animé"],              "prix_base":850},
+    {"flag":"🇨🇿","nom":"Prague",         "pays":"République Tchèque","iata":"PRG","booking_id":"Prague",        "tags":["Architecture","Bière","Histoire"],     "prix_base":600},
+    {"flag":"🇭🇺","nom":"Budapest",       "pays":"Hongrie",         "iata":"BUD","booking_id":"Budapest",        "tags":["Thermes","Architecture","Nuit"],       "prix_base":550},
+    {"flag":"🇦🇹","nom":"Vienne",         "pays":"Autriche",        "iata":"VIE","booking_id":"Vienna",          "tags":["Musique","Musées","Architecture"],     "prix_base":900},
+    {"flag":"🇳🇱","nom":"Amsterdam",      "pays":"Pays-Bas",        "iata":"AMS","booking_id":"Amsterdam",       "tags":["Canaux","Musées","Vélo"],              "prix_base":1100},
+    {"flag":"🇩🇪","nom":"Berlin",         "pays":"Allemagne",       "iata":"BER","booking_id":"Berlin",          "tags":["Histoire","Art","Vie nocturne"],       "prix_base":800},
+    {"flag":"🇩🇪","nom":"Munich",         "pays":"Allemagne",       "iata":"MUC","booking_id":"Munich",          "tags":["Bière","Culture","Nature"],            "prix_base":950},
+    {"flag":"🇨🇭","nom":"Zurich",         "pays":"Suisse",          "iata":"ZRH","booking_id":"Zurich",          "tags":["Luxe","Nature","Finance"],             "prix_base":1800},
+    {"flag":"🇨🇭","nom":"Interlaken",     "pays":"Suisse",          "iata":"ZRH","booking_id":"Interlaken",      "tags":["Alpes","Aventure","Nature"],           "prix_base":1600},
+    {"flag":"🇸🇪","nom":"Stockholm",      "pays":"Suède",           "iata":"ARN","booking_id":"Stockholm",       "tags":["Design","Nature","Culture"],           "prix_base":1300},
+    {"flag":"🇩🇰","nom":"Copenhague",     "pays":"Danemark",        "iata":"CPH","booking_id":"Copenhagen",      "tags":["Design","Gastronomie","Vélo"],         "prix_base":1400},
+    {"flag":"🇳🇴","nom":"Oslo",           "pays":"Norvège",         "iata":"OSL","booking_id":"Oslo",            "tags":["Fjords","Nature","Design"],            "prix_base":1600},
+    {"flag":"🇳🇴","nom":"Bergen",         "pays":"Norvège",         "iata":"BGO","booking_id":"Bergen",          "tags":["Fjords","Nature","Paysages"],          "prix_base":1400},
+    {"flag":"🇫🇮","nom":"Helsinki",       "pays":"Finlande",        "iata":"HEL","booking_id":"Helsinki",        "tags":["Design","Sauna","Nature"],             "prix_base":1200},
+    {"flag":"🇮🇸","nom":"Reykjavik",      "pays":"Islande",         "iata":"KEF","booking_id":"Reykjavik",       "tags":["Aurores","Volcans","Nature"],          "prix_base":2100},
+    {"flag":"🇵🇱","nom":"Cracovie",       "pays":"Pologne",         "iata":"KRK","booking_id":"Krakow",          "tags":["Histoire","Culture","Abordable"],      "prix_base":450},
+    {"flag":"🇷🇴","nom":"Bucarest",       "pays":"Roumanie",        "iata":"OTP","booking_id":"Bucharest",       "tags":["Histoire","Vie nocturne","Abordable"],  "prix_base":400},
+    {"flag":"🇷🇴","nom":"Brasov",         "pays":"Roumanie",        "iata":"OTP","booking_id":"Brasov",          "tags":["Château","Montagne","Médiéval"],       "prix_base":380},
+    {"flag":"🇧🇬","nom":"Sofia",          "pays":"Bulgarie",        "iata":"SOF","booking_id":"Sofia",           "tags":["Histoire","Monastères","Abordable"],   "prix_base":380},
+    {"flag":"🇷🇸","nom":"Belgrade",       "pays":"Serbie",          "iata":"BEG","booking_id":"Belgrade",        "tags":["Vie nocturne","Gastronomie","Abordable"],"prix_base":380},
+    {"flag":"🇲🇪","nom":"Kotor",          "pays":"Monténégro",      "iata":"TGD","booking_id":"Kotor",           "tags":["Mer","Médiéval","Paysages"],           "prix_base":600},
+    {"flag":"🇦🇱","nom":"Tirana",         "pays":"Albanie",         "iata":"TIA","booking_id":"Tirana",          "tags":["Découverte","Abordable","Authentique"], "prix_base":350},
+    {"flag":"🇲🇹","nom":"La Valette",     "pays":"Malte",           "iata":"MLA","booking_id":"Valletta",        "tags":["Histoire","Mer","Plongée"],            "prix_base":750},
+    {"flag":"🇨🇾","nom":"Chypre",         "pays":"Chypre",          "iata":"LCA","booking_id":"Larnaca",         "tags":["Plage","Histoire","Mer"],              "prix_base":700},
+    {"flag":"🇹🇷","nom":"Istanbul",       "pays":"Turquie",         "iata":"IST","booking_id":"Istanbul",        "tags":["Culture","Gastronomie","Bosphore"],    "prix_base":700},
+    {"flag":"🇹🇷","nom":"Cappadoce",      "pays":"Turquie",         "iata":"ASR","booking_id":"Cappadocia",      "tags":["Montgolfière","Paysages","Unique"],    "prix_base":800},
+    {"flag":"🇹🇷","nom":"Antalya",        "pays":"Turquie",         "iata":"AYT","booking_id":"Antalya",         "tags":["Plage","Histoire","Mer"],              "prix_base":650},
+    {"flag":"🇬🇧","nom":"Londres",        "pays":"Royaume-Uni",     "iata":"LHR","booking_id":"London",          "tags":["Culture","Histoire","Shopping"],       "prix_base":1400},
+    {"flag":"🇬🇧","nom":"Édimbourg",      "pays":"Royaume-Uni",     "iata":"EDI","booking_id":"Edinburgh",       "tags":["Châteaux","Whisky","Histoire"],        "prix_base":1100},
+    {"flag":"🇮🇪","nom":"Dublin",         "pays":"Irlande",         "iata":"DUB","booking_id":"Dublin",          "tags":["Pub","Culture","Vert"],                "prix_base":1200},
+    # ── ASIE ──
+    {"flag":"🇯🇵","nom":"Tokyo",          "pays":"Japon",           "iata":"TYO","booking_id":"Tokyo",           "tags":["Culture","Gastronomie","Modernité"],   "prix_base":2200},
+    {"flag":"🇯🇵","nom":"Kyoto",          "pays":"Japon",           "iata":"ITM","booking_id":"Kyoto",           "tags":["Temples","Geishas","Tradition"],       "prix_base":1900},
+    {"flag":"🇯🇵","nom":"Osaka",          "pays":"Japon",           "iata":"KIX","booking_id":"Osaka",           "tags":["Gastronomie","Vivant","Shopping"],     "prix_base":1800},
+    {"flag":"🇹🇭","nom":"Bangkok",        "pays":"Thaïlande",       "iata":"BKK","booking_id":"Bangkok",         "tags":["Temples","Street food","Vivant"],      "prix_base":900},
+    {"flag":"🇹🇭","nom":"Chiang Mai",     "pays":"Thaïlande",       "iata":"CNX","booking_id":"Chiang Mai",      "tags":["Temples","Nature","Détente"],          "prix_base":950},
+    {"flag":"🇹🇭","nom":"Phuket",         "pays":"Thaïlande",       "iata":"HKT","booking_id":"Phuket",          "tags":["Plage","Fête","Mer"],                  "prix_base":1100},
+    {"flag":"🇹🇭","nom":"Koh Samui",      "pays":"Thaïlande",       "iata":"USM","booking_id":"Koh Samui",       "tags":["Île","Plage","Détente"],               "prix_base":1200},
+    {"flag":"🇻🇳","nom":"Hanoï",          "pays":"Vietnam",         "iata":"HAN","booking_id":"Hanoi",           "tags":["Rue","Histoire","Gastronomie"],        "prix_base":700},
+    {"flag":"🇻🇳","nom":"Ho Chi Minh",    "pays":"Vietnam",         "iata":"SGN","booking_id":"Ho Chi Minh City","tags":["Énergie","Histoire","Street food"],    "prix_base":750},
+    {"flag":"🇻🇳","nom":"Da Nang",        "pays":"Vietnam",         "iata":"DAD","booking_id":"Da Nang",         "tags":["Plage","Pont","Détente"],              "prix_base":700},
+    {"flag":"🇻🇳","nom":"Hội An",         "pays":"Vietnam",         "iata":"DAD","booking_id":"Hoi An",          "tags":["Lanternes","Histoire","Charme"],       "prix_base":650},
+    {"flag":"🇰🇭","nom":"Siem Reap",      "pays":"Cambodge",        "iata":"REP","booking_id":"Siem Reap",       "tags":["Angkor","Histoire","Culture"],         "prix_base":600},
+    {"flag":"🇲🇲","nom":"Bagan",          "pays":"Myanmar",         "iata":"NYU","booking_id":"Bagan",           "tags":["Temples","Montgolfière","Unique"],     "prix_base":700},
+    {"flag":"🇱🇦","nom":"Luang Prabang",  "pays":"Laos",            "iata":"LPQ","booking_id":"Luang Prabang",   "tags":["Temples","Nature","Sérénité"],         "prix_base":550},
+    {"flag":"🇲🇾","nom":"Kuala Lumpur",   "pays":"Malaisie",        "iata":"KUL","booking_id":"Kuala Lumpur",    "tags":["Tours","Shopping","Gastronomie"],      "prix_base":850},
+    {"flag":"🇲🇾","nom":"Penang",         "pays":"Malaisie",        "iata":"PEN","booking_id":"Penang",          "tags":["Street art","Gastronomie","Histoire"], "prix_base":700},
+    {"flag":"🇸🇬","nom":"Singapour",      "pays":"Singapour",       "iata":"SIN","booking_id":"Singapore",       "tags":["Modernité","Gastronomie","Propre"],    "prix_base":2000},
+    {"flag":"🇮🇩","nom":"Bali",           "pays":"Indonésie",       "iata":"DPS","booking_id":"Bali",            "tags":["Spiritualité","Plage","Jungle"],       "prix_base":1000},
+    {"flag":"🇮🇩","nom":"Lombok",         "pays":"Indonésie",       "iata":"LOP","booking_id":"Lombok",          "tags":["Plage","Volcan","Nature"],             "prix_base":900},
+    {"flag":"🇮🇩","nom":"Yogyakarta",     "pays":"Indonésie",       "iata":"JOG","booking_id":"Yogyakarta",      "tags":["Borobudur","Culture","Art"],           "prix_base":700},
+    {"flag":"🇵🇭","nom":"Palawan",        "pays":"Philippines",     "iata":"PPS","booking_id":"El Nido",         "tags":["Plage","Lagon","Plongée"],             "prix_base":1100},
+    {"flag":"🇵🇭","nom":"Cebu",           "pays":"Philippines",     "iata":"CEB","booking_id":"Cebu City",       "tags":["Plongée","Plage","Baleines"],          "prix_base":900},
+    {"flag":"🇮🇳","nom":"Goa",            "pays":"Inde",            "iata":"GOI","booking_id":"Goa",             "tags":["Plage","Fête","Détente"],              "prix_base":800},
+    {"flag":"🇮🇳","nom":"Jaipur",         "pays":"Inde",            "iata":"JAI","booking_id":"Jaipur",          "tags":["Palais","Désert","Couleurs"],          "prix_base":700},
+    {"flag":"🇮🇳","nom":"Mumbai",         "pays":"Inde",            "iata":"BOM","booking_id":"Mumbai",          "tags":["Bollywood","Énergie","Contrastes"],    "prix_base":750},
+    {"flag":"🇮🇳","nom":"Kerala",         "pays":"Inde",            "iata":"COK","booking_id":"Kochi",           "tags":["Backwaters","Nature","Détente"],       "prix_base":700},
+    {"flag":"🇮🇳","nom":"Varanasi",       "pays":"Inde",            "iata":"VNS","booking_id":"Varanasi",        "tags":["Spirituel","Gange","Unique"],          "prix_base":650},
+    {"flag":"🇳🇵","nom":"Katmandou",      "pays":"Népal",           "iata":"KTM","booking_id":"Kathmandu",       "tags":["Himalaya","Trek","Spirituel"],         "prix_base":700},
+    {"flag":"🇱🇰","nom":"Colombo",        "pays":"Sri Lanka",       "iata":"CMB","booking_id":"Colombo",         "tags":["Temples","Plage","Nature"],            "prix_base":800},
+    {"flag":"🇲🇻","nom":"Malé",           "pays":"Maldives",        "iata":"MLE","booking_id":"Male",            "tags":["Luxe","Plage","Snorkeling"],           "prix_base":4500},
+    {"flag":"🇨🇳","nom":"Pékin",          "pays":"Chine",           "iata":"PEK","booking_id":"Beijing",         "tags":["Grande Muraille","Histoire","Culture"],"prix_base":1200},
+    {"flag":"🇨🇳","nom":"Shanghai",       "pays":"Chine",           "iata":"PVG","booking_id":"Shanghai",        "tags":["Modernité","Finance","Architecture"],  "prix_base":1300},
+    {"flag":"🇨🇳","nom":"Guilin",         "pays":"Chine",           "iata":"KWL","booking_id":"Guilin",          "tags":["Paysages","Rizières","Nature"],        "prix_base":1000},
+    {"flag":"🇰🇷","nom":"Séoul",          "pays":"Corée du Sud",    "iata":"ICN","booking_id":"Seoul",           "tags":["K-pop","Gastronomie","Modernité"],     "prix_base":1200},
+    {"flag":"🇰🇷","nom":"Busan",          "pays":"Corée du Sud",    "iata":"PUS","booking_id":"Busan",           "tags":["Mer","Plage","Gastronomie"],           "prix_base":1100},
+    {"flag":"🇹🇼","nom":"Taipei",         "pays":"Taïwan",          "iata":"TPE","booking_id":"Taipei",          "tags":["Street food","Modernité","Nature"],    "prix_base":1100},
+    {"flag":"🇲🇳","nom":"Oulan-Bator",    "pays":"Mongolie",        "iata":"ULN","booking_id":"Ulaanbaatar",     "tags":["Steppes","Nomades","Aventure"],        "prix_base":1200},
+    {"flag":"🇺🇿","nom":"Samarcande",     "pays":"Ouzbékistan",     "iata":"SKD","booking_id":"Samarkand",       "tags":["Route de la soie","Histoire","Unique"], "prix_base":900},
+    {"flag":"🇬🇪","nom":"Tbilissi",       "pays":"Géorgie",         "iata":"TBS","booking_id":"Tbilisi",         "tags":["Vin","Histoire","Caucause"],           "prix_base":700},
+    {"flag":"🇦🇲","nom":"Erevan",         "pays":"Arménie",         "iata":"EVN","booking_id":"Yerevan",         "tags":["Histoire","Monastères","Abordable"],   "prix_base":650},
+    {"flag":"🇦🇿","nom":"Bakou",          "pays":"Azerbaïdjan",     "iata":"GYD","booking_id":"Baku",            "tags":["Pétrole","Architecture","Unique"],     "prix_base":800},
+    {"flag":"🇯🇴","nom":"Pétra",          "pays":"Jordanie",        "iata":"AMM","booking_id":"Petra",           "tags":["Rochers","Histoire","Désert"],         "prix_base":1200},
+    {"flag":"🇮🇱","nom":"Tel Aviv",       "pays":"Israël",          "iata":"TLV","booking_id":"Tel Aviv",        "tags":["Plage","Tech","Gastronomie"],          "prix_base":1500},
+    {"flag":"🇦🇪","nom":"Dubaï",          "pays":"ÉAU",             "iata":"DXB","booking_id":"Dubai",           "tags":["Luxe","Gratte-ciel","Shopping"],       "prix_base":2200},
+    {"flag":"🇦🇪","nom":"Abu Dhabi",      "pays":"ÉAU",             "iata":"AUH","booking_id":"Abu Dhabi",       "tags":["Luxe","Mosquée","Culture"],            "prix_base":2000},
+    {"flag":"🇴🇲","nom":"Mascate",        "pays":"Oman",            "iata":"MCT","booking_id":"Muscat",          "tags":["Désert","Authenticité","Nature"],      "prix_base":1300},
+    {"flag":"🇶🇦","nom":"Doha",           "pays":"Qatar",           "iata":"DOH","booking_id":"Doha",            "tags":["Architecture","Luxe","Culture"],       "prix_base":1800},
+    # ── AMÉRIQUES ──
+    {"flag":"🇺🇸","nom":"New York",       "pays":"États-Unis",      "iata":"JFK","booking_id":"New York City",   "tags":["Ville","Shopping","Culture"],          "prix_base":2500},
+    {"flag":"🇺🇸","nom":"Los Angeles",    "pays":"États-Unis",      "iata":"LAX","booking_id":"Los Angeles",     "tags":["Hollywood","Plage","Culture"],         "prix_base":2300},
+    {"flag":"🇺🇸","nom":"Miami",          "pays":"États-Unis",      "iata":"MIA","booking_id":"Miami",           "tags":["Plage","Fête","Art Déco"],             "prix_base":2200},
+    {"flag":"🇺🇸","nom":"San Francisco",  "pays":"États-Unis",      "iata":"SFO","booking_id":"San Francisco",   "tags":["Tech","Pont","Culture"],               "prix_base":2400},
+    {"flag":"🇺🇸","nom":"New Orleans",    "pays":"États-Unis",      "iata":"MSY","booking_id":"New Orleans",     "tags":["Jazz","Gastronomie","Fête"],           "prix_base":1900},
+    {"flag":"🇺🇸","nom":"Las Vegas",      "pays":"États-Unis",      "iata":"LAS","booking_id":"Las Vegas",       "tags":["Casinos","Shows","Désert"],            "prix_base":2000},
+    {"flag":"🇺🇸","nom":"Hawaii",         "pays":"États-Unis",      "iata":"HNL","booking_id":"Honolulu",        "tags":["Plage","Volcan","Nature"],             "prix_base":3000},
+    {"flag":"🇨🇦","nom":"Montréal",       "pays":"Canada",          "iata":"YUL","booking_id":"Montreal",        "tags":["French","Culture","Gastronomie"],      "prix_base":1600},
+    {"flag":"🇨🇦","nom":"Vancouver",      "pays":"Canada",          "iata":"YVR","booking_id":"Vancouver",       "tags":["Nature","Montagne","Mer"],             "prix_base":1800},
+    {"flag":"🇨🇦","nom":"Toronto",        "pays":"Canada",          "iata":"YYZ","booking_id":"Toronto",         "tags":["Multiculturel","Chutes","Modernité"],  "prix_base":1700},
+    {"flag":"🇲🇽","nom":"Mexico",         "pays":"Mexique",         "iata":"MEX","booking_id":"Mexico City",     "tags":["Culture","Gastronomie","Histoire"],    "prix_base":1100},
+    {"flag":"🇲🇽","nom":"Cancún",         "pays":"Mexique",         "iata":"CUN","booking_id":"Cancun",          "tags":["Plage","Cenotes","Fête"],              "prix_base":1500},
+    {"flag":"🇲🇽","nom":"Oaxaca",         "pays":"Mexique",         "iata":"OAX","booking_id":"Oaxaca",          "tags":["Culture","Gastronomie","Art"],         "prix_base":1000},
+    {"flag":"🇨🇷","nom":"San José",       "pays":"Costa Rica",      "iata":"SJO","booking_id":"San Jose",        "tags":["Nature","Biodiversité","Surf"],        "prix_base":1400},
+    {"flag":"🇨🇺","nom":"La Havane",      "pays":"Cuba",            "iata":"HAV","booking_id":"Havana",          "tags":["Vintage","Musique","Rhum"],            "prix_base":1200},
+    {"flag":"🇵🇦","nom":"Panama City",    "pays":"Panama",          "iata":"PTY","booking_id":"Panama City",     "tags":["Canal","Modernité","Jungle"],          "prix_base":1300},
+    {"flag":"🇨🇴","nom":"Carthagène",     "pays":"Colombie",        "iata":"CTG","booking_id":"Cartagena",       "tags":["Colonial","Mer","Couleurs"],           "prix_base":1100},
+    {"flag":"🇨🇴","nom":"Medellín",       "pays":"Colombie",        "iata":"MDE","booking_id":"Medellin",        "tags":["Printemps","Culture","Énergie"],       "prix_base":1000},
+    {"flag":"🇨🇴","nom":"Bogotá",         "pays":"Colombie",        "iata":"BOG","booking_id":"Bogota",          "tags":["Altitude","Gastronomie","Art"],        "prix_base":1100},
+    {"flag":"🇵🇪","nom":"Cusco",          "pays":"Pérou",           "iata":"LIM","booking_id":"Cusco",           "tags":["Machu Picchu","Histoire","Inca"],      "prix_base":1400},
+    {"flag":"🇵🇪","nom":"Lima",           "pays":"Pérou",           "iata":"LIM","booking_id":"Lima",            "tags":["Gastronomie","Mer","Culture"],         "prix_base":1200},
+    {"flag":"🇧🇴","nom":"La Paz",         "pays":"Bolivie",         "iata":"LPB","booking_id":"La Paz",          "tags":["Altitude","Salar","Unique"],           "prix_base":900},
+    {"flag":"🇧🇷","nom":"Rio de Janeiro", "pays":"Brésil",          "iata":"GIG","booking_id":"Rio de Janeiro",  "tags":["Carnaval","Plage","Nature"],           "prix_base":1500},
+    {"flag":"🇧🇷","nom":"São Paulo",      "pays":"Brésil",          "iata":"GRU","booking_id":"Sao Paulo",       "tags":["Gastronomie","Culture","Énergie"],     "prix_base":1400},
+    {"flag":"🇧🇷","nom":"Florianópolis",  "pays":"Brésil",          "iata":"FLN","booking_id":"Florianopolis",   "tags":["Plage","Nature","Surf"],               "prix_base":1200},
+    {"flag":"🇦🇷","nom":"Buenos Aires",   "pays":"Argentine",       "iata":"EZE","booking_id":"Buenos Aires",    "tags":["Tango","Gastronomie","Passion"],       "prix_base":1000},
+    {"flag":"🇦🇷","nom":"Patagonie",      "pays":"Argentine",       "iata":"USH","booking_id":"Ushuaia",         "tags":["Bout du monde","Trek","Nature"],       "prix_base":2200},
+    {"flag":"🇨🇱","nom":"Santiago",       "pays":"Chili",           "iata":"SCL","booking_id":"Santiago",        "tags":["Vin","Modernité","Culture"],           "prix_base":1400},
+    {"flag":"🇨🇱","nom":"Atacama",        "pays":"Chili",           "iata":"CJC","booking_id":"San Pedro de Atacama","tags":["Désert","Étoiles","Unique"],      "prix_base":1600},
+    {"flag":"🇺🇾","nom":"Montevideo",     "pays":"Uruguay",         "iata":"MVD","booking_id":"Montevideo",      "tags":["Détente","Bord de mer","Culture"],     "prix_base":1100},
+    {"flag":"🇪🇨","nom":"Galápagos",      "pays":"Équateur",        "iata":"GPS","booking_id":"Galapagos",       "tags":["Faune","Nature","Unique"],             "prix_base":3000},
+    # ── AFRIQUE ──
+    {"flag":"🇲🇦","nom":"Marrakech",      "pays":"Maroc",           "iata":"RAK","booking_id":"Marrakech",       "tags":["Souk","Désert","Culture"],             "prix_base":700},
+    {"flag":"🇲🇦","nom":"Essaouira",      "pays":"Maroc",           "iata":"ESU","booking_id":"Essaouira",       "tags":["Vent","Médina","Authenticité"],        "prix_base":600},
+    {"flag":"🇲🇦","nom":"Fès",            "pays":"Maroc",           "iata":"FEZ","booking_id":"Fez",             "tags":["Médina","Histoire","Artisanat"],       "prix_base":600},
+    {"flag":"🇹🇳","nom":"Tunis",          "pays":"Tunisie",         "iata":"TUN","booking_id":"Tunis",           "tags":["Histoire","Médina","Plage"],           "prix_base":500},
+    {"flag":"🇪🇬","nom":"Le Caire",       "pays":"Égypte",          "iata":"CAI","booking_id":"Cairo",           "tags":["Pyramides","Histoire","Culture"],      "prix_base":800},
+    {"flag":"🇪🇬","nom":"Louxor",         "pays":"Égypte",          "iata":"LXR","booking_id":"Luxor",           "tags":["Pharaons","Temples","Nil"],            "prix_base":700},
+    {"flag":"🇸🇸","nom":"Zanzibar",       "pays":"Tanzanie",        "iata":"ZNZ","booking_id":"Zanzibar",        "tags":["Plage","Épices","Plongée"],            "prix_base":1500},
+    {"flag":"🇹🇿","nom":"Serengeti",      "pays":"Tanzanie",        "iata":"JRO","booking_id":"Serengeti",       "tags":["Safari","Grande Migration","Nature"],  "prix_base":3500},
+    {"flag":"🇰🇪","nom":"Nairobi",        "pays":"Kenya",           "iata":"NBO","booking_id":"Nairobi",         "tags":["Safari","Nature","Savane"],            "prix_base":2000},
+    {"flag":"🇺🇬","nom":"Kampala",        "pays":"Ouganda",         "iata":"EBB","booking_id":"Kampala",         "tags":["Gorilles","Nature","Découverte"],      "prix_base":1800},
+    {"flag":"🇷🇼","nom":"Kigali",         "pays":"Rwanda",          "iata":"KGL","booking_id":"Kigali",          "tags":["Gorilles","Propre","Nature"],          "prix_base":2000},
+    {"flag":"🇿🇦","nom":"Le Cap",         "pays":"Afrique du Sud",  "iata":"CPT","booking_id":"Cape Town",       "tags":["Vignobles","Montagne","Mer"],          "prix_base":1500},
+    {"flag":"🇿🇦","nom":"Johannesburg",   "pays":"Afrique du Sud",  "iata":"JNB","booking_id":"Johannesburg",    "tags":["Apartheid","Culture","Safari"],        "prix_base":1400},
+    {"flag":"🇿🇼","nom":"Victoria Falls", "pays":"Zimbabwe",        "iata":"VFA","booking_id":"Victoria Falls",  "tags":["Chutes","Aventure","Nature"],          "prix_base":2200},
+    {"flag":"🇧🇼","nom":"Botswana",       "pays":"Botswana",        "iata":"GBE","booking_id":"Maun",            "tags":["Delta Okavango","Safari","Luxe"],      "prix_base":3500},
+    {"flag":"🇲🇬","nom":"Antananarivo",   "pays":"Madagascar",      "iata":"TNR","booking_id":"Antananarivo",    "tags":["Lémuriens","Nature","Unique"],         "prix_base":1400},
+    {"flag":"🇸🇨","nom":"Mahé",           "pays":"Seychelles",      "iata":"SEZ","booking_id":"Mahe",            "tags":["Luxe","Plage","Nature"],               "prix_base":4000},
+    {"flag":"🇲🇺","nom":"Île Maurice",    "pays":"Maurice",         "iata":"MRU","booking_id":"Mauritius",       "tags":["Plage","Luxe","Lagon"],               "prix_base":2500},
+    {"flag":"🇷🇪","nom":"La Réunion",     "pays":"France",          "iata":"RUN","booking_id":"Saint-Denis",     "tags":["Volcan","Trek","Nature"],              "prix_base":1800},
+    {"flag":"🇨🇻","nom":"Cap-Vert",       "pays":"Cap-Vert",        "iata":"SID","booking_id":"Sal",             "tags":["Plage","Musique","Authenticité"],      "prix_base":1200},
+    {"flag":"🇸🇳","nom":"Dakar",          "pays":"Sénégal",         "iata":"DSS","booking_id":"Dakar",           "tags":["Culture","Musique","Océan"],           "prix_base":1000},
+    {"flag":"🇪🇹","nom":"Addis-Abeba",    "pays":"Éthiopie",        "iata":"ADD","booking_id":"Addis Ababa",     "tags":["Histoire","Café","Découverte"],        "prix_base":1100},
+    {"flag":"🇬🇭","nom":"Accra",          "pays":"Ghana",           "iata":"ACC","booking_id":"Accra",           "tags":["Côte","Histoire","Musique"],           "prix_base":1200},
+    # ── OCÉANIE ──
+    {"flag":"🇦🇺","nom":"Sydney",         "pays":"Australie",       "iata":"SYD","booking_id":"Sydney",          "tags":["Opéra","Plage","Culture"],             "prix_base":3000},
+    {"flag":"🇦🇺","nom":"Melbourne",      "pays":"Australie",       "iata":"MEL","booking_id":"Melbourne",       "tags":["Art","Gastronomie","Sport"],           "prix_base":2800},
+    {"flag":"🇦🇺","nom":"Cairns",         "pays":"Australie",       "iata":"CNS","booking_id":"Cairns",          "tags":["Grande Barrière","Forêt","Plongée"],   "prix_base":2500},
+    {"flag":"🇦🇺","nom":"Uluru",          "pays":"Australie",       "iata":"AYQ","booking_id":"Uluru",           "tags":["Rocher sacré","Désert","Unique"],      "prix_base":2800},
+    {"flag":"🇳🇿","nom":"Queenstown",     "pays":"Nv-Zélande",      "iata":"ZQN","booking_id":"Queenstown",      "tags":["Aventure","Paysages","Bungee"],        "prix_base":3200},
+    {"flag":"🇳🇿","nom":"Auckland",       "pays":"Nv-Zélande",      "iata":"AKL","booking_id":"Auckland",        "tags":["Harbour","Culture","Nature"],          "prix_base":3000},
+    {"flag":"🇫🇯","nom":"Fidji",          "pays":"Fidji",           "iata":"NAN","booking_id":"Fiji",            "tags":["Plage","Lagon","Luxe"],               "prix_base":3500},
+    {"flag":"🇵🇫","nom":"Bora Bora",      "pays":"Polynésie Fr.",   "iata":"BOB","booking_id":"Bora Bora",       "tags":["Luxe","Lagon","Romance"],             "prix_base":5000},
+    {"flag":"🇳🇨","nom":"Nouméa",         "pays":"Nv-Calédonie",    "iata":"NOU","booking_id":"Noumea",          "tags":["Lagon","Plage","Nature"],             "prix_base":2800},
+    {"flag":"🇵🇬","nom":"Port Moresby",   "pays":"Papouasie",       "iata":"POM","booking_id":"Port Moresby",    "tags":["Aventure","Tribaux","Unique"],         "prix_base":2500},
 ]
+
 
 # ─────────────────────────────────────────────
 #  UTILITAIRES
@@ -938,7 +1140,7 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
-tab_search, tab_cost, tab_weather = st.tabs([T["tab_search"], T["tab_cost"], T["tab_weather"]])
+tab_search, tab_cost, tab_weather, tab_bpack = st.tabs([T["tab_search"], T["tab_cost"], T["tab_weather"], T["tab_bpack"]])
 
 # ══════════════════════════════════════════════
 #  ONGLET 1 — RECHERCHE DE VOYAGES
@@ -1087,15 +1289,15 @@ with tab_cost:
         st.markdown('<div class="no-result">Tapez une ville ci-dessus et cliquez sur Calculer.</div>', unsafe_allow_html=True)
 
 # ══════════════════════════════════════════════
-#  ONGLET 3 — MÉTÉO
+#  ONGLET 3 — MÉTÉO (composants natifs Streamlit)
 # ══════════════════════════════════════════════
 with tab_weather:
-    st.markdown(f'''
+    st.markdown(f"""
 <div class="hero" style="padding:1.2rem 0 1.8rem; margin-bottom:1.5rem;">
   <div class="hero-title" style="font-size:2.2rem;">{T["wx_title"]}</div>
   <div class="hero-sub">{T["wx_sub"]}</div>
 </div>
-''', unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
     col_wx, col_wxbtn = st.columns([4, 1])
     with col_wx:
@@ -1109,56 +1311,294 @@ with tab_weather:
         if not wx:
             st.markdown(f'<div class="msg-sage">⟶ {T["wx_err"]}</div>', unsafe_allow_html=True)
         else:
-            bg = "#FFF8EE" if wx["is_day"] else "#1A1A2E"
-            fg = "#0D0D0D" if wx["is_day"] else "#E8E0D0"
-            muted = "#6B6560" if wx["is_day"] else "#9A9080"
+            # ── En-tête : ville + emoji + description ──
+            st.markdown(f"""
+<div style="display:flex;justify-content:space-between;align-items:center;
+            border-bottom:1px solid var(--border);padding-bottom:1rem;margin-bottom:1.2rem;">
+  <div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:400;
+                color:var(--ink);line-height:1;">{wx["city"]}</div>
+    <div style="font-size:0.75rem;letter-spacing:0.1em;text-transform:uppercase;
+                color:var(--muted);margin-top:4px;">{wx["desc"]}</div>
+  </div>
+  <div style="font-size:3.5rem;line-height:1;">{wx["emoji"]}</div>
+</div>
+""", unsafe_allow_html=True)
 
-            st.markdown(f'''
-<div class="dest-card" style="max-width:540px;margin:0 auto 2rem;background:{bg};">
-  <div class="dest-body">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;">
-      <div>
-        <div class="dest-name" style="font-size:2rem;color:{fg};">{wx["city"]}</div>
-        <div class="dest-country" style="color:{muted};">{wx["desc"]}</div>
-      </div>
-      <div style="font-size:3.5rem;line-height:1;">{wx["emoji"]}</div>
-    </div>
-
-    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:1.2rem;">
-      <div style="font-family:\'Cormorant Garamond\',serif;font-size:4rem;font-weight:300;color:{fg};line-height:1;">{wx["temp"]}°</div>
-      <div style="color:{muted};font-size:0.75rem;letter-spacing:0.06em;">
-        ↑ {wx["temp_max"]}° &nbsp; ↓ {wx["temp_min"]}°
-      </div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1.2rem;">
-      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_feels"]}</div>
-        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["feels"]}°</div>
-      </div>
-      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_humidity"]}</div>
-        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["humidity"]} %</div>
-      </div>
-      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_wind"]}</div>
-        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.3rem;color:{fg};">{wx["wind"]} km/h</div>
-      </div>
-      <div style="background:rgba(0,0,0,0.04);padding:10px 14px;">
-        <div style="font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;color:{muted};margin-bottom:4px;">{T["wx_sunrise"]} · {T["wx_sunset"]}</div>
-        <div style="font-family:\'Cormorant Garamond\',serif;font-size:1.1rem;color:{fg};">{wx["sunrise"]} · {wx["sunset"]}</div>
-      </div>
-    </div>
-
-    <div style="font-size:0.65rem;letter-spacing:0.07em;color:{muted};text-align:center;border-top:1px solid var(--border);padding-top:0.8rem;">
-      {T["wx_src"]}
-    </div>
+            # ── Température principale ──
+            col_t, col_mm = st.columns([2, 1])
+            with col_t:
+                st.markdown(f"""
+<div style="font-family:'Cormorant Garamond',serif;font-size:5rem;font-weight:300;
+            color:var(--ink);line-height:1;margin-bottom:4px;">{wx["temp"]}°C</div>
+""", unsafe_allow_html=True)
+            with col_mm:
+                st.markdown(f"""
+<div style="padding-top:1.2rem;">
+  <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Max · Min</div>
+  <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--ink);">
+    {wx["temp_max"]}° · {wx["temp_min"]}°
   </div>
 </div>
-''', unsafe_allow_html=True)
+""", unsafe_allow_html=True)
+
+            st.markdown("<div style='height:1px;background:var(--border);margin:1rem 0'></div>", unsafe_allow_html=True)
+
+            # ── 4 métriques en colonnes natives ──
+            c1, c2, c3, c4 = st.columns(4)
+            with c1:
+                st.metric(T["wx_feels"],   f"{wx['feels']}°C")
+            with c2:
+                st.metric(T["wx_humidity"],f"{wx['humidity']} %")
+            with c3:
+                st.metric(T["wx_wind"],    f"{wx['wind']} km/h")
+            with c4:
+                st.metric(f"{T['wx_sunrise']} · {T['wx_sunset']}",
+                          f"{wx['sunrise']} · {wx['sunset']}")
+
+            st.markdown(f"""
+<div style="font-size:0.65rem;letter-spacing:0.07em;color:var(--muted);
+            text-align:center;margin-top:1.2rem;">{T["wx_src"]}</div>
+""", unsafe_allow_html=True)
 
     elif wx_btn:
         st.markdown(f'<div class="msg-sage">⟶ {T["wx_err"]}</div>', unsafe_allow_html=True)
     else:
         st.markdown(f'<div class="no-result">{T["wx_prompt"]}</div>', unsafe_allow_html=True)
 
+# ══════════════════════════════════════════════
+#  ONGLET 4 — BACKPACKER
+# ══════════════════════════════════════════════
+
+# Coûts de vols inter-régions (€ aller-retour estimé par tronçon)
+VOL_INTER = {
+    ("Europe","Europe"):30, ("Europe","Asie"):450, ("Europe","Afrique"):300,
+    ("Europe","Amériques"):500, ("Europe","Océanie"):900, ("Europe","Moyen-Orient"):250,
+    ("Asie","Asie"):120, ("Asie","Afrique"):500, ("Asie","Amériques"):700,
+    ("Asie","Océanie"):350, ("Asie","Moyen-Orient"):200,
+    ("Afrique","Afrique"):150, ("Afrique","Amériques"):700, ("Afrique","Océanie"):900,
+    ("Amériques","Amériques"):180, ("Amériques","Océanie"):700,
+    ("Océanie","Océanie"):200, ("Moyen-Orient","Moyen-Orient"):150,
+}
+def cout_vol(r1, r2):
+    key = tuple(sorted([r1, r2]))
+    return VOL_INTER.get(key, VOL_INTER.get((r1,r2), 400))
+
+REGION_MAP = {
+    "Asie du Sud-Est": "Asie", "Southeast Asia": "Asie",
+    "Europe de l'Est": "Europe", "Eastern Europe": "Europe",
+    "Amérique Latine": "Amériques", "Latin America": "Amériques",
+    "Afrique": "Afrique", "Africa": "Afrique",
+    "Océanie": "Océanie", "Oceania": "Océanie",
+    "Moyen-Orient": "Moyen-Orient", "Middle East": "Moyen-Orient",
+    "Asia del Sudeste": "Asie", "Europa del Este": "Europe",
+    "América Latina": "Amériques", "África": "Afrique",
+    "Oceanía": "Océanie", "Oriente Medio": "Moyen-Orient",
+}
+PAYS_REGION = {
+    "Japon":"Asie","Thaïlande":"Asie","Vietnam":"Asie","Cambodge":"Asie","Laos":"Asie",
+    "Malaisie":"Asie","Singapour":"Asie","Indonésie":"Asie","Philippines":"Asie",
+    "Inde":"Asie","Népal":"Asie","Sri Lanka":"Asie","Chine":"Asie","Corée du Sud":"Asie",
+    "Taïwan":"Asie","Mongolie":"Asie","Ouzbékistan":"Asie","Myanmar":"Asie",
+    "Géorgie":"Asie","Arménie":"Asie","Azerbaïdjan":"Asie","Maldives":"Asie",
+    "France":"Europe","Espagne":"Europe","Italie":"Europe","Portugal":"Europe",
+    "Grèce":"Europe","Croatie":"Europe","République Tchèque":"Europe","Hongrie":"Europe",
+    "Autriche":"Europe","Pays-Bas":"Europe","Allemagne":"Europe","Suisse":"Europe",
+    "Suède":"Europe","Danemark":"Europe","Norvège":"Europe","Finlande":"Europe",
+    "Islande":"Europe","Pologne":"Europe","Roumanie":"Europe","Bulgarie":"Europe",
+    "Serbie":"Europe","Monténégro":"Europe","Albanie":"Europe","Malte":"Europe",
+    "Chypre":"Europe","Turquie":"Europe","Royaume-Uni":"Europe","Irlande":"Europe",
+    "États-Unis":"Amériques","Canada":"Amériques","Mexique":"Amériques",
+    "Costa Rica":"Amériques","Cuba":"Amériques","Panama":"Amériques","Colombie":"Amériques",
+    "Pérou":"Amériques","Bolivie":"Amériques","Brésil":"Amériques","Argentine":"Amériques",
+    "Chili":"Amériques","Uruguay":"Amériques","Équateur":"Amériques",
+    "Maroc":"Afrique","Tunisie":"Afrique","Égypte":"Afrique","Tanzanie":"Afrique",
+    "Kenya":"Afrique","Ouganda":"Afrique","Rwanda":"Afrique","Afrique du Sud":"Afrique",
+    "Zimbabwe":"Afrique","Botswana":"Afrique","Madagascar":"Afrique","Seychelles":"Afrique",
+    "Maurice":"Afrique","France (Réunion)":"Afrique","Cap-Vert":"Afrique","Sénégal":"Afrique",
+    "Éthiopie":"Afrique","Ghana":"Afrique","France":"Europe",
+    "Australie":"Océanie","Nv-Zélande":"Océanie","Fidji":"Océanie",
+    "Polynésie Fr.":"Océanie","Nv-Calédonie":"Océanie","Papouasie":"Océanie",
+    "ÉAU":"Moyen-Orient","Jordanie":"Moyen-Orient","Israël":"Moyen-Orient",
+    "Oman":"Moyen-Orient","Qatar":"Moyen-Orient",
+}
+
+STYLE_COEF = {"Économique 🌿":0.6, "Équilibré ⚖️":1.0, "Confort 🛎":1.6,
+              "Budget 🌿":0.6, "Balanced ⚖️":1.0, "Comfort 🛎":1.6,
+              "Económico 🌿":0.6, "Equilibrado ⚖️":1.0, "Confort 🛎":1.6}
+
+def build_backpacker_itinerary(budget, nb_days, style, regions_pref):
+    coef = STYLE_COEF.get(style, 1.0)
+    regions_filter = [REGION_MAP.get(r) for r in regions_pref] if regions_pref else None
+
+    # Filtrer et scorer les destinations
+    pool = []
+    for d in DESTINATIONS:
+        region = PAYS_REGION.get(d["pays"])
+        if not region:
+            continue
+        if regions_filter and region not in regions_filter:
+            continue
+        cost_day = COST_DB.get(d["nom"].lower(), COST_DB.get(d["booking_id"].lower()))
+        if not cost_day:
+            cost_day = {"repas": 20, "transport": 6, "logement": 40, "loisirs": 12}
+        pool.append({**d, "region": region, "cost_day": cost_day})
+
+    if not pool:
+        return None
+
+    # Construire l'itinéraire : alterner les régions, varier les pays
+    import random
+    random.seed(42)
+    random.shuffle(pool)
+
+    # Nombre de destinations selon budget et durée
+    n_dest = max(2, min(8, nb_days // 5))
+    # Essayer de varier les régions
+    chosen, seen_pays = [], set()
+    for d in pool:
+        if d["pays"] not in seen_pays:
+            chosen.append(d)
+            seen_pays.add(d["pays"])
+        if len(chosen) >= n_dest:
+            break
+    if len(chosen) < 2:
+        chosen = pool[:n_dest]
+
+    # Distribuer les jours
+    days_each = nb_days // len(chosen)
+    extra     = nb_days % len(chosen)
+
+    # Calculer les coûts
+    itinerary = []
+    total_cost = 0
+    prev_region = "Europe"
+    for idx, dest in enumerate(chosen):
+        nuits  = days_each + (1 if idx < extra else 0)
+        cd     = dest["cost_day"]
+        vol    = round(cout_vol(prev_region, dest["region"]) * coef)
+        hotel  = round(cd["logement"] * coef)
+        life   = round((cd["repas"] + cd["transport"] + cd["loisirs"]) * coef)
+        subtot = vol + (hotel + life) * nuits
+        total_cost += subtot
+        prev_region = dest["region"]
+        itinerary.append({
+            "dest":   dest,
+            "nuits":  nuits,
+            "vol":    vol,
+            "hotel":  hotel,
+            "life":   life,
+            "subtot": subtot,
+        })
+    return itinerary, total_cost
+
+
+with tab_bpack:
+    st.markdown(f"""
+<div class="hero" style="padding:1.2rem 0 1.8rem; margin-bottom:1.5rem;">
+  <div class="hero-title" style="font-size:2.2rem;">{T["bp_title"]}</div>
+  <div class="hero-sub">{T["bp_sub"]}</div>
+</div>
+""", unsafe_allow_html=True)
+
+    col_b1, col_b2, col_b3 = st.columns([2, 1, 2])
+    with col_b1:
+        bp_budget = st.slider(T["bp_budget"], 500, 15000, 4000, 100)
+    with col_b2:
+        bp_days = st.number_input(T["bp_days"], min_value=7, max_value=365, value=30, step=1)
+    with col_b3:
+        bp_style = st.selectbox(T["bp_style"], T["bp_styles"])
+
+    bp_regions = st.multiselect(T["bp_region"], T["bp_regions"])
+    bp_btn = st.button(T["bp_btn"], use_container_width=True)
+
+    if bp_btn:
+        result = build_backpacker_itinerary(bp_budget, bp_days, bp_style, bp_regions)
+        if not result:
+            st.markdown(f'<div class="msg-sage">⟶ {T["bp_warning"]}</div>', unsafe_allow_html=True)
+        else:
+            itinerary, total_cost = result
+            over_budget = total_cost > bp_budget
+
+            # Résumé global
+            st.markdown(f"""
+<div class="summary">
+  <b>{len(itinerary)}</b> pays &nbsp;·&nbsp;
+  <b>{bp_days}</b> jours &nbsp;·&nbsp;
+  <b style="color:{'#B85555' if over_budget else '#4A6E4E'};">{total_cost:,} €</b>
+  {'⚠ dépasse votre budget' if over_budget else '✓ dans votre budget'}
+</div>
+""", unsafe_allow_html=True)
+
+            # Cartes par destination
+            cols = st.columns(min(len(itinerary), 3))
+            for idx, step in enumerate(itinerary):
+                dest = step["dest"]
+                photo = DEST_PHOTOS.get(dest["nom"],
+                    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80")
+                with cols[idx % 3]:
+                    st.markdown(f"""
+<div class="dest-card">
+  <div class="photo-wrap">
+    <img class="dest-photo" src="{photo}" alt="{dest['nom']}" loading="lazy"
+         style="height:140px;">
+    <div style="position:absolute;bottom:10px;left:12px;
+                background:rgba(13,13,13,0.72);color:#F5F0E8;
+                font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
+                padding:3px 10px;">{T["bp_nights"].format(n=step["nuits"])}</div>
+  </div>
+  <div class="dest-body" style="padding:0.9rem 1.1rem 0.8rem;">
+    <div class="dest-name" style="font-size:1.3rem;">{dest["flag"]} {dest["nom"]}</div>
+    <div class="dest-country">{dest["pays"]}</div>
+    <div style="display:flex;flex-direction:column;gap:5px;margin:0.7rem 0;
+                font-size:0.72rem;color:var(--muted);">
+      <div style="display:flex;justify-content:space-between;">
+        <span>✈ {T["bp_flight"]}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["vol"]:,} €</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span>🏨 {T["bp_hotel"]}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["hotel"]:,} €/nuit</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;">
+        <span>🍽 {T["bp_life"]}</span>
+        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["life"]:,} €/jour</span>
+      </div>
+    </div>
+    <div class="dest-price-row" style="padding-top:0.6rem;margin-bottom:0.7rem;">
+      <div>
+        <div style="font-size:0.65rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);">{T["bp_total_dest"]}</div>
+        <div class="dest-price" style="font-size:1.6rem;">{step["subtot"]:,} €</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;">
+      <div style="flex:1;">
+""", unsafe_allow_html=True)
+                    st.link_button(T["btn_sky"], build_skyscanner_url(
+                        "CDG", dest["iata"], "20260901", "20260930", 1, 0, 0),
+                        use_container_width=True)
+                    st.markdown("</div><div style='flex:1;'>", unsafe_allow_html=True)
+                    st.link_button(T["btn_book"], build_booking_url(
+                        dest["booking_id"], "2026-09-01", "2026-09-30", 1, 0),
+                        use_container_width=True)
+                    st.markdown("</div></div></div></div>", unsafe_allow_html=True)
+
+            # Récap budget total
+            pct = min(100, round(total_cost / bp_budget * 100))
+            st.markdown(f"""
+<div class="dest-card" style="margin-top:1.5rem;">
+  <div class="dest-body">
+    <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:0.8rem;">
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.5rem;">{T["bp_grand"]}</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;color:var(--ink);">{total_cost:,} € <span style="font-size:1rem;color:var(--muted);">/ {bp_budget:,} €</span></div>
+    </div>
+    <div style="height:4px;background:var(--border);margin-bottom:0.6rem;">
+      <div style="height:4px;width:{pct}%;background:{'#B85555' if over_budget else '#7A9E7E'};"></div>
+    </div>
+    <div style="font-size:0.65rem;letter-spacing:0.07em;color:var(--muted);text-align:center;">{T["bp_src"]}</div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+    else:
+        st.markdown(f'<div class="no-result">{T["bp_prompt"]}</div>', unsafe_allow_html=True)

@@ -129,7 +129,6 @@ div[data-testid="stButton"] button:hover{background:var(--cream2)!important;colo
 div[data-testid="stSlider"]>div>div>div{background:var(--ink)!important;}
 </style>
 """, unsafe_allow_html=True)
-Pouch Voyage — Application Streamlit
 Travelpayout ID: 731169
 """
 

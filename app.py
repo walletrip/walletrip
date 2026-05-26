@@ -53,7 +53,7 @@ DEST_PHOTOS = {
     "Cracovie":       "https://images.unsplash.com/photo-1584892941636-f1e5686a7247?w=800&q=80",
     "Bucarest":       "https://images.unsplash.com/photo-1584811644165-33db418a4c73?w=800&q=80",
     "Istanbul":       "https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?w=800&q=80",
-    "Cappadoce":      "https://images.unsplash.com/photo-1565691562872-a38f18dbc9cd?w=800&q=80",
+    "Cappadoce":      "https://images.unsplash.com/photo-1570856686220-c2e416f39dac?w=800&q=80",
     "Londres":        "https://images.unsplash.com/photo-1513635269975-59663e0ac1ad?w=800&q=80",
     "Édimbourg":      "https://images.unsplash.com/photo-1506377872008-6645d9d29ef7?w=800&q=80",
     "Dublin":         "https://images.unsplash.com/photo-1549918864-48ac978761a4?w=800&q=80",
@@ -87,7 +87,7 @@ DEST_PHOTOS = {
     "Malé":           "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?w=800&q=80",
     "Pékin":          "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?w=800&q=80",
     "Séoul":          "https://images.unsplash.com/photo-1538485399081-7191377e8241?w=800&q=80",
-    "Dubaï":          "https://images.unsplash.com/photo-1518684079-3c830dcef090?w=800&q=80",
+    "Dubaï":          "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=800&q=80",
     "Pétra":          "https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=80",
     "Samarcande":     "https://images.unsplash.com/photo-1596397249129-c7a8f9bdf9b6?w=800&q=80",
     "Tbilissi":       "https://images.unsplash.com/photo-1565008576549-57f8b4a16b5b?w=800&q=80",
@@ -1197,6 +1197,10 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+# ── SESSION STATE — isoler les boutons ──────────
+if "last_action" not in st.session_state:
+    st.session_state.last_action = None
+
 # ── BARRE DE RECHERCHE HORIZONTALE ──────────────
 with st.container():
     st.markdown("""
@@ -1239,7 +1243,9 @@ with st.container():
         fav = st.text_input("fav_h", placeholder=T["fav_ph"], label_visibility="collapsed")
     with row2[2]:
         st.markdown("<div style='margin-top:1.4rem'></div>", unsafe_allow_html=True)
-        chercher = st.button(T["search"], use_container_width=True, type="primary")
+        if st.button(T["search"], key="btn_search", use_container_width=True, type="primary"):
+            st.session_state.last_action = "search"
+        chercher = st.session_state.last_action == "search"
 
     st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1249,6 +1255,7 @@ tab_search, tab_cost, tab_weather, tab_bpack = st.tabs([T["tab_search"], T["tab_
 #  ONGLET 1 — RECHERCHE DE VOYAGES
 # ══════════════════════════════════════════════
 with tab_search:
+    chercher = st.session_state.get("last_action") == "search"
     if not chercher:
         # ── Mur de photos d'accueil ──
         HERO_DESTINATIONS = [
@@ -1260,10 +1267,10 @@ with tab_search:
             ("Kyoto",         "🇯🇵", "Japon"),
             ("Rio de Janeiro","🇧🇷", "Brésil"),
             ("Lisbonne",      "🇵🇹", "Portugal"),
-            ("Dubaï",         "🇦🇪", "ÉAU"),
-            ("Cappadoce",     "🇹🇷", "Turquie"),
             ("Cusco",         "🇵🇪", "Pérou"),
             ("Reykjavik",     "🇮🇸", "Islande"),
+            ("Bangkok",       "🇹🇭", "Thaïlande"),
+            ("Patagonie",     "🇦🇷", "Argentine"),
         ]
         grid_cols = st.columns(4)
         for idx, (nom, flag, pays) in enumerate(HERO_DESTINATIONS):
@@ -1683,7 +1690,9 @@ with tab_bpack:
         bp_style = st.selectbox(T["bp_style"], T["bp_styles"])
 
     bp_regions = st.multiselect(T["bp_region"], T["bp_regions"])
-    bp_btn = st.button(T["bp_btn"], use_container_width=True)
+    if st.button(T["bp_btn"], key="btn_bpack", use_container_width=True):
+        st.session_state.last_action = "bpack"
+    bp_btn = st.session_state.last_action == "bpack"
 
     if bp_btn:
         result = build_backpacker_itinerary(bp_budget, bp_days, bp_style, bp_regions)

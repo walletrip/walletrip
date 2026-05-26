@@ -360,29 +360,28 @@ st.markdown("""
     background: var(--cream2) !important; color: var(--ink) !important;
   }
 
-  /* ── Link buttons — raffinés, minimalistes ── */
+  /* ── Link buttons — rectangles noirs élégants ── */
   div[data-testid="stLinkButton"] a {
-    background: transparent !important;
-    color: var(--muted) !important;
-    border: none !important;
-    border-bottom: 1px solid var(--border) !important;
+    background: var(--ink) !important;
+    color: var(--cream) !important;
+    border: 1px solid var(--ink) !important;
     border-radius: 0 !important;
-    font-family: 'Cormorant Garamond', serif !important;
-    font-size: 0.95rem !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 0.72rem !important;
     font-weight: 400 !important;
-    font-style: italic !important;
-    letter-spacing: 0.04em !important;
-    text-transform: none !important;
-    padding: 4px 0 !important;
+    font-style: normal !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    padding: 9px 12px !important;
     width: 100% !important;
     display: block !important;
     text-align: center !important;
-    transition: color 0.2s ease, border-color 0.2s ease !important;
+    transition: background 0.2s ease, color 0.2s ease !important;
   }
   div[data-testid="stLinkButton"] a:hover {
+    background: var(--cream2) !important;
     color: var(--ink) !important;
-    border-bottom-color: var(--ink) !important;
-    background: transparent !important;
+    border-color: var(--ink) !important;
   }
 
   /* slider */
@@ -1694,6 +1693,15 @@ with tab_bpack:
         st.session_state.last_action = "bpack"
     bp_btn = st.session_state.last_action == "bpack"
 
+    # Dates pour les liens affiliés backpacker (utilise les dates du formulaire principal)
+    try:
+        d1_str = d1.strftime("%Y-%m-%d")
+        d2_str = d2.strftime("%Y-%m-%d")
+    except Exception:
+        from datetime import date as _date, timedelta as _td
+        d1_str = (_date.today() + _td(days=30)).strftime("%Y-%m-%d")
+        d2_str = (_date.today() + _td(days=60)).strftime("%Y-%m-%d")
+
     if bp_btn:
         result = build_backpacker_itinerary(bp_budget, bp_days, bp_style, bp_regions)
         if not result:
@@ -1712,58 +1720,69 @@ with tab_bpack:
 </div>
 """, unsafe_allow_html=True)
 
-            # Cartes par destination
-            cols = st.columns(min(len(itinerary), 3))
+            # ── Photo unique d'ambiance ──
+            st.markdown("""
+<div style="position:relative;margin-bottom:2rem;overflow:hidden;">
+  <img src="https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=1400&q=85"
+       style="width:100%;height:220px;object-fit:cover;display:block;filter:brightness(0.72);">
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:300;
+                color:#FEFCF8;letter-spacing:0.12em;text-shadow:0 2px 12px rgba(0,0,0,0.4);">
+      Votre itinéraire
+    </div>
+  </div>
+</div>
+""", unsafe_allow_html=True)
+
+            # ── Tableau des étapes ──
             for idx, step in enumerate(itinerary):
                 dest = step["dest"]
-                photo = DEST_PHOTOS.get(dest["nom"],
-                    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&q=80")
-                with cols[idx % 3]:
-                    st.markdown(f"""
-<div class="dest-card">
-  <div class="photo-wrap">
-    <img class="dest-photo" src="{photo}" alt="{dest['nom']}" loading="lazy"
-         style="height:140px;">
-    <div style="position:absolute;bottom:10px;left:12px;
-                background:rgba(13,13,13,0.72);color:#F5F0E8;
-                font-size:0.65rem;letter-spacing:0.1em;text-transform:uppercase;
-                padding:3px 10px;">{T["bp_nights"].format(n=step["nuits"])}</div>
+                st.markdown(f"""
+<div style="background:var(--white);border:1px solid var(--border);
+            display:flex;align-items:center;justify-content:space-between;
+            padding:1rem 1.4rem;margin-bottom:8px;gap:1rem;">
+  <div style="display:flex;align-items:center;gap:14px;flex:2;">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:2rem;
+                color:var(--border);font-weight:300;min-width:32px;text-align:center;">
+      {idx+1:02d}
+    </div>
+    <div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;
+                  color:var(--ink);line-height:1;">{dest["flag"]} {dest["nom"]}</div>
+      <div style="font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;
+                  color:var(--muted);margin-top:2px;">{dest["pays"]} · {step["nuits"]} nuits</div>
+    </div>
   </div>
-  <div class="dest-body" style="padding:0.9rem 1.1rem 0.8rem;">
-    <div class="dest-name" style="font-size:1.3rem;">{dest["flag"]} {dest["nom"]}</div>
-    <div class="dest-country">{dest["pays"]}</div>
-    <div style="display:flex;flex-direction:column;gap:5px;margin:0.7rem 0;
-                font-size:0.72rem;color:var(--muted);">
-      <div style="display:flex;justify-content:space-between;">
-        <span>✈ {T["bp_flight"]}</span>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["vol"]:,} €</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;">
-        <span>🏨 {T["bp_hotel"]}</span>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["hotel"]:,} €/nuit</span>
-      </div>
-      <div style="display:flex;justify-content:space-between;">
-        <span>🍽 {T["bp_life"]}</span>
-        <span style="font-family:'Cormorant Garamond',serif;font-size:0.95rem;color:var(--ink);">{step["life"]:,} €/jour</span>
-      </div>
+  <div style="display:flex;gap:2rem;flex:3;justify-content:center;">
+    <div style="text-align:center;">
+      <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">✈ Vol</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);">{step["vol"]:,} €</div>
     </div>
-    <div class="dest-price-row" style="padding-top:0.6rem;margin-bottom:0.7rem;">
-      <div>
-        <div style="font-size:0.65rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted);">{T["bp_total_dest"]}</div>
-        <div class="dest-price" style="font-size:1.6rem;">{step["subtot"]:,} €</div>
-      </div>
+    <div style="text-align:center;">
+      <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">🏨 /nuit</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);">{step["hotel"]:,} €</div>
     </div>
-    <div style="display:flex;gap:6px;">
-      <div style="flex:1;">
+    <div style="text-align:center;">
+      <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">🍽 /jour</div>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:1.1rem;color:var(--ink);">{step["life"]:,} €</div>
+    </div>
+  </div>
+  <div style="text-align:right;flex:1;">
+    <div style="font-size:0.62rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);">Total</div>
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;color:var(--ink);font-weight:400;">{step["subtot"]:,} €</div>
+  </div>
+</div>
 """, unsafe_allow_html=True)
-                    st.link_button(T["btn_sky"], build_skyscanner_url(
-                        "CDG", dest["iata"], "20260901", "20260930", 1, 0, 0),
+                b1, b2 = st.columns(2)
+                with b1:
+                    st.link_button(f"✈ {T['btn_sky']} — {dest['nom']}", build_skyscanner_url(
+                        depart_iata, dest["iata"], d1_str, d2_str, 1, 0, 0),
                         use_container_width=True)
-                    st.markdown("</div><div style='flex:1;'>", unsafe_allow_html=True)
-                    st.link_button(T["btn_book"], build_booking_url(
-                        dest["booking_id"], "2026-09-01", "2026-09-30", 1, 0),
+                with b2:
+                    st.link_button(f"⌂ {T['btn_book']} — {dest['nom']}", build_booking_url(
+                        dest["booking_id"], d1_str, d2_str, 1, 0),
                         use_container_width=True)
-                    st.markdown("</div></div></div></div>", unsafe_allow_html=True)
+                st.markdown("<div style='margin-bottom:4px'></div>", unsafe_allow_html=True)
 
             # Récap budget total
             pct = min(100, round(total_cost / bp_budget * 100))
